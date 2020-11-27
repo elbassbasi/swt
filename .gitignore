@@ -1,0 +1,12 @@
+/build/
+/bin/
+/.settings/
+/.idea/
+/CMakeFiles/
+/nbproject/
+.project
+.cproject
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Makefile
