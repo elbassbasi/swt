@@ -1,0 +1,21 @@
+    file(GLOB src_windows_core "core/*.c")
+    file(GLOB src_windows_runtime "runtime/*.c")
+    file(GLOB src_windows_graphics "graphics/*.c")
+    file(GLOB src_windows_widgets "widgets/*.c")
+    file(GLOB src_windows_controls "controls/*.c")
+if(MINGW)
+  set(CMAKE_RC_COMPILER_INIT windres)
+  ENABLE_LANGUAGE(RC)
+  SET(CMAKE_RC_COMPILE_OBJECT
+    "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+  file(GLOB src_windows_res "runtime/*.rc")
+else()
+  set(src_windows_res )
+endif(MINGW)
+
+set(src_windows ${src_windows_core} ${src_windows_runtime} ${src_windows_graphics} ${src_windows_widgets} ${src_windows_controls} ${src_windows_res})
+
+    add_library(swt SHARED ${src_windows} ${src_common} ${src_swtp})
+    target_include_directories(swt PRIVATE ../..)
+	target_compile_definitions(swt PRIVATE SWTBUILD)
+    target_link_libraries(swt gdiplus uxtheme oleaut32 gdi32 ole32 uuid comctl32 msimg32 opengl32 usp10)

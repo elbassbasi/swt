@@ -1,1 +1,0 @@
-file(GLOB src_swtp "*.cpp")

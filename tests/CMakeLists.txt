@@ -62,10 +62,11 @@ file(GLOB test_widgets_toolkit "widgets/Toolkit/*.cpp")
 file(GLOB test_widgets_tooltip "widgets/ToolTip/*.cpp")
 file(GLOB test_widgets_tracker "widgets/Tracker/*.cpp")
 file(GLOB test_widgets_tray "widgets/Tray/*.cpp")
+
 set(test_widgets ${test_widgets_main} ${test_widgets_canvas} ${test_widgets_caret} ${test_widgets_composite} 
 ${test_widgets_control} ${test_widgets_dialogs} ${test_widgets_dnd} ${test_widgets_glcanvas} ${test_widgets_menu} ${test_widgets_scrollable} 
 ${test_widgets_shell} ${test_widgets_taskbar} ${test_widgets_theme} ${test_widgets_toolkit} ${test_widgets_tooltip}
- ${test_widgets_tracker} ${test_widgets_tray} ../swtp/swtp.cpp)
+ ${test_widgets_tracker} ${test_widgets_tray})
 #resource
 set(test_res )
 if (WIN32)
@@ -79,8 +80,8 @@ endif(MINGW)
 endif(WIN32)
 find_package(OpenGL REQUIRED)
 add_executable(swttest ${test_main} ${test_controls} ${test_graphics} ${test_runtime} ${test_widgets} ${test_res})
-target_include_directories(swttest PRIVATE ../include ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(swttest swt cswt ${OPENGL_LIBRARIES})
+target_include_directories(swttest PRIVATE .. ${OPENGL_INCLUDE_DIRS})
+target_link_libraries(swttest swt cswt swtp ${OPENGL_LIBRARIES})
 
  add_custom_target(swttest-copy-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
