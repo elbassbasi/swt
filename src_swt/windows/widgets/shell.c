@@ -7,7 +7,7 @@
 #if defined( __WIN32__) || defined(__WIN64__)
 #include "shell.h"
 #include "toolkit.h"
-int _w_shell_check_style(w_shell *parent, int style) {
+wuint64 _w_shell_check_style(w_shell *parent, wuint64 style) {
 	if ((style & W_NO_TRIM) != 0) {
 		style &= ~(W_CLOSE | W_TITLE | W_MIN | W_MAX | W_RESIZE | W_BORDER);
 	} else if ((style & W_NO_MOVE) != 0) {
@@ -109,8 +109,8 @@ void _w_shell_style(w_widget *widget, w_widget *parent, int style,
 		if ((style & W_CLOSE) != 0)
 			*dwStyle |= WS_SYSMENU;
 		//}
-		//if ((style & W_TITLE) != 0)
-		*dwStyle |= WS_CAPTION;
+		if ((style & W_TITLE) != 0)
+			*dwStyle |= WS_CAPTION;
 
 		/* Set the min and max button bits */
 		if ((style & W_MIN) != 0)
