@@ -1,4 +1,5 @@
 #main
+file(GLOB src_swtp "../src_swtp/*.cpp")
 file(GLOB test_main "main/*.cpp")
 #controls
 file(GLOB test_controls_main "controls/*.cpp")
@@ -79,9 +80,9 @@ if(MINGW)
 endif(MINGW)
 endif(WIN32)
 find_package(OpenGL REQUIRED)
-add_executable(swttest ${test_main} ${test_controls} ${test_graphics} ${test_runtime} ${test_widgets} ${test_res})
+add_executable(swttest ${src_swtp} ${test_main} ${test_controls} ${test_graphics} ${test_runtime} ${test_widgets} ${test_res})
 target_include_directories(swttest PRIVATE .. ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(swttest swt cswt swtp ${OPENGL_LIBRARIES})
+target_link_libraries(swttest swt cswt ${OPENGL_LIBRARIES})
 
  add_custom_target(swttest-copy-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
