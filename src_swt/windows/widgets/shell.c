@@ -133,7 +133,7 @@ void _w_shell_style(w_widget *widget, w_widget *parent, int style,
 #if !IsWinCE
 	if (parent == 0) {
 		if ((style & W_ON_TOP) != 0) {
-			int trim = /*W_TITLE |*/W_CLOSE | W_MIN | W_MAX;
+			int trim = W_TITLE |W_CLOSE | W_MIN | W_MAX;
 			if ((style & W_NO_TRIM) != 0 || (style & trim) == 0) {
 				*dwExStyle |= WS_EX_TOOLWINDOW;
 			}

@@ -86,7 +86,7 @@ void w_font_dispose(w_font *font) {
         _W_FONT(font)->handle = 0;
     }
 }
-wbool w_font_is_ok(w_font *font){
+wresult w_font_is_ok(w_font *font){
 	return _W_FONT(font)->handle != 0;
 }
 wresult w_font_create(w_font *font, const char *name, int style, int size) {

@@ -49,28 +49,28 @@ struct _w_canvas_reserved {
 /*
  * caret
  */
-wbool _w_caret_blink_caret(w_caret *caret);
+wresult _w_caret_blink_caret(w_caret *caret);
 wresult _w_caret_draw_caret(w_caret *caret);
 wresult _w_caret_get_bounds(w_caret *caret,w_point *location,w_size *size);
 wresult _w_caret_get_font(w_caret *caret,w_font** font);
 wresult _w_caret_get_image(w_caret *caret, w_image *image);
 w_canvas* _w_caret_get_parent(w_caret *caret);
 wresult _w_caret_get_visible(w_caret *caret);
-wbool _w_caret_hide_caret(w_caret *caret);
+wresult _w_caret_hide_caret(w_caret *caret);
 wresult _w_caret_is_visible(w_caret *caret);
-wbool _w_caret_is_focus_caret(w_caret *caret);
+wresult _w_caret_is_focus_caret(w_caret *caret);
 gboolean _w_caret_proc(gpointer clientData);
 void _w_caret_set_current_caret(w_caret *caret);
 void _w_caret_kill_focus(w_caret *caret);
 void _w_caret_copy(w_widgetdata *from, w_widgetdata *to);
-wbool _w_caret_equals(w_widgetdata *obj1, w_widgetdata *obj2);
+wresult _w_caret_equals(w_widgetdata *obj1, w_widgetdata *obj2);
 void _w_caret_close(w_widgetdata *widgetdata);
 wresult _w_caret_set_bounds(w_caret *caret,w_point *location,w_size *size);
 void _w_caret_set_focus(w_caret *caret);
 wresult _w_caret_set_font(w_caret *caret, w_font *font);
 wresult _w_caret_set_image(w_caret *caret, w_image *image);
-wresult _w_caret_set_visible(w_caret *caret, wbool visible);
-wbool _w_caret_show_caret(w_caret *caret);
+wresult _w_caret_set_visible(w_caret *caret, int visible);
+wresult _w_caret_show_caret(w_caret *caret);
 /*
  * IME
  */
@@ -82,7 +82,7 @@ size_t _w_ime_get_ranges(w_ime *ime, w_range *ranges, w_textstyle *styles,
 wresult _w_ime_get_text(w_ime *ime, w_alloc text,void* user_data);
 wresult _w_ime_get_wide_caret(w_ime *ime);
 void _w_ime_copy(w_widgetdata *from, w_widgetdata *to);
-wbool _w_ime_equals(w_widgetdata *obj1, w_widgetdata *obj2);
+wresult _w_ime_equals(w_widgetdata *obj1, w_widgetdata *obj2);
 void _w_ime_close(w_widgetdata *widgetdata);
 wresult _w_ime_set_composition_offset(w_ime *ime, int offset);
 /*
@@ -96,7 +96,7 @@ wresult _w_canvas_get_imcaret_pos(w_control *control, w_point *pos,
 void _w_canvas_redraw_widget(w_control *control, w_rect *rect, int flags,
 		_w_control_reserved *reserved);
 wresult _w_canvas_scroll(w_canvas *canvas, w_point *_dest, w_rect *_rect,
-		wbool all);
+		int all);
 wresult _w_canvas_set_bounds(w_control *control,w_point *location,w_size *size,
 		_w_control_reserved *reserved);
 void _w_canvas_set_foreground_color(w_control *control, GtkWidget *handle,

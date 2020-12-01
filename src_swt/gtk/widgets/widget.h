@@ -190,12 +190,12 @@ struct _w_widget_reserved {
 			_w_widget_reserved *reserved);
 	wresult (*create_handle)(w_widget *widget, int index,
 			_w_widget_reserved *reserved);
-	void (*set_orientation)(w_widget *widget, wbool create,
+	void (*set_orientation)(w_widget *widget, int create,
 			_w_widget_reserved *reserved);
 	wuint64 (*check_style)(w_widget *control, wuint64 style);
-	wresult (*set_tab_group_focus)(w_widget *widget, wbool next,
+	wresult (*set_tab_group_focus)(w_widget *widget, int next,
 			_w_widget_reserved *reserved);
-	wresult (*set_tab_item_focus)(w_widget *widget, wbool next,
+	wresult (*set_tab_item_focus)(w_widget *widget, int next,
 			_w_widget_reserved *reserved);
 };
 #define _W_WIDGET(x) ((_w_widget*)x)
@@ -263,7 +263,7 @@ wresult _w_widget_create_widget(w_widget *widget, int index,
 		_w_widget_reserved *reserved);
 wresult _w_widget_create_handle(w_widget *widget, int index,
 		_w_widget_reserved *reserved);
-void _w_widget_set_orientation(w_widget *widget, wbool create,
+void _w_widget_set_orientation(w_widget *widget, int create,
 		_w_widget_reserved *reserved);
 void _w_widget_hook_events(w_widget *widget, _w_widget_reserved *reserved);
 GdkWindow* _gdk_window_get_device_position(GdkWindow *window, gint *x, gint *y,
@@ -282,9 +282,9 @@ gboolean _gtk_widget_expose(w_widget *widget, _w_event_platform *e,
  * resource data public function
  */
 
-wbool _w_widgetdata_is_ok(w_widgetdata *obj);
+wresult _w_widgetdata_is_ok(w_widgetdata *obj);
 void _w_widgetdata_close(w_widgetdata *obj);
-wbool _w_widget_is_ok(w_widget *widget);
+wresult _w_widget_is_ok(w_widget *widget);
 void __w_resource_dispose(w_widget *widget);
 void _w_widget_dispose(w_widget *widget);
 int _w_widget_post_event(w_widget *widget, w_event *ee);

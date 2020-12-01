@@ -76,7 +76,7 @@ void _w_dragsource_drag_get_data(GtkWidget *widget, GdkDragContext *context,
 		return;
 	event.transfer = transfer;
 
-	wbool doit = _w_widget_send_event(W_WIDGET(source), (w_event*) &event);
+	int doit = _w_widget_send_event(W_WIDGET(source), (w_event*) &event);
 	if (!doit)
 		return;
 
@@ -170,7 +170,7 @@ void _w_dragsource_drag_end(GtkWidget *widget, GdkDragContext *context) {
 	//event.doit = operation != 0;
 	event.detail = operation;
 
-	wbool doit = _w_widget_send_event(W_WIDGET(source), (w_event*) &event);
+	int doit = _w_widget_send_event(W_WIDGET(source), (w_event*) &event);
 	_W_WIDGET(source)->state &= ~STATE_DRAGSOURCE_MOVEDATA;
 }
 void _w_dragsource_drag_data_delete(GtkWidget *widget,
@@ -422,7 +422,7 @@ w_transfer** _w_droptarget_get_transfer(w_droptarget *droptarget,
 wresult _w_droptarget_iterator_close(w_iterator *it) {
 	return W_TRUE;
 }
-wbool _w_droptarget_iterator_next(w_iterator *it, void *obj) {
+wresult _w_droptarget_iterator_next(w_iterator *it, void *obj) {
 	_w_droptarget_iterator *iterator = (_w_droptarget_iterator*) it;
 	size_t transferAgents_length = 0;
 	size_t dataTypes_length = 0;

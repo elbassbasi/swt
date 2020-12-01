@@ -6,16 +6,16 @@
  */
 #ifdef __linux
 #include "graphics.h"
-wbool w_pattern_init(w_pattern *pattren) {
+wresult w_pattern_init(w_pattern *pattren) {
     _W_PATTERN(pattren)->handle = 0;
 }
-wbool w_pattern_dispose(w_pattern *pattren) {
+wresult w_pattern_dispose(w_pattern *pattren) {
     if(pattren != 0 && _W_PATTERN(pattren)->handle!=0){
         cairo_pattern_destroy(_W_PATTERN(pattren)->handle);
         _W_PATTERN(pattren)->handle = 0;
     }
 }
-wbool w_pattern_is_ok(w_pattern *pattren) {
+wresult w_pattern_is_ok(w_pattern *pattren) {
     return pattren != 0 && _W_PATTERN(pattren)->handle!=0;
 }
 wresult w_pattern_create_from_image(w_pattern *pattren, w_image *image) {

@@ -55,7 +55,7 @@ wresult _w_tabfolder_set_bounds_0(w_control *control, w_point *location,
 }
 void _w_tabitem_copy(w_widgetdata *from, w_widgetdata *to) {
 }
-wbool _w_tabitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_tabitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 }
 w_widget* _w_tabitem_get_parent_widget(w_item *item) {
 	return W_WIDGET(_W_ITEM(item)->parent);
@@ -118,7 +118,7 @@ wresult _w_tabitem_set_image(w_tabitem *item, int index) {
 	}
 	return W_FALSE;
 }
-wresult _w_tabitem_remove(w_tabitem *item, wbool destroy_Control) {
+wresult _w_tabitem_remove(w_tabitem *item, int destroy_Control) {
 	gtk_notebook_remove_page(
 			GTK_NOTEBOOK(_W_WIDGET(_W_ITEM(item)->parent)->handle),
 			_W_ITEM(item)->index);

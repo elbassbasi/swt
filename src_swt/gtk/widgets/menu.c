@@ -31,7 +31,7 @@ int _w_menuitem_iterator_reset(w_iterator *it) {
 	_W_MENUITEM_ITERATOR( it)->original;
 	return W_TRUE;
 }
-wbool _w_menuitem_iterator_next(w_iterator *it, void *obj) {
+wresult _w_menuitem_iterator_next(w_iterator *it, void *obj) {
 	if (_W_MENUITEM_ITERATOR( it)->list != 0) {
 		_W_MENUITEM_ITERATOR( it)->widget =
 				(GtkWidget*) _W_MENUITEM_ITERATOR( it)->list->data;
@@ -233,7 +233,7 @@ void* _w_menuitem_get_data(w_item *item) {
 	return g_object_get_qdata(G_OBJECT(_W_MENUITEM(item)->widget),
 			gtk_toolkit->quark[1]);
 }
-wbool _w_menuitem_get_enabled(w_menuitem *item) {
+wresult _w_menuitem_get_enabled(w_menuitem *item) {
 	return gtk_widget_get_sensitive(_W_MENUITEM(item)->widget);
 }
 wresult _w_menuitem_get_item(w_menuitem *item, unsigned int index,
@@ -295,7 +295,7 @@ wresult _w_menuitem_get_image(w_menuitem *item, w_image *image) {
 w_widget* _w_menuitem_get_menu(w_item *item) {
 	return W_WIDGET(_W_MENUITEM(item)->menu);
 }
-wbool _w_menuitem_get_parent(w_menuitem *item, w_menuitem *parent) {
+wresult _w_menuitem_get_parent(w_menuitem *item, w_menuitem *parent) {
 	if (GTK_IS_MENU_SHELL(_W_MENUITEM(item)->widget)) {
 		return W_FALSE;
 	} else {
@@ -313,7 +313,7 @@ wbool _w_menuitem_get_parent(w_menuitem *item, w_menuitem *parent) {
 		}
 	}
 }
-wbool _w_menuitem_get_selection(w_menuitem *item) {
+wresult _w_menuitem_get_selection(w_menuitem *item) {
 	if (GTK_IS_CHECK_MENU_ITEM(
 			_W_MENUITEM(item)->widget) || GTK_IS_RADIO_MENU_ITEM(_W_MENUITEM(item)->widget)) {
 		return gtk_check_menu_item_get_active(
@@ -350,7 +350,7 @@ wresult _w_menuitem_get_text(w_item *item, w_alloc text,void* user_data) {
 	}
 	return 0;
 }
-wbool _w_menuitem_is_enabled(w_menuitem *item) {
+wresult _w_menuitem_is_enabled(w_menuitem *item) {
 	return gtk_widget_is_sensitive(_W_MENUITEM(item)->widget);
 }
 wresult _w_menuitem_remove(w_menuitem *item) {
@@ -430,7 +430,7 @@ wresult _w_menuitem_set_data(w_item *item, void *data) {
 			gtk_toolkit->quark[1], data);
 	return W_TRUE;
 }
-wresult _w_menuitem_set_enabled(w_menuitem *item, wbool enabled) {
+wresult _w_menuitem_set_enabled(w_menuitem *item, int enabled) {
 	gtk_widget_set_sensitive(_W_MENUITEM(item)->widget, enabled);
 	return W_TRUE;
 }
@@ -444,7 +444,7 @@ wresult _w_menuitem_set_id(w_menuitem *item, unsigned short id) {
 }
 wresult _w_menuitem_set_image(w_menuitem *item, w_image *image) {
 }
-wresult _w_menuitem_set_selection(w_menuitem *item, wbool selected) {
+wresult _w_menuitem_set_selection(w_menuitem *item, int selected) {
 	if (GTK_IS_CHECK_MENU_ITEM(_W_MENUITEM(item)->widget)) {
 		gtk_check_menu_item_set_active(
 				GTK_CHECK_MENU_ITEM(_W_MENUITEM(item)->widget), selected);
@@ -543,9 +543,9 @@ int _w_menu_get_orientation(w_menu *menu) {
 w_control* _w_menu_get_parent(w_menu *menu) {
 	return _W_MENU(menu)->parent;
 }
-wbool _w_menu_get_visible(w_menu *menu) {
+wresult _w_menu_get_visible(w_menu *menu) {
 }
-wbool _w_menu_is_visible(w_menu *menu) {
+wresult _w_menu_is_visible(w_menu *menu) {
 }
 void _w_menu_set_location(w_menu *menu, w_point *location) {
 	if ((_W_WIDGET(menu)->style & (W_BAR | W_DROP_DOWN)) != 0) return;
@@ -563,7 +563,7 @@ void _w_menu_position_func(GtkMenu *menu, gint *x, gint *y, gboolean *push_in,
 	*x = _W_MENU(menu)->x;
 	*y = _W_MENU(menu)->y;
 }
-wresult _w_menu_set_visible(w_menu *menu, wbool visible) {
+wresult _w_menu_set_visible(w_menu *menu, int visible) {
 	if ((_W_WIDGET(menu)->style & (W_BAR | W_DROP_DOWN)) != 0)
 		return W_FALSE;
 	if (visible) {

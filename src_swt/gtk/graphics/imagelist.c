@@ -22,7 +22,7 @@ void w_imagelist_dispose(w_imagelist *imagelist) {
 	free(images);
 	_W_IMAGELIST(imagelist)->images = 0;
 }
-wbool w_imagelist_is_ok(w_imagelist *imagelist) {
+wresult w_imagelist_is_ok(w_imagelist *imagelist) {
 	return imagelist != 0 && _W_IMAGELIST(imagelist)->images != 0;
 }
 wresult w_imagelist_create(w_imagelist *imagelist, w_size *size,

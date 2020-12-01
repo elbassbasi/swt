@@ -10,7 +10,7 @@
 /*
  * caret
  */
-wbool _w_caret_blink_caret(w_caret *caret) {
+wresult _w_caret_blink_caret(w_caret *caret) {
 	if (!_W_CARET(caret)->isVisible)
 		return W_TRUE;
 	if (!_W_CARET(caret)->isShowing)
@@ -113,7 +113,7 @@ wresult _w_caret_get_visible(w_caret *caret) {
 	return _W_CARET(caret)->isVisible;
 }
 
-wbool _w_caret_hide_caret(w_caret *caret) {
+wresult _w_caret_hide_caret(w_caret *caret) {
 	if (!_W_CARET(caret)->isShowing)
 		return W_TRUE;
 	_W_CARET(caret)->isShowing = W_FALSE;
@@ -132,7 +132,7 @@ wresult _w_caret_is_visible(w_caret *caret) {
 	return W_FALSE;
 }
 
-wbool _w_caret_is_focus_caret(w_caret *caret) {
+wresult _w_caret_is_focus_caret(w_caret *caret) {
 	return caret == gtk_toolkit->currentCaret;
 }
 gboolean _w_caret_proc(gpointer clientData) {
@@ -170,7 +170,7 @@ void _w_caret_kill_focus(w_caret *caret) {
 void _w_caret_copy(w_widgetdata *from, w_widgetdata *to) {
 	w_widgetdata_close(to);
 }
-wbool _w_caret_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_caret_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 	return obj1 == obj2;
 }
 void _w_caret_close(w_widgetdata *widgetdata) {
@@ -188,7 +188,7 @@ void _w_caret_close(w_widgetdata *widgetdata) {
 	_W_CARET(widgetdata)->clazz = 0;
 }
 wresult _w_caret_set_bounds(w_caret *caret,w_point *location,w_size *size) {
-	wbool is_equal = W_TRUE;
+	int is_equal = W_TRUE;
 	if (location != 0) {
 		if (_W_CARET(caret)->bounds.x != location->x ||
 		_W_CARET(caret)->bounds.y != location->y)
@@ -201,7 +201,7 @@ wresult _w_caret_set_bounds(w_caret *caret,w_point *location,w_size *size) {
 	}
 	if (is_equal)
 		return W_TRUE;
-	wbool isFocus = _w_caret_is_focus_caret(caret);
+	int isFocus = _w_caret_is_focus_caret(caret);
 	if (isFocus && _W_CARET(caret)->isVisible)
 		_w_caret_hide_caret(caret);
 	if (location != 0) {
@@ -236,7 +236,7 @@ wresult _w_caret_set_image(w_caret *caret, w_image *image) {
 	if (image != 0 && !w_image_is_ok(image)) {
 		return W_ERROR_INVALID_ARGUMENT;
 	}
-	wbool isFocus = _w_caret_is_focus_caret(caret);
+	int isFocus = _w_caret_is_focus_caret(caret);
 	if (isFocus && _W_CARET(caret)->isVisible)
 		_w_caret_hide_caret(caret);
 	wresult result = w_image_copy(image, 0, &_W_CARET(caret)->image);
@@ -244,7 +244,7 @@ wresult _w_caret_set_image(w_caret *caret, w_image *image) {
 		_w_caret_show_caret(caret);
 	return result;
 }
-wresult _w_caret_set_visible(w_caret *caret, wbool visible) {
+wresult _w_caret_set_visible(w_caret *caret, int visible) {
 	if (visible == _W_CARET(caret)->isVisible)
 		return W_TRUE;
 	_W_CARET(caret)->isVisible = visible;
@@ -258,7 +258,7 @@ wresult _w_caret_set_visible(w_caret *caret, wbool visible) {
 	return W_TRUE;
 }
 
-wbool _w_caret_show_caret(w_caret *caret) {
+wresult _w_caret_show_caret(w_caret *caret) {
 	if (_W_CARET(caret)->isShowing)
 		return W_TRUE;
 	_W_CARET(caret)->isShowing = W_TRUE;
@@ -385,7 +385,7 @@ wresult _w_ime_get_wide_caret(w_ime *ime) {
 void _w_ime_copy(w_widgetdata *from, w_widgetdata *to) {
 	w_widgetdata_close(to);
 }
-wbool _w_ime_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_ime_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 	return obj1 == obj2;
 }
 void _w_ime_close(w_widgetdata *widgetdata) {
@@ -446,7 +446,7 @@ wresult _w_canvas_get_imcaret_pos(w_control *control, w_point *pos,
 void _w_canvas_redraw_widget(w_control *control, w_rect *rect, int flags,
 		_w_control_reserved *reserved) {
 	w_caret *caret = _W_CANVAS(control)->caret;
-	wbool isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
+	int isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
 	if (isFocus)
 		_w_caret_kill_focus(caret);
 	_w_scrollable_redraw_widget(control, rect, flags, reserved);
@@ -454,7 +454,7 @@ void _w_canvas_redraw_widget(w_control *control, w_rect *rect, int flags,
 		_w_caret_set_focus(caret);
 }
 wresult _w_canvas_scroll(w_canvas *canvas, w_point *_dest, w_rect *_rect,
-		wbool all) {
+		int all) {
 	w_point dest;
 	w_rect rect, tmp;
 	if (_dest == 0)
@@ -478,7 +478,7 @@ wresult _w_canvas_scroll(w_canvas *canvas, w_point *_dest, w_rect *_rect,
 	if (W_CONTROL_GET_CLASS(canvas)->is_visible(W_CONTROL(canvas)) < 0)
 		return W_FALSE;
 	w_caret *caret = _W_CANVAS(canvas)->caret;
-	wbool isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
+	int isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
 	if (isFocus)
 		_w_caret_kill_focus(caret);
 	GdkWindow *window = reserved->paintWindow(W_WIDGET(canvas),
@@ -583,7 +583,7 @@ wresult _w_canvas_scroll(w_canvas *canvas, w_point *_dest, w_rect *_rect,
 #endif
 #else
 #endif
-		wbool disjoint = (dest.x + rect.width < rect.x)
+		int disjoint = (dest.x + rect.width < rect.x)
 				|| (rect.x + rect.width < dest.x)
 				|| (dest.y + rect.height < rect.y)
 				|| (rect.y + rect.height < dest.y);
@@ -661,7 +661,7 @@ wresult _w_canvas_scroll(w_canvas *canvas, w_point *_dest, w_rect *_rect,
 wresult _w_canvas_set_bounds(w_control *control,w_point *location,w_size *size,
 		_w_control_reserved *reserved) {
 	w_caret *caret = _W_CANVAS(control)->caret;
-	wbool isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
+	int isFocus = caret != 0 && _w_caret_is_focus_caret(caret);
 	if (isFocus)
 		_w_caret_kill_focus(caret);
 	wresult result = _w_composite_set_bounds_0(control, location, size, reserved);
@@ -745,7 +745,7 @@ gboolean _gtk_ime_button_press_event(w_widget *widget, _w_event_platform *e,
 gboolean _gtk_ime_commit(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved) {
 	w_ime *ime = _W_CANVAS(widget)->ime;
-	wbool doit = W_TRUE;
+	int doit = W_TRUE;
 	_W_IME(ime)->pangoAttrs = 0;
 	_W_IME(ime)->caretOffset = _W_IME(ime)->commitCount = 0;
 	char *textPtr = (char*) e->args[0];
@@ -865,7 +865,7 @@ gboolean _gtk_canvas_draw(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved) {
 	if ((_W_WIDGET(widget)->state & STATE_OBSCURED) != 0)
 		return FALSE;
-	wbool isFocus = w_widgetdata_is_ok(W_WIDGETDATA(_W_CANVAS(widget)->caret))
+	int isFocus = w_widgetdata_is_ok(W_WIDGETDATA(_W_CANVAS(widget)->caret))
 			&& _w_caret_is_focus_caret(_W_CANVAS(widget)->caret);
 	if (isFocus)
 		_w_caret_kill_focus(_W_CANVAS(widget)->caret);

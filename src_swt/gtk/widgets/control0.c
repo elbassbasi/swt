@@ -102,7 +102,7 @@ wresult _w_control_draw_background(w_control *_this, w_control *control,
 			reserved);
 }
 wresult _w_control_draw_draw_gripper(w_control *control, w_graphics *gc,
-		w_rect *rect, wbool vertical, _w_control_reserved *reserved) {
+		w_rect *rect, int vertical, _w_control_reserved *reserved) {
 	GtkWidget *paintHandle = reserved->paintHandle(W_WIDGET(control),
 			_W_WIDGET_RESERVED(reserved));
 	GdkWindow *window = gtk_widget_get_window(paintHandle);
@@ -131,7 +131,7 @@ void _w_control_draw_widget(w_control *control, w_graphics *gc,
 		_w_control_reserved *reserved) {
 
 }
-wresult _w_control_enable_widget(w_control *control, wbool enabled,
+wresult _w_control_enable_widget(w_control *control, int enabled,
 		_w_control_reserved *reserved) {
 	gtk_widget_set_sensitive(_W_WIDGET(control)->handle, enabled);
 	return W_TRUE;
@@ -886,7 +886,7 @@ void _w_control_move_children(w_control *control, int oldWidth,
 		_w_control_reserved *reserved) {
 
 }
-wresult _w_control_pack(w_control *control, wbool changed) {
+wresult _w_control_pack(w_control *control, int changed) {
 	w_size size;
 	w_control_compute_size_0(control, &size, W_DEFAULT, W_DEFAULT, changed);
 	return w_control_set_bounds(control, 0, &size);
@@ -2182,7 +2182,7 @@ wresult _w_control_set_menu(w_control *control, w_menu *menu) {
 	}
 	return W_ERROR_INVALID_ARGUMENT;
 }
-void _w_control_set_orientation_0(w_control *control, wbool create,
+void _w_control_set_orientation_0(w_control *control, int create,
 		_w_control_reserved *reserved) {
 	if ((_W_WIDGET(control)->style & W_RIGHT_TO_LEFT) != 0 || !create) {
 		GtkTextDirection dir =
@@ -2351,7 +2351,7 @@ wresult _w_control_set_redraw(w_control *control, int redraw) {
 		}
 	}
 }
-wresult _w_control_set_tab_item_focus(w_widget *widget, wbool next,
+wresult _w_control_set_tab_item_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved) {
 	if (!_w_control_is_showing(W_CONTROL(widget),
 			_W_CONTROL_RESERVED(reserved)))
@@ -2394,7 +2394,7 @@ void _w_control_set_toolTip_text_0(w_control *control, w_shell *shell,
 wresult _w_control_set_touch_enabled(w_control *control, int enabled) {
 	return W_TRUE;
 }
-wresult _w_control_set_visible(w_control *control, wbool visible) {
+wresult _w_control_set_visible(w_control *control, int visible) {
 	_w_control_reserved *reserved = _W_CONTROL_GET_RESERVED(control);
 	GtkWidget *topHandle = reserved->widget.topHandle(W_WIDGET(control),
 			_W_WIDGET_RESERVED(reserved));
@@ -2632,7 +2632,7 @@ wresult _w_control_traverse(w_control *control, int traversal,
 }
 
 wresult _w_control_traverse_0(w_control *_this, int traversal, char character,
-		int keyCode, int keyLocation, int stateMask, wbool doit,
+		int keyCode, int keyLocation, int stateMask, int doit,
 		_w_control_reserved *reserved) {
 	if (traversal == W_TRAVERSE_NONE) {
 		switch (keyCode) {
@@ -2927,12 +2927,12 @@ wresult _w_control_traverse_1(w_control *control, w_event_key *event,
 	}
 	return W_FALSE;
 }
-wresult _w_control_traverse_escape(w_control *control, wbool next,
+wresult _w_control_traverse_escape(w_control *control, int next,
 		_w_control_reserved *reserved) {
 	return W_FALSE;
 }
-w_control* computeTabList(w_control *root, wbool next, w_control *c);
-wresult _w_control_traverse_group(w_control *control, wbool next,
+w_control* computeTabList(w_control *root, int next, w_control *c);
+wresult _w_control_traverse_group(w_control *control, int next,
 		_w_control_reserved *reserved) {
 	/*Control root = computeTabRoot();
 	 Widget group = computeTabGroup();
@@ -2964,7 +2964,7 @@ wresult _w_control_traverse_group(w_control *control, wbool next,
 	 return group.setTabGroupFocus(next);*/
 }
 
-wresult _w_control_traverse_item(w_control *control, wbool next,
+wresult _w_control_traverse_item(w_control *control, int next,
 		_w_control_reserved *reserved) {
 	_w_fixed *topHandle = (_w_fixed*) _W_WIDGET_RESERVED(reserved)->topHandle(
 			W_WIDGET(control), _W_WIDGET_RESERVED(reserved));
@@ -3026,7 +3026,7 @@ gboolean _w_control_traverse_mnemonic(w_control *control, int key,
 		_w_control_reserved *reserved) {
 	return reserved->mnemonic_hit(control, key, reserved);
 }
-wresult _w_control_update_0(w_control *control, wbool all, wbool flush) {
+wresult _w_control_update_0(w_control *control, int all, int flush) {
 	_w_widget_reserved *reserved = _w_widget_get_reserved(W_WIDGET(control));
 	GtkWidget *topHandle = reserved->topHandle(W_WIDGET(control), reserved);
 	if (!gtk_widget_get_visible(topHandle))
@@ -3159,7 +3159,7 @@ wresult _w_control_kill_timer(w_control *control, unsigned short id) {
 	}
 	return W_FALSE;
 }
-wresult _w_control_set_tab(w_control *control, wbool tab) {
+wresult _w_control_set_tab(w_control *control, int tab) {
 	if (tab) {
 		_W_WIDGET(control)->state |= STATE_TAB_LIST;
 	} else {

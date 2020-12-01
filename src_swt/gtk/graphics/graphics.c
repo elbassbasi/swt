@@ -32,7 +32,7 @@ void _w_graphics_init(w_graphics* gc,GdkWindow* drawable);
 #endif
 void w_graphics_dispose(w_graphics *gc) {
 }
-wbool w_graphics_is_ok(w_graphics *gc) {
+wresult w_graphics_is_ok(w_graphics *gc) {
 #if USE_CAIRO
 	return _W_GRAPHICS(gc)->cairo != 0;
 #else
@@ -341,7 +341,7 @@ wresult w_graphics_copy_area_to_image(w_graphics *gc, w_surface *bitmap, int x,
 		int y) {
 }
 wresult w_graphics_copy_area(w_graphics *gc, int srcX, int srcY, int width,
-		int height, int destX, int destY, wbool paint) {
+		int height, int destX, int destY, wresult paint) {
 
 }
 wresult w_graphics_draw_arc(w_graphics *gc, w_rect *rect, int startAngle,
@@ -1281,7 +1281,7 @@ wresult w_graphics_fill_arc(w_graphics *gc, w_rect *rect, int startAngle,
 #endif
 }
 wresult w_graphics_fill_gradientrectangle(w_graphics *gc, w_rect *rect,
-		wbool vertical) {
+		int vertical) {
 	if (_W_GRAPHICS(gc)->cairo == 0)
 		return W_ERROR_NO_HANDLES;
 	int x = rect->x, y = rect->y, width = rect->width, height = rect->height;
@@ -1297,7 +1297,7 @@ wresult w_graphics_fill_gradientrectangle(w_graphics *gc, w_rect *rect,
 	w_color fromRGB, toRGB;
 	fromRGB = foregroundRGB;
 	toRGB = backgroundRGB;
-	wbool swapColors = W_FALSE;
+	wresult swapColors = W_FALSE;
 	if (width < 0) {
 		x += width;
 		width = -width;
@@ -1519,7 +1519,7 @@ int w_graphics_get_advance_width(w_graphics *gc, int ch) {
 	//BOGUS
 	/* return stringExtentInPixels(new String(new char[]{ch})).x;*/
 }
-wbool w_graphics_get_advanced(w_graphics *gc) {
+wresult w_graphics_get_advanced(w_graphics *gc) {
 	wresult result = _w_graphics_check(gc, 0);
 	if (result < 0)
 		return W_FALSE;
@@ -1837,18 +1837,18 @@ wresult w_graphics_get_transform(w_graphics *gc, w_transform *Transform) {
 	 transform.setElements(1, 0, 0, 1, 0, 0);
 	 }*/
 }
-wbool w_graphics_get_xor_mode(w_graphics *gc) {
+wresult w_graphics_get_xor_mode(w_graphics *gc) {
 	/*
 	 if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	 return data.xorMode;
 	 */
 }
-wbool w_graphics_is_clipped(w_graphics *gc) {
+wresult w_graphics_is_clipped(w_graphics *gc) {
 	/*
 	 if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	 return data.clipRgn != 0;*/
 }
-wresult w_graphics_set_advanced(w_graphics *gc, wbool advanced) {
+wresult w_graphics_set_advanced(w_graphics *gc, int advanced) {
 	/*
 	 if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	 if (!advanced) {
@@ -2237,7 +2237,7 @@ wresult w_graphics_set_line_dash(w_graphics *gc, int *dashes, int length) {
 		return W_ERROR_NO_HANDLES;
 	w_line_dash *lineDashes = _W_GRAPHICS(gc)->line.dash;
 	if (dashes != 0 && length > 0) {
-		wbool changed = _W_GRAPHICS(gc)->line.style != W_LINE_CUSTOM
+		wresult changed = _W_GRAPHICS(gc)->line.style != W_LINE_CUSTOM
 				|| lineDashes == 0 || lineDashes->length != length;
 		if (lineDashes != 0) {
 			for (int i = 0; i < length; i++) {
@@ -2324,7 +2324,7 @@ wresult w_graphics_set_line_width(w_graphics *gc, float lineWidth) {
 			| GRAPHICS_STATE_DRAW_OFFSET);
 	return W_TRUE;
 }
-wresult w_graphics_set_xor_mode(w_graphics *gc, wbool _xor) {
+wresult w_graphics_set_xor_mode(w_graphics *gc, int _xor) {
 	/*
 	 if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	 if (Cairo.cairo_version() >= Cairo.CAIRO_VERSION_ENCODE(1, 10, 0)) {

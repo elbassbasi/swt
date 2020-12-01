@@ -44,7 +44,7 @@ typedef struct _w_composite_iterator {
 	_w_fixed *first;
 	_w_fixed *i;
 	size_t count;
-	wbool tablist;
+	int tablist;
 } _w_composite_iterator;
 #define _W_COMPOSITE_ITERATOR(it) ((_w_composite_iterator*)it)
 /**
@@ -72,7 +72,7 @@ wresult _w_composite_create_handle_0(w_widget *composite, int index,
 		GtkWidget **fixed, GtkWidget **scrolled, GtkWidget **handle);
 wresult _w_composite_draw_background(w_composite *composite, w_graphics *gc,
 		w_rect *_rect, w_point *_offset);
-wresult _w_composite_enable_widget(w_control *control, wbool enabled,
+wresult _w_composite_enable_widget(w_control *control, int enabled,
 		_w_control_reserved *reserved);
 w_composite* _w_composite_find_deferred_control(w_composite *composite,
 		 _w_composite_reserved *reserved);
@@ -92,7 +92,7 @@ int _w_composite_get_client_area(w_widget *widget,
 wresult _w_composite_get_layout(w_composite *composite,w_layout** layout);
 int _w_composite_get_layout_deferred(w_composite *composite);
 wresult _w_composite_get_tab_list(w_composite *composite, w_iterator *it);
-wbool _w_composite_has_border(w_composite *composite,
+int _w_composite_has_border(w_composite *composite,
 		 _w_composite_reserved *reserved);
 void _w_composite_hook_events(w_widget *widget, _w_widget_reserved *reserved);
 GtkIMContext* _w_composite_imHandle(w_widget *control,
@@ -111,7 +111,7 @@ void _w_composite_move_below(w_composite *_this, GtkWidget *child,
 		GtkWidget *sibling, _w_control_reserved *reserved);
 void _w_composite_move_children(w_composite *composite, int oldWidth);
 void _w_composite_minimum_size(w_composite *composite, w_size *size, int wHint,
-		int hHint, wbool changed);
+		int hHint, int changed);
 GtkWidget* _w_composite_parenting_handle(w_widget *control,
 		 _w_widget_reserved *reserved);
 void _w_composite_print_widget(w_control *control, w_graphics *gc,
@@ -127,13 +127,13 @@ wresult _w_composite_set_bounds_0(w_control *control,w_point *location,
 wresult _w_composite_set_focus(w_control *control);
 wresult _w_composite_set_layout(w_composite *composite, w_layout *layout);
 wresult _w_composite_set_layout_deferred(w_composite *composite, int defer);
-void _w_composite_set_orientation(w_control *control, wbool create,
+void _w_composite_set_orientation(w_control *control, int create,
 		_w_control_reserved *reserved);
 int _w_composite_set_scrollbar_visible(w_widget *scrollable, int style,
 		int visible,  _w_widget_reserved *reserved);
-wresult _w_composite_set_tab_group_focus(w_widget *widget, wbool next,
+wresult _w_composite_set_tab_group_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved);
-wresult _w_composite_set_tab_item_focus(w_widget *widget, wbool next,
+wresult _w_composite_set_tab_item_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved);
 wresult _w_composite_set_tab_list(w_composite *composite, w_control **tabList,
 		size_t length);

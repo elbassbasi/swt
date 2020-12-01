@@ -59,9 +59,9 @@ void _w_toolbar_relayout(w_toolbar *toolbar) {
 w_imagelist* _w_toolbar_get_imagelist(w_toolbar *toolbar) {
 	return _W_TOOLBAR(toolbar)->imagelist;
 }
-wbool _w_toolbar_get_item(w_toolbar *toolbar, int index, w_toolitem *item) {
+wresult _w_toolbar_get_item(w_toolbar *toolbar, int index, w_toolitem *item) {
 }
-wbool _w_toolbar_get_item_from_point(w_toolbar *toolbar, w_point *point,
+wresult _w_toolbar_get_item_from_point(w_toolbar *toolbar, w_point *point,
 		w_toolitem *item) {
 }
 int _w_toolbar_get_item_count(w_toolbar *toolbar) {
@@ -196,19 +196,19 @@ wresult _w_toolitem_get_bounds(w_toolitem *item, w_rect *rect) {
 }
 w_control* _w_toolitem_get_control(w_toolitem *item) {
 }
-wbool _w_toolitem_get_enabled(w_toolitem *item) {
+wresult _w_toolitem_get_enabled(w_toolitem *item) {
 }
-wbool _w_toolitem_get_selection(w_toolitem *item) {
+wresult _w_toolitem_get_selection(w_toolitem *item) {
 }
 wresult _w_toolitem_get_tooltip_text(w_toolitem *item, w_alloc *text) {
 }
 int _w_toolitem_get_width(w_toolitem *item) {
 }
-wbool _w_toolitem_is_enabled(w_toolitem *item) {
+wresult _w_toolitem_is_enabled(w_toolitem *item) {
 }
 wresult _w_toolitem_set_control(w_toolitem *item, w_control *control) {
 }
-wresult _w_toolitem_set_enabled(w_toolitem *item, wbool enabled) {
+wresult _w_toolitem_set_enabled(w_toolitem *item, int enabled) {
 }
 wresult _w_toolitem_set_image(w_toolitem *item, int image) {
 	GtkToolItem *toolitem = gtk_toolbar_get_nth_item(
@@ -227,7 +227,7 @@ wresult _w_toolitem_set_image(w_toolitem *item, int image) {
 	}
 	return W_FALSE;
 }
-wresult _w_toolitem_set_selection(w_toolitem *item, wbool selected) {
+wresult _w_toolitem_set_selection(w_toolitem *item, int selected) {
 }
 wresult _w_toolitem_set_tooltip_text(w_toolitem *item, const char *string) {
 }

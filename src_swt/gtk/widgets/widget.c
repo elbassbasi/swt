@@ -106,7 +106,7 @@ wresult _w_widget_create_handle(w_widget *widget, int index,
 		_w_widget_reserved *reserved) {
 	return W_TRUE;
 }
-void _w_widget_set_orientation(w_widget *widget, wbool create,
+void _w_widget_set_orientation(w_widget *widget, int create,
 		_w_widget_reserved *reserved) {
 }
 void _w_widget_hook_events(w_widget *widget, _w_widget_reserved *reserved) {
@@ -685,13 +685,13 @@ void _w_widget_get_handles(_w_widget_handles *handles) {
  * resource data public function
  */
 
-wbool _w_widgetdata_is_ok(w_widgetdata *obj) {
+wresult _w_widgetdata_is_ok(w_widgetdata *obj) {
 	return W_TRUE;
 }
 void _w_widgetdata_close(w_widgetdata *obj) {
 
 }
-wbool _w_widget_is_ok(w_widget *widget) {
+wresult _w_widget_is_ok(w_widget *widget) {
 	return W_TRUE;
 }
 void __w_resource_dispose(w_widget *widget) {

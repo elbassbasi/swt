@@ -15,7 +15,7 @@ void w_transform_dispose(w_transform *transform) {
 		_W_TRANSFORM(transform)->handle = 0;
 	}
 }
-wbool w_transform_is_ok(w_transform *transform) {
+wresult w_transform_is_ok(w_transform *transform) {
 	return transform != 0 && _W_TRANSFORM(transform)->handle != 0;
 }
 wresult w_transform_create(w_transform *transform, w_transformmatrix *matrix) {
@@ -60,7 +60,7 @@ wresult w_transform_invert(w_transform *transform) {
 	}
 	return W_TRUE;
 }
-wbool w_transform_is_identity(w_transform *transform) {
+wresult w_transform_is_identity(w_transform *transform) {
 	if (transform == 0 || _W_TRANSFORM(transform)->handle == 0)
 		return W_FALSE;
 	cairo_matrix_t *mat = _W_TRANSFORM(transform)->handle;

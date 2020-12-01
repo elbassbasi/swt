@@ -176,10 +176,10 @@ void w_thread_init(w_thread *thread) {
 	thread->args = 0;
 	thread->start_proc = 0;
 }
-wbool w_threadid_equal(w_threadid thread1, w_threadid thread2) {
+wresult w_threadid_equal(w_threadid thread1, w_threadid thread2) {
 	return pthread_equal(thread1, thread2);
 }
-wbool w_thread_equal(w_thread *thread1, w_thread *thread2) {
+wresult w_thread_equal(w_thread *thread1, w_thread *thread2) {
 	return pthread_equal(thread1->id, thread2->id);
 }
 void w_thread_dispose(w_thread *thread) {
@@ -282,7 +282,7 @@ w_thread* w_thread_get_current() {
 w_threadid w_thread_get_current_id() {
 	return pthread_self();
 }
-wbool w_thread_is_current(w_thread *thread) {
+wresult w_thread_is_current(w_thread *thread) {
 	return pthread_equal(pthread_self(), thread->id);
 }
 void w_thread_yield() {
@@ -304,7 +304,7 @@ size_t w_thread_get_cpu_count() {
 		number_of_processors = sysconf(_SC_NPROCESSORS_ONLN);
 	return number_of_processors;
 }
-wbool w_thread_set_concurrency(size_t level) {
+wresult w_thread_set_concurrency(size_t level) {
 }
 void w_app_init_thread(w_app *app) {
 	w_thread_init(&app->mainthread);

@@ -153,7 +153,7 @@ struct _w_control_reserved {
 			_w_control_reserved *reserved);
 	wresult (*traverse_item)(w_control *control, int next,
 			_w_control_reserved *reserved);
-	wresult (*traverse_group)(w_control *control, wbool next,
+	wresult (*traverse_group)(w_control *control, int next,
 			_w_control_reserved *reserved);
 	wresult (*traverse_return)(w_control *control,
 			_w_control_reserved *reserved);
@@ -179,7 +179,7 @@ struct _w_control_reserved {
 			_w_control_reserved *reserved);
 	wresult (*is_tab_group)(w_control *control, _w_control_reserved *reserved);
 	wresult (*is_tab_item)(w_control *control, _w_control_reserved *reserved);
-	wresult (*enable_widget)(w_control *control, wbool enabled,
+	wresult (*enable_widget)(w_control *control, int enabled,
 			_w_control_reserved *reserved);
 	wresult (*get_imcaret_pos)(w_control *control, w_point *pos,
 			_w_control_reserved *reserved);
@@ -229,10 +229,10 @@ wresult _w_control_draw_background(w_control *_this, w_control *control,
 		GdkWindow *window, cairo_region_t *region, w_rect *rect,
 		_w_control_reserved *reserved);
 wresult _w_control_draw_draw_gripper(w_control *control, w_graphics *gc,
-		w_rect *rect, wbool vertical, _w_control_reserved *reserved);
+		w_rect *rect, int vertical, _w_control_reserved *reserved);
 void _w_control_draw_widget(w_control *control, w_graphics *gc,
 		_w_control_reserved *reserved);
-wresult _w_control_enable_widget(w_control *control, wbool enabled,
+wresult _w_control_enable_widget(w_control *control, int enabled,
 		_w_control_reserved *reserved);
 GtkWidget* _w_control_enterExitHandle(w_widget *control,
 		_w_widget_reserved *reserved);
@@ -304,7 +304,7 @@ wresult _w_control_move_above(w_control *control, w_control *_control);
 wresult _w_control_move_below(w_control *control, w_control *_control);
 void _w_control_move_children(w_control *control, int oldWidth,
 		_w_control_reserved *reserved);
-wresult _w_control_pack(w_control *control, wbool changed);
+wresult _w_control_pack(w_control *control, int changed);
 wresult _w_control_new_layout_data(w_control *control, void **data,
 		size_t size);
 wresult _w_control_to_control(w_control *control, w_point *result,
@@ -441,7 +441,7 @@ void _w_control_set_foreground_color_1(w_control *control, GtkWidget *handle,
 void _w_control_set_initial_bounds(w_control *control,
 		_w_control_reserved *reserved);
 wresult _w_control_set_menu(w_control *control, w_menu *menu);
-void _w_control_set_orientation_0(w_control *control, wbool create,
+void _w_control_set_orientation_0(w_control *control, int create,
 		_w_control_reserved *reserved);
 wresult _w_control_set_orientation(w_control *control, int orientation);
 wresult _w_control_set_parent(w_control *control, w_composite *parent);
@@ -452,14 +452,14 @@ void _w_control_set_parent_window(w_control *control, GtkWidget *widget,
 gboolean _w_control_set_radio_selection(w_control *control, gboolean value,
 		_w_control_reserved *reserved);
 wresult _w_control_set_redraw(w_control *control, int redraw);
-wresult _w_control_set_tab_item_focus(w_widget *widget, wbool next,
+wresult _w_control_set_tab_item_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved);
 wresult _w_control_set_text_direction(w_control *control, int textDirection);
 wresult _w_control_set_toolTip_text(w_control *control, const char *text,size_t length);
 void _w_control_set_toolTip_text_0(w_control *control, w_shell *shell,
 		const char *newString);
 wresult _w_control_set_touch_enabled(w_control *control, int enabled);
-wresult _w_control_set_visible(w_control *control, wbool visible);
+wresult _w_control_set_visible(w_control *control, int visible);
 wresult _w_control_set_ZOrder(w_control *control, w_control *sibling, int flags,
 		_w_control_reserved *reserved);
 void _w_control_set_widget_background(w_control *control,
@@ -469,7 +469,7 @@ void _w_control_show_widget(w_control *control, _w_control_reserved *reserved);
 wresult _w_control_traverse(w_control *control, int traversal,
 		w_event_key *event);
 wresult _w_control_traverse_0(w_control *_this, int traversal, char character,
-		int keyCode, int keyLocation, int stateMask, wbool doit,
+		int keyCode, int keyLocation, int stateMask, int doit,
 		_w_control_reserved *reserved);
 wresult _w_control_translate_mnemonic(w_control *_this, w_event_key *event,
 		w_control *control, _w_control_reserved *reserved);
@@ -481,12 +481,12 @@ int _w_control_traversal_code(w_control *control, int key, GdkEventKey *event,
 		_w_control_reserved *reserved);
 wresult _w_control_traverse_1(w_control *control, w_event_key *event,
 		_w_control_reserved *reserved);
-wresult _w_control_traverse_escape(w_control *control, wbool next,
+wresult _w_control_traverse_escape(w_control *control, int next,
 		_w_control_reserved *reserved);
-w_control* computeTabList(w_control *root, wbool next, w_control *c);
-wresult _w_control_traverse_group(w_control *control, wbool next,
+w_control* computeTabList(w_control *root, int next, w_control *c);
+wresult _w_control_traverse_group(w_control *control, int next,
 		_w_control_reserved *reserved);
-wresult _w_control_traverse_item(w_control *control, wbool next,
+wresult _w_control_traverse_item(w_control *control, int next,
 		_w_control_reserved *reserved);
 gboolean _w_control_traverse_return(w_control *control,
 		_w_control_reserved *reserved);
@@ -494,7 +494,7 @@ gboolean _w_control_traverse_page(w_control *control, gboolean next,
 		_w_control_reserved *reserved);
 gboolean _w_control_traverse_mnemonic(w_control *control, int key,
 		_w_control_reserved *reserved);
-wresult _w_control_update_0(w_control *control, wbool all, wbool flush);
+wresult _w_control_update_0(w_control *control, int all, int flush);
 wresult _w_control_update(w_control *control);
 void _w_control_update_background_mode(w_control *control,
 		_w_control_reserved *reserved);
@@ -510,7 +510,7 @@ gboolean _w_timer_listenner(gpointer user_data);
 wresult _w_control_set_timer(w_control *control, wint64 ms, unsigned short id);
 void _w_control_kill_all_timer(w_control *control);
 wresult _w_control_kill_timer(w_control *control, unsigned short id);
-wresult _w_control_set_tab(w_control *control, wbool tab);
+wresult _w_control_set_tab(w_control *control, int tab);
 wresult _w_control_get_tab(w_control *control);
 /*
  * signals
@@ -519,7 +519,7 @@ gboolean _gtk_control_destroy(w_widget *widget, _w_event_platform *ee,
 		_w_widget_reserved *reserved);
 gboolean _gtk_control_button_press_event_0(w_widget *widget,
 		_w_event_platform *e, _w_widget_reserved *reserved,
-		wbool sendMouseDown);
+		int sendMouseDown);
 gboolean _gtk_control_button_press_event(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved);
 gboolean _gtk_control_button_release_event(w_widget *widget,

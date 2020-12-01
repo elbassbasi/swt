@@ -66,7 +66,7 @@ gboolean _w_control_contained_in_region(w_widget *widget, int x, int y,
 }
 gboolean _gtk_control_button_press_event_0(w_widget *widget,
 		_w_event_platform *e, _w_widget_reserved *reserved,
-		wbool sendMouseDown) {
+		int sendMouseDown) {
 	GdkEventButton *gdkEvent = e->args[0];
 	w_event_mouse event;
 	_W_CONTROL(widget)->lastInput.x = (int) gdkEvent->x;
@@ -447,7 +447,7 @@ gboolean _gtk_control_expose_inverse(w_widget *widget, _w_event_platform *e,
 		return FALSE;
 #if USE_CAIRO
 	w_control *control = 0;	// findBackgroundControl();
-	wbool draw = control != 0 && _W_CONTROL(control)->backgroundImage != 0;
+	int draw = control != 0 && _W_CONTROL(control)->backgroundImage != 0;
 #if GTK3
 	if (!draw && (_W_WIDGET(widget)->state & STATE_CANVAS) != 0) {
 		GdkRGBA rgba;

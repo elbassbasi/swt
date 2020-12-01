@@ -378,7 +378,7 @@ int _w_coolbar_get_item_count(w_coolbar *coolbar) {
 void _w_coolbar_get_items(w_coolbar *coolbar, w_iterator *items) {
 
 }
-wbool _w_coolbar_get_locked(w_coolbar *coolbar) {
+wresult _w_coolbar_get_locked(w_coolbar *coolbar) {
 }
 wresult _w_coolbar_insert_item(w_coolbar *coolbar, w_coolitem *item, int style,
 		int index) {
@@ -428,14 +428,14 @@ wresult _w_coolbar_insert_item(w_coolbar *coolbar, w_coolitem *item, int style,
 	}
 	return TRUE;
 }
-wresult _w_coolbar_set_locked(w_coolbar *coolbar, wbool locked) {
+wresult _w_coolbar_set_locked(w_coolbar *coolbar, int locked) {
 }
 int _w_coolbar_compute_size(w_widget *widget, struct w_event_compute_size *e,
 		struct _w_widget_reserved *reserved) {
 	int width = 0, height = 0;
 	_w_coolbar_wrap_items(W_COOLBAR(widget),
 			(_W_WIDGET(widget)->style & W_VERTICAL) != 0 ? e->hHint : e->wHint);
-	wbool flat = (_W_WIDGET(widget)->style & W_FLAT) != 0;
+	int flat = (_W_WIDGET(widget)->style & W_FLAT) != 0;
 	__w_coolitem* _item;
 	_w_coolitems *_items = _W_COOLBAR(widget)->items;
 	if (_items != 0) {

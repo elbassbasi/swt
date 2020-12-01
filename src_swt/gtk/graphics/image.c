@@ -17,7 +17,7 @@ void w_image_dispose(w_image *image) {
 		_W_IMAGE(image)->pixbuf = 0;
 	}
 }
-wbool w_image_is_ok(w_image *image) {
+wresult w_image_is_ok(w_image *image) {
 	return _W_IMAGE(image)->pixbuf != 0;
 }
 wresult w_image_create_from_file(w_image *image, const char *file) {
@@ -298,7 +298,7 @@ wresult _w_toolkit_image_to_disabled(w_toolkit *toolkit, w_image *image,
 void w_surface_init(w_surface *bitmap) {
 	_W_SURFACE(bitmap)->surface = 0;
 }
-wbool w_surface_is_ok(w_surface *bitmap) {
+wresult w_surface_is_ok(w_surface *bitmap) {
 	return _W_SURFACE(bitmap)->surface != 0;
 }
 void w_surface_dispose(w_surface *bitmap) {

@@ -16,7 +16,7 @@ typedef struct w_iterator_dir {
 	DIR *dr;
 	size_t count;
 } w_iterator_dir;
-wbool _w_iterator_dir_next(w_iterator *it, void *obj) {
+wresult _w_iterator_dir_next(w_iterator *it, void *obj) {
 	struct w_iterator_dir *mem = (w_iterator_dir*) it;
 	struct dirent *de;
 	w_finddir *find = (w_finddir*) obj;

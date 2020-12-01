@@ -47,11 +47,11 @@ int _w_combo_get_item_height(w_combo *combo) {
 }
 void _w_combo_get_items(w_combo *combo, w_iterator *items) {
 }
-wbool _w_combo_get_list_visible(w_combo *combo) {
+wresult _w_combo_get_list_visible(w_combo *combo) {
 }
-wresult _w_combo_set_list_visible(w_combo *combo, wbool visible) {
+wresult _w_combo_set_list_visible(w_combo *combo, int visible) {
 }
-wbool _w_combo_get_selection(w_combo *combo, w_point *pt) {
+wresult _w_combo_get_selection(w_combo *combo, w_point *pt) {
 }
 int _w_combo_get_selection_index(w_combo *combo) {
 	return gtk_combo_box_get_active(GTK_COMBO_BOX(_W_WIDGET(combo)->handle));

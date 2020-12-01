@@ -33,9 +33,9 @@ typedef struct _mnemonics {
 	size_t length;
 } _mnemonics;
 int _mnemonics_fix_0(struct _mnemonics *mnemonics, const char *text,
-		size_t text_length, wbool replace, int *process);
+		size_t text_length, int replace, int *process);
 void _mnemonics_fix(_mnemonics *mnemonics, const char *text,
-		size_t text_length, wbool replace);
+		size_t text_length, int replace);
 void _mnemonics_free(_mnemonics *mnemonics, const char *text);
 int _mnemonics_from_gtk_0(const char *text, size_t text_length, char *out,
 		size_t out_length, int *process);

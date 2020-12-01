@@ -66,7 +66,7 @@ wresult _w_scrollbar_get_values(w_scrollbar *scrollbar,
 wresult _w_scrollbar_get_visible(w_scrollbar *scrollbar);
 wresult _w_scrollbar_is_enabled(w_scrollbar *scrollbar);
 wresult _w_scrollbar_is_visible(w_scrollbar *scrollbar);
-wresult _w_scrollbar_set_enabled(w_scrollbar *scrollbar, wbool enabled);
+wresult _w_scrollbar_set_enabled(w_scrollbar *scrollbar, int enabled);
 wresult _w_scrollbar_set_increment(w_scrollbar *scrollbar, int value);
 wresult _w_scrollbar_set_maximum(w_scrollbar *scrollbar, int value);
 wresult _w_scrollbar_set_minimum(w_scrollbar *scrollbar, int value);
@@ -75,8 +75,8 @@ wresult _w_scrollbar_set_selection(w_scrollbar *scrollbar, int selection);
 wresult _w_scrollbar_set_thumb(w_scrollbar *scrollbar, int value);
 wresult _w_scrollbar_set_values(w_scrollbar *scrollbar,
 		 w_scrollbar_value *values);
-wresult _w_scrollbar_set_visible_0(w_scrollbar *scrollbar, wbool visible);
-wresult _w_scrollbar_set_visible(w_scrollbar *scrollbar, wbool visible);
+wresult _w_scrollbar_set_visible_0(w_scrollbar *scrollbar, int visible);
+wresult _w_scrollbar_set_visible(w_scrollbar *scrollbar, int visible);
 /*
  * scrollable
  */
@@ -98,7 +98,7 @@ int _w_scrollable_hscrollbar_width(w_scrollable *scrollable,
 		 _w_scrollable_reserved *reserved);
 wresult _w_scrollable_send_leave_notify(w_control *control,
 		_w_control_reserved *reserved);
-void _w_scrollable_set_orientation(w_control *control, wbool create,
+void _w_scrollable_set_orientation(w_control *control, int create,
 		_w_control_reserved *reserved);
 int _w_scrollable_set_scrollbar_visible_0(w_widget *scrollable, int style,
 		int visible,  _w_widget_reserved *reserved);
