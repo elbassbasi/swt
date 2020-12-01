@@ -43,7 +43,7 @@ struct _w_shell_reserved {
 #define _W_SHELL_MAXIMUM_TRIM 128
 #define _W_SHELL_BORDER 3
 #define ISCUSTOMRESIZE(style) ((style & W_NO_TRIM) == 0 && (style & (W_RESIZE | W_ON_TOP)) == (W_RESIZE | W_ON_TOP))
-int _w_shell_check_style(w_shell *parent, int style);
+wuint64 _w_shell_check_style(w_shell *parent, wuint64 style);
 const char* _w_shell_window_class(w_widget *parent, int style);
 void _w_shell_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle);
