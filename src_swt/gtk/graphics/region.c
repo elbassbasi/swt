@@ -15,7 +15,7 @@ void w_region_dispose(w_region *region) {
 		_W_REGION(region)->handle = 0;
 	}
 }
-wbool w_region_is_ok(w_region *region) {
+wresult w_region_is_ok(w_region *region) {
 	if (region == 0 || _W_REGION(region)->handle == 0)
 		return W_FALSE;
 	return W_TRUE;
@@ -155,7 +155,7 @@ wresult w_region_add_region(w_region *region, w_region *_region) {
 	cairo_region_union(_W_REGION(region)->handle, _W_REGION(_region)->handle);
 	return W_TRUE;
 }
-wbool w_region_contains(w_region *region, w_point *pt) {
+wresult w_region_contains(w_region *region, w_point *pt) {
 	if (region == 0 || _W_REGION(region)->handle == 0)
 		return W_FALSE;
 	return cairo_region_contains_point(_W_REGION(region)->handle, pt->x, pt->y);
@@ -195,7 +195,7 @@ wresult w_region_intersect_region(w_region *region, w_region *_region) {
 	_W_REGION(_region)->handle);
 	return W_TRUE;
 }
-wbool w_region_intersects(w_region *region, w_rect *rect) {
+wresult w_region_intersects(w_region *region, w_rect *rect) {
 	if (region == 0 || _W_REGION(region)->handle == 0)
 		return W_FALSE;
 	if (rect == 0)
@@ -208,7 +208,7 @@ wbool w_region_intersects(w_region *region, w_rect *rect) {
 	return cairo_region_contains_rectangle(_W_REGION(region)->handle, &gdkRect)
 			!= CAIRO_REGION_OVERLAP_IN;
 }
-wbool w_region_is_empty(w_region *region) {
+wresult w_region_is_empty(w_region *region) {
 	if (region == 0 || _W_REGION(region)->handle == 0)
 		return W_TRUE;
 	return cairo_region_is_empty(_W_REGION(region)->handle);

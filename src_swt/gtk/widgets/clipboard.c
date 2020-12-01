@@ -66,7 +66,7 @@ wresult w_clipboard_close(w_clipboard *clipboard) {
 	_W_CLIPBOARD(clipboard)->clipboards = 0;
 	return W_TRUE;
 }
-wbool w_clipboard_is_ok(w_clipboard *clipboard) {
+wresult w_clipboard_is_ok(w_clipboard *clipboard) {
 	if (clipboard == 0)
 		return W_FALSE;
 	if (_W_CLIPBOARD(clipboard)->clipboards == 0)

@@ -15,7 +15,7 @@
 #endif
 wuchar trimWidths[] = { 0, 4, 6, 5, 6, 0 };
 wuchar trimHeights[] = { 0, 4, 6, 28, 29, 23 };
-wbool _w_toolkit_set_warnings(_w_toolkit *toolkit, wbool warning) {
+wresult _w_toolkit_set_warnings(_w_toolkit *toolkit, int warning) {
 	return FALSE;
 }
 void* _w_toolkit_malloc(w_toolkit *toolkit, size_t size) {

@@ -114,7 +114,7 @@ void _w_shell_adjust_trim(w_shell *shell) {
 		gtk_toolkit->ignoreTrim = W_TRUE;
 		return;
 	}
-	wbool hasTitle = W_FALSE, hasResize = W_FALSE, hasBorder = W_FALSE;
+	int hasTitle = W_FALSE, hasResize = W_FALSE, hasBorder = W_FALSE;
 	wuint64 style = _W_WIDGET(shell)->style;
 	if ((style & W_NO_TRIM) == 0) {
 		hasTitle = (style & (W_MIN | W_MAX | /*W_TITLE |*/W_MENU)) != 0;
@@ -191,7 +191,7 @@ void _w_shell_bring_totop(w_shell *shell, int force) {
 	 *
 	 * NOTE: This bug is fixed in GTK+ 2.6.8 and above.
 	 */
-	wbool xFocus = W_FALSE;
+	int xFocus = W_FALSE;
 	if (activeShell != 0) {
 		gtk_toolkit->activeShell = shell;
 		gtk_toolkit->activePending = W_TRUE;
@@ -1019,7 +1019,7 @@ wresult _w_shell_set_enabled(w_control *_this, int enabled) {
 	if (((_W_WIDGET(_this)->state & STATE_DISABLED) == 0) == enabled)
 		return W_TRUE;
 	w_control *control = 0;
-	wbool fixFocus = W_FALSE;
+	int fixFocus = W_FALSE;
 	if (!enabled) {
 		if (gtk_toolkit->focusEvent != W_EVENT_FOCUSOUT) {
 			control = _w_toolkit_get_focus_control(W_TOOLKIT(gtk_toolkit));
@@ -1166,7 +1166,7 @@ wresult _w_shell_set_maximized(w_shell *shell, int maximized) {
 wresult _w_shell_set_menu_bar(w_shell *shell, w_menu *menu) {
 	if (_W_SHELL(shell)->menubar == menu)
 		return W_TRUE;
-	wbool both = menu != 0 && _W_SHELL(shell)->menubar != 0;
+	int both = menu != 0 && _W_SHELL(shell)->menubar != 0;
 	if (menu != 0) {
 		if (!w_widget_is_ok(W_WIDGET(menu)))
 			return W_ERROR_INVALID_ARGUMENT;
@@ -1392,7 +1392,7 @@ wresult _w_shell_set_visible(w_control *control, int visible) {
 		gtk_toolkit->dispatchEvents[6] = GDK_WINDOW_STATE;
 		gtk_toolkit->dispatchEvents[7] = -1;
 		_w_toolkit_put_gdk_events();
-		wbool iconic = W_FALSE;
+		int iconic = W_FALSE;
 		w_shell *shell;
 		if (parent != 0) {
 			w_control_get_shell(W_CONTROL(parent), &shell);
@@ -1624,7 +1624,7 @@ void _w_shell_update_modal(w_shell *_this) {
 	/*if (GTK_IS_PLUG(shellHandle))
 	 return;*/
 	GtkWindowGroup *group = 0;
-	wbool isModalShell = W_FALSE;
+	int isModalShell = W_FALSE;
 	if (!gtk_toolkit->modalDialog) {
 		w_shell *modal = _w_shell_get_modal_shell(_this);
 		int mask = W_PRIMARY_MODAL | W_APPLICATION_MODAL | W_SYSTEM_MODAL;
@@ -1697,7 +1697,7 @@ void _w_shell_update_minimized(w_shell *_this, int minimized) {
 	_w_shell *shell = gtk_toolkit->shells, *tmp;
 	while (shell != 0) {
 		if (_W_CONTROL(shell)->parent == W_COMPOSITE(_this)) {
-			wbool update = W_FALSE;
+			int update = W_FALSE;
 			tmp = shell;
 			while (tmp != 0 && W_SHELL(tmp) != _this
 					&& !isUndecorated(_W_WIDGET(tmp)->style)) {
@@ -1766,7 +1766,7 @@ void _w_shell_set_tooltip_text_0(w_shell *shell, GtkWidget *rootWidget,
 		_mnemonics_fix(&buffer, string, -1, W_FALSE);
 	}
 	gchar *oldTooltip = gtk_widget_get_tooltip_text(rootWidget);
-	wbool same = W_FALSE;
+	int same = W_FALSE;
 	if (buffer.str == 0 && oldTooltip == 0) {
 		same = W_TRUE;
 	} else if (buffer.str != 0 && oldTooltip != 0) {
@@ -1930,7 +1930,7 @@ int _w_shell_restore_focus(w_shell *shell) {
 	if (_W_SHELL(shell)->savedFocus != 0
 			&& !w_widget_is_ok(W_WIDGET(_W_SHELL(shell)->savedFocus)))
 		_W_SHELL(shell)->savedFocus = 0;
-	wbool restored = _W_SHELL(shell)->savedFocus != 0
+	int restored = _W_SHELL(shell)->savedFocus != 0
 			&& W_CONTROL_GET_CLASS(_W_SHELL(shell)->savedFocus)->set_focus(
 			_W_SHELL(shell)->savedFocus) > 0;
 	_W_SHELL(shell)->savedFocus = 0;

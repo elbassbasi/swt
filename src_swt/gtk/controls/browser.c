@@ -53,24 +53,24 @@ wresult _w_browser_kit_forward(w_browser *browser) {
 const char* _w_browser_kit_get_browser_type(w_browser *browser) {
 	return "WebKit";
 }
-wbool _w_browser_kit_get_javascript_enabled(w_browser *browser) {
+wresult _w_browser_kit_get_javascript_enabled(w_browser *browser) {
 }
 wresult _w_browser_kit_get_text(w_browser *browser, w_alloc *text) {
 }
 wresult _w_browser_kit_get_url(w_browser *browser, w_alloc *url) {
 }
-wbool _w_browser_kit_is_back_enabled(w_browser *browser) {
+wresult _w_browser_kit_is_back_enabled(w_browser *browser) {
 }
-wbool _w_browser_kit_is_forward_enabled(w_browser *browser) {
+wresult _w_browser_kit_is_forward_enabled(w_browser *browser) {
 }
 wresult _w_browser_kit_refresh(w_browser *browser) {
 }
 wresult _w_browser_kit_set_javascript_enabled(w_browser *browser,
-		wbool enabled) {
+		int enabled) {
 }
 
 wresult _w_browser_kit_set_text(w_browser *browser, const char *html_bytes,
-		wbool trusted) {
+		int trusted) {
 	struct _w_browser_kit_reserved *reserved = _W_BROWSER_KIT_RESERVED(
 			_w_widget_get_reserved(W_WIDGET(browser)));
 	const char *uriBytes;
@@ -79,7 +79,7 @@ wresult _w_browser_kit_set_text(w_browser *browser, const char *html_bytes,
 	 * If this.htmlBytes is not null then the about:blank page is already being loaded,
 	 * so no navigate is required.  Just set the html that is to be shown.
 	 */
-	wbool blankLoading = _W_BROWSER_KIT(browser)->htmlBytes != 0; // Webkit1 only.
+	int blankLoading = _W_BROWSER_KIT(browser)->htmlBytes != 0; // Webkit1 only.
 	if (reserved->version & WEBKIT_VERSION_1) {
 		/*this.htmlBytes = html_bytes;
 		 untrustedText = !trusted;*/
@@ -567,7 +567,7 @@ wresult _w_browser_forward(w_browser *browser) {
 const char* _w_browser_get_browser_type(w_browser *browser) {
 	return "empty";
 }
-wbool _w_browser_get_javascript_enabled(w_browser *browser) {
+wresult _w_browser_get_javascript_enabled(w_browser *browser) {
 	return W_FALSE;
 }
 wresult _w_browser_get_text(w_browser *browser, w_alloc *text) {
@@ -576,20 +576,20 @@ wresult _w_browser_get_text(w_browser *browser, w_alloc *text) {
 wresult _w_browser_get_url(w_browser *browser, w_alloc *url) {
 	return W_ERROR_NOT_IMPLEMENTED;
 }
-wbool _w_browser_is_back_enabled(w_browser *browser) {
+wresult _w_browser_is_back_enabled(w_browser *browser) {
 	return W_FALSE;
 }
-wbool _w_browser_is_forward_enabled(w_browser *browser) {
+wresult _w_browser_is_forward_enabled(w_browser *browser) {
 	return W_FALSE;
 }
 wresult _w_browser_refresh(w_browser *browser) {
 	return W_ERROR_NOT_IMPLEMENTED;
 }
-wresult _w_browser_set_javascript_enabled(w_browser *browser, wbool enabled) {
+wresult _w_browser_set_javascript_enabled(w_browser *browser, int enabled) {
 	return W_ERROR_NOT_IMPLEMENTED;
 }
 wresult _w_browser_set_text(w_browser *browser, const char *html,
-		wbool trusted) {
+		int trusted) {
 	return W_ERROR_NOT_IMPLEMENTED;
 }
 wresult _w_browser_set_url(w_browser *browser, const char *url,

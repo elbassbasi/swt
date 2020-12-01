@@ -43,7 +43,7 @@ void _w_treecolumn_cell_data(GtkTreeViewColumn *tree_column,
 		GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter,
 		gpointer data);
 wresult _w_table_create_0(w_widget *widget, w_widget *parent, wuint64 style,
-		w_widget_post_event_proc post_event, wbool is_tree);
+		w_widget_post_event_proc post_event, int is_tree);
 void _w_tree_connect_signal(w_widget *widget,
 		struct _w_control_reserved *reserved);
 void _w_table_class_init(struct _w_table_class *clazz);

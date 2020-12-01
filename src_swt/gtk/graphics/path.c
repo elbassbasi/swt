@@ -183,7 +183,7 @@ wresult w_path_add_rectangle(w_path *path, w_rectf *rect) {
 	_W_PATH(path)->closed = TRUE;
 	return W_TRUE;
 }
-wresult w_path_add_string(w_path *path, const char *string, int length,
+wresult w_path_add_string(w_path *path, const char *string, int length, int enc,
 		w_pointf *pt, w_font *font) {
 	if (path == 0)
 		return W_ERROR_NULL_ARGUMENT;
@@ -220,7 +220,7 @@ wresult w_path_close(w_path *path) {
 	return W_TRUE;
 }
 wresult w_path_contains(w_path *path, w_pointf *pt, w_graphics *gc,
-		wbool outline) {
+		int outline) {
 	if (path == 0)
 		return W_ERROR_NULL_ARGUMENT;
 	if (_W_PATH(path)->handle == 0)
@@ -347,7 +347,7 @@ wresult w_iterator_pathdata_close(w_iterator *it) {
 	cairo_path_destroy(data->path);
 	return W_TRUE;
 }
-wbool w_iterator_pathdata_next(w_iterator *_it, void *_obj) {
+wresult w_iterator_pathdata_next(w_iterator *_it, void *_obj) {
 	w_iterator_pathdata *it = (w_iterator_pathdata*) _it;
 	if (it->i >= it->path->num_data)
 		return W_FALSE;

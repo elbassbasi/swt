@@ -19,7 +19,7 @@ void w_textlayout_dispose(w_textlayout *textlayout) {
 		_W_TEXTLAYOUT(textlayout)->layout = 0;
 	}
 }
-wbool w_textlayout_isok(w_textlayout *textlayout) {
+wresult w_textlayout_isok(w_textlayout *textlayout) {
 	if (textlayout == 0)
 		return W_FALSE;
 	return _W_TEXTLAYOUT(textlayout)->layout != 0;
@@ -84,7 +84,7 @@ wresult w_textlayout_create(w_textlayout *textlayout) {
 // Bug 477950: In order to support GTK2 and GTK3 colors simultaneously, this method's parameters
 // were modified to accept SWT Color objects instead of GdkColor structs.
 void _w_textlayout_draw_with_cairo(w_textlayout *textlayout, w_graphics *gc,
-		int x, int y, int start, int end, wbool fullSelection, w_color fg,
+		int x, int y, int start, int end, int fullSelection, w_color fg,
 		w_color bg) {
 	cairo_t *cairo = _W_GRAPHICS(gc)->cairo;
 	PangoLayout *layout = _W_TEXTLAYOUT(textlayout)->layout;
@@ -132,7 +132,7 @@ wresult w_textlayout_draw(w_textlayout *textlayout, w_graphics *gc, int x,
 	int length = pango_layout_get_character_count(layout);
 	x += MIN(_W_TEXTLAYOUT(textlayout)->indent,
 			_W_TEXTLAYOUT(textlayout)-> wrapIndent);
-	wbool hasSelection = selectionStart <= selectionEnd && selectionStart != -1
+	wresult hasSelection = selectionStart <= selectionEnd && selectionStart != -1
 			&& selectionEnd != -1;
 	cairo_t *cairo = _W_GRAPHICS(gc)->cairo;
 	if ((flags & (W_FULL_SELECTION | W_DELIMITER_SELECTION)) != 0
@@ -166,7 +166,7 @@ wresult w_textlayout_draw(w_textlayout *textlayout, w_graphics *gc, int x,
 			} else {
 				//lineEnd = g_utf16_strlen(ptr, -1);
 			}
-			wbool extent = FALSE;
+			int extent = FALSE;
 			if (lineIndex == lineCount - 1
 					&& (flags & W_LAST_LINE_SELECTION) != 0) {
 				extent = TRUE;
@@ -226,7 +226,7 @@ wresult w_textlayout_draw(w_textlayout *textlayout, w_graphics *gc, int x,
 		 selectionEnd = translateOffset(selectionEnd);
 		 if (selectionForeground == null) selectionForeground = device.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		 if (selectionBackground == null) selectionBackground = device.getSystemColor(SWT.COLOR_LIST_SELECTION);*/
-		wbool fullSelection = selectionStart == 0 && selectionEnd == length - 1;
+		int fullSelection = selectionStart == 0 && selectionEnd == length - 1;
 		if (fullSelection) {
 			const char *ptr = pango_layout_get_text(layout);
 			/*if ((data.style & SWT.MIRRORED) != 0) {
@@ -266,7 +266,7 @@ int w_textlayout_get_alignment(w_textlayout *textlayout) {
 	if (!w_textlayout_isok(textlayout))
 		return W_LEFT;
 	int align = pango_layout_get_alignment(_W_TEXTLAYOUT(textlayout)->layout);
-	wbool rtl = pango_context_get_base_dir(_W_TEXTLAYOUT(textlayout)->context)
+	int rtl = pango_context_get_base_dir(_W_TEXTLAYOUT(textlayout)->context)
 			== PANGO_DIRECTION_RTL;
 	switch (align) {
 	case PANGO_ALIGN_LEFT:
@@ -290,7 +290,7 @@ w_font* w_textlayout_get_font(w_textlayout *textlayout) {
 }
 int w_textlayout_get_indent(w_textlayout *textlayout) {
 }
-wbool w_textlayout_get_justify(w_textlayout *textlayout) {
+wresult w_textlayout_get_justify(w_textlayout *textlayout) {
 }
 int w_textlayout_get_level(w_textlayout *textlayout, int offset, int enc) {
 }
@@ -308,7 +308,7 @@ int w_textlayout_get_line_offset(w_textlayout *textlayout, int lineIndex,
 		int enc) {
 }
 wresult w_textlayout_get_location(w_textlayout *textlayout, int offset,
-		wbool trailing, w_point *pt, int enc) {
+		int trailing, w_point *pt, int enc) {
 }
 int w_textlayout_get_next_offset(w_textlayout *textlayout, int offset,
 		int movement, int enc) {
@@ -333,7 +333,7 @@ wresult w_iterator_textlayout_ranges_close(w_iterator *_it) {
 	pango_attr_iterator_destroy(it->iter);
 	return W_TRUE;
 }
-wbool w_iterator_textlayout_ranges_next(w_iterator *_it, void *obj) {
+wresult w_iterator_textlayout_ranges_next(w_iterator *_it, void *obj) {
 	w_iterator_textlayout_ranges *it = (w_iterator_textlayout_ranges*) _it;
 	gboolean ret = it->next;
 	PangoAttrColor *color;
@@ -533,7 +533,7 @@ wresult w_textlayout_set_indent(w_textlayout *textlayout, int indent) {
 	}
 	return W_TRUE;
 }
-wresult w_textlayout_set_justify(w_textlayout *textlayout, wbool justify) {
+wresult w_textlayout_set_justify(w_textlayout *textlayout, int justify) {
 	if (textlayout == 0 || _W_TEXTLAYOUT(textlayout)->layout == 0)
 		return W_ERROR_NO_HANDLES;
 	PangoLayout *layout = _W_TEXTLAYOUT(textlayout)->layout;
@@ -789,7 +789,7 @@ wresult w_textlayout_set_width(w_textlayout *textlayout, int width) {
 	_W_TEXTLAYOUT(textlayout)->wrapWidth = width;
 	if (_W_TEXTLAYOUT(textlayout)->wrapWidth == -1) {
 		pango_layout_set_width(_W_TEXTLAYOUT(textlayout)->layout, -1);
-		wbool rtl = pango_context_get_base_dir(
+		int rtl = pango_context_get_base_dir(
 		_W_TEXTLAYOUT(textlayout)->context) == PANGO_DIRECTION_RTL;
 		pango_layout_set_alignment(_W_TEXTLAYOUT(textlayout)->layout,
 				rtl ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);

@@ -23,7 +23,7 @@ void _w_treecolumn_renderer_render(w_widget *widget, GtkCellRenderer *_cell,
 	w_rect rect;
 	struct _w_graphics gc;
 	w_tree_attr attr;
-	wbool wasSelected = FALSE;
+	int wasSelected = FALSE;
 	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
 		memset(&event, 0, sizeof(event));
 		event.event.type = W_EVENT_ITEM_GET_ATTR;
@@ -526,9 +526,9 @@ int _w_treecolumn_get_id(w_treecolumn *column) {
 }
 int _w_treecolumn_get_image(w_treecolumn *column) {
 }
-wbool _w_treecolumn_get_moveable(w_treecolumn *column) {
+wresult _w_treecolumn_get_moveable(w_treecolumn *column) {
 }
-wbool _w_treecolumn_get_resizable(w_treecolumn *column) {
+wresult _w_treecolumn_get_resizable(w_treecolumn *column) {
 }
 w_string_ref* _w_treecolumn_get_tooltip_text(w_treecolumn *column) {
 }
@@ -571,9 +571,9 @@ wresult _w_treecolumn_set_id(w_treecolumn *column, int id) {
 }
 wresult _w_treecolumn_set_image(w_treecolumn *column, int image) {
 }
-wresult _w_treecolumn_set_moveable(w_treecolumn *column, wbool moveable) {
+wresult _w_treecolumn_set_moveable(w_treecolumn *column, int moveable) {
 }
-wresult _w_treecolumn_set_resizable(w_treecolumn *column, wbool resizable) {
+wresult _w_treecolumn_set_resizable(w_treecolumn *column, int resizable) {
 }
 wresult _w_treecolumn_set_tooltip_text(w_treecolumn *column, const char *text) {
 }
@@ -611,9 +611,9 @@ wresult _w_treecolumn_set_text(w_item *item, const char *string) {
 /*
  * tree item
  */
-wresult _w_treeitem_clear(w_treeitem *item, int index, wbool all) {
+wresult _w_treeitem_clear(w_treeitem *item, int index, int all) {
 }
-wresult _w_treeitem_clear_all(w_treeitem *item, wbool all) {
+wresult _w_treeitem_clear_all(w_treeitem *item, int all) {
 }
 void _w_treeitem_get_bounds(w_treeitem *item, w_rect *bounds) {
 	// TODO fully test on early and later versions of GTK
@@ -665,11 +665,11 @@ void _w_treeitem_get_bounds(w_treeitem *item, w_rect *bounds) {
 	 }
 	 return r;*/
 }
-wbool _w_treeitem_get_checked(w_treeitem *item) {
+wresult _w_treeitem_get_checked(w_treeitem *item) {
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(
 			GTK_TREE_VIEW(_W_WIDGET(_W_TREEITEM(item)->tree)->handle));
 	int info = 0;
-	wbool ret;
+	int ret;
 	gtk_tree_model_get(modelHandle, &_W_TREEITEM(item)->iter, COLUMN_INFO,
 			&info, -1);
 	if (info & COLUMN_INFO_CHECK) {
@@ -679,20 +679,20 @@ wbool _w_treeitem_get_checked(w_treeitem *item) {
 	}
 	return ret;
 }
-wbool _w_treeitem_get_expanded(w_treeitem *item) {
+wresult _w_treeitem_get_expanded(w_treeitem *item) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	GtkTreePath *path = gtk_tree_model_get_path(modelHandle,
 			&_W_TREEITEM(item)->iter);
-	wbool expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(handle), path);
+	int expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(handle), path);
 	gtk_tree_path_free(path);
 	return expanded;
 }
-wbool _w_treeitem_get_grayed(w_treeitem *item) {
+wresult _w_treeitem_get_grayed(w_treeitem *item) {
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(
 			GTK_TREE_VIEW(_W_WIDGET(_W_TREEITEM(item)->tree)->handle));
 	int info = 0;
-	wbool ret;
+	int ret;
 	gtk_tree_model_get(modelHandle, &_W_TREEITEM(item)->iter, COLUMN_INFO,
 			&info, -1);
 	if (info & COLUMN_INFO_GRAYED) {
@@ -702,7 +702,7 @@ wbool _w_treeitem_get_grayed(w_treeitem *item) {
 	}
 	return ret;
 }
-wbool _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
+wresult _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	wuint n = gtk_tree_model_iter_n_children(modelHandle,
@@ -716,7 +716,7 @@ wbool _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
 	}
 	return W_FALSE;
 }
-wbool _w_treeitem_get_first_child(w_treeitem *item, w_treeitem *child) {
+wresult _w_treeitem_get_first_child(w_treeitem *item, w_treeitem *child) {
 	return _w_treeitem_get_item(item, 0, child);
 }
 int _w_treeitem_get_item_count(w_treeitem *item) {
@@ -734,7 +734,7 @@ int _w_treeitem_get_image(w_treeitem *item) {
 			&image, -1);
 	return W_TRUE;
 }
-wbool _w_treeitem_get_last_child(w_treeitem *item, w_treeitem *child) {
+wresult _w_treeitem_get_last_child(w_treeitem *item, w_treeitem *child) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	wuint n = gtk_tree_model_iter_n_children(modelHandle,
@@ -749,7 +749,7 @@ wbool _w_treeitem_get_last_child(w_treeitem *item, w_treeitem *child) {
 	}
 	return W_FALSE;
 }
-wbool _w_treeitem_get_next_sibling(w_treeitem *item, w_treeitem *next) {
+wresult _w_treeitem_get_next_sibling(w_treeitem *item, w_treeitem *next) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	memcpy(&_W_TREEITEM(next)->iter, &_W_TREEITEM(item)->iter,
@@ -762,7 +762,7 @@ wbool _w_treeitem_get_next_sibling(w_treeitem *item, w_treeitem *next) {
 	}
 	return W_FALSE;
 }
-wbool _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
+wresult _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	if (gtk_tree_model_iter_parent(modelHandle, &_W_TREEITEM(parent)->iter,
@@ -775,7 +775,7 @@ wbool _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
 		return W_FALSE;
 	}
 }
-wbool _w_treeitem_get_prev_sibling(w_treeitem *item, w_treeitem *prev) {
+wresult _w_treeitem_get_prev_sibling(w_treeitem *item, w_treeitem *prev) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	memcpy(&_W_TREEITEM(prev)->iter, &_W_TREEITEM(item)->iter,
@@ -883,7 +883,7 @@ wresult _w_treeitem_remove_all(w_treeitem *item) {
 	 OS.g_object_notify (parent.handle, OS.model);
 	 }*/
 }
-wresult _w_treeitem_set_checked(w_treeitem *item, wbool checked) {
+wresult _w_treeitem_set_checked(w_treeitem *item, int checked) {
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(
 			GTK_TREE_VIEW(_W_WIDGET(_W_TREEITEM(item)->tree)->handle));
 	int info = 0;
@@ -898,7 +898,7 @@ wresult _w_treeitem_set_checked(w_treeitem *item, wbool checked) {
 			COLUMN_INFO, info, -1);
 	return W_TRUE;
 }
-wresult _w_treeitem_set_expanded(w_treeitem *item, wbool expanded) {
+wresult _w_treeitem_set_expanded(w_treeitem *item, int expanded) {
 	GtkWidget *handle = _W_WIDGET(_W_TREEITEM(item)->tree)->handle;
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(GTK_TREE_VIEW(handle));
 	GtkTreePath *path = gtk_tree_model_get_path(modelHandle,
@@ -922,7 +922,7 @@ wresult _w_treeitem_set_expanded(w_treeitem *item, wbool expanded) {
 	gtk_tree_path_free(path);
 	return W_TRUE;
 }
-wresult _w_treeitem_set_grayed(w_treeitem *item, wbool grayed) {
+wresult _w_treeitem_set_grayed(w_treeitem *item, int grayed) {
 	GtkTreeModel *modelHandle = gtk_tree_view_get_model(
 			GTK_TREE_VIEW(_W_WIDGET(_W_TREEITEM(item)->tree)->handle));
 	int info = 0;
@@ -1035,7 +1035,7 @@ wresult _w_treeitem_set_text(w_item *item, const char *string) {
 void _w_treeitem_copy(w_widgetdata *from, w_widgetdata *to) {
 
 }
-wbool _w_treeitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_treeitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 
 }
 /*
@@ -1049,9 +1049,9 @@ int _w_tree_get_gridline_width(w_tree *tree) {
 }
 int _w_tree_get_header_height(w_tree *tree) {
 }
-wbool _w_tree_get_header_visible(w_tree *tree) {
+wresult _w_tree_get_header_visible(w_tree *tree) {
 }
-wbool _w_tree_get_column(w_tree *tree, int index, w_treecolumn *column) {
+wresult _w_tree_get_column(w_tree *tree, int index, w_treecolumn *column) {
 }
 int _w_tree_get_column_count(w_tree *tree) {
 }
@@ -1062,7 +1062,7 @@ void _w_tree_get_columns(w_tree *tree, w_iterator *columns) {
 w_imagelist* _w_tree_get_imagelist(w_tree *tree) {
 	return _W_TABLEBASE(tree)->imagelist;
 }
-wbool _w_tree_get_item(w_tree *tree, w_point *point, w_treeitem *item) {
+wresult _w_tree_get_item(w_tree *tree, w_point *point, w_treeitem *item) {
 	if (point == 0)
 		return W_ERROR_NULL_ARGUMENT;
 	GtkTreePath *path = 0;
@@ -1111,11 +1111,11 @@ wbool _w_tree_get_item(w_tree *tree, w_point *point, w_treeitem *item) {
 }
 int _w_tree_get_item_height(w_tree *tree) {
 }
-wbool _w_tree_get_lines_visible(w_tree *tree) {
+wresult _w_tree_get_lines_visible(w_tree *tree) {
 }
-wbool _w_tree_get_parent_item(w_tree *tree, w_treeitem *item) {
+wresult _w_tree_get_parent_item(w_tree *tree, w_treeitem *item) {
 }
-wbool _w_tree_get_root_item(w_tree *tree, w_treeitem *root) {
+wresult _w_tree_get_root_item(w_tree *tree, w_treeitem *root) {
 	_W_TREEITEM(root)->widgetdata.clazz = W_WIDGETDATA_CLASS(
 			W_TREE_GET_CLASS(tree)->class_treeitem);
 	memset(&_W_TREEITEM(root)->iter, 0, sizeof(GtkTreeIter));
@@ -1129,11 +1129,11 @@ int _w_tree_get_selection_count(w_tree *tree) {
 			GTK_TREE_VIEW(_W_WIDGET(tree)->handle));
 	return gtk_tree_selection_count_selected_rows(selection);
 }
-wbool _w_tree_get_sort_column(w_tree *tree, w_treecolumn *column) {
+wresult _w_tree_get_sort_column(w_tree *tree, w_treecolumn *column) {
 }
 int _w_tree_get_sort_direction(w_tree *tree) {
 }
-wbool _w_tree_get_top_item(w_tree *tree, w_treeitem *topitem) {
+wresult _w_tree_get_top_item(w_tree *tree, w_treeitem *topitem) {
 }
 wresult _w_tree_insert_column(w_tree *tree, w_treecolumn *column,
 		const char *text, int index) {
@@ -1230,11 +1230,11 @@ wresult _w_tree_remove_all(w_tree *tree) {
 wresult _w_tree_set_imagelist(w_tree *tree, w_imagelist *imagelist) {
 	return _w_table_set_imagelist(W_TABLE(tree), imagelist);
 }
-wresult _w_tree_set_insert_mark(w_tree *tree, w_treeitem *item, wbool before) {
+wresult _w_tree_set_insert_mark(w_tree *tree, w_treeitem *item, int before) {
 }
 wresult _w_tree_set_item_height(w_tree *tree, int itemHeight) {
 }
-wresult _w_tree_set_lines_visible(w_tree *tree, wbool show) {
+wresult _w_tree_set_lines_visible(w_tree *tree, int show) {
 }
 wresult _w_tree_select(w_tree *tree, w_treeitem *item) {
 }
@@ -1242,7 +1242,7 @@ wresult _w_tree_select_all(w_tree *tree) {
 }
 wresult _w_tree_set_column_order(w_tree *tree, int *order, size_t length) {
 }
-wresult _w_tree_set_header_visible(w_tree *tree, wbool show) {
+wresult _w_tree_set_header_visible(w_tree *tree, int show) {
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_W_WIDGET(tree)->handle),
 			show);
 	return W_TRUE;

@@ -119,7 +119,7 @@ w_control* _w_toolkit_get_focus_control(w_toolkit *toolkit) {
 	} while ((handle = gtk_widget_get_parent(handle)) != 0);
 	return 0;
 }
-wbool _w_toolkit_get_high_contrast(w_toolkit *toolkit) {
+wresult _w_toolkit_get_high_contrast(w_toolkit *toolkit) {
 }
 int _w_toolkit_get_icon_depth(w_toolkit *toolkit) {
 }
@@ -148,7 +148,7 @@ _w_shell* _w_shells_iterator_find_first(_w_shell *parent) {
 	}
 	return 0;
 }
-wbool _w_shells_iterator_next(w_iterator *it, void *obj) {
+wresult _w_shells_iterator_next(w_iterator *it, void *obj) {
 	if (_W_SHELLS_ITERATOR(it)->current != 0) {
 		*((_w_shell**) obj) = _W_SHELLS_ITERATOR(it)->current;
 		_W_SHELLS_ITERATOR(it)->current = _w_shells_iterator_find_next(
@@ -441,7 +441,7 @@ w_thread* _w_toolkit_get_thread(w_toolkit *toolkit) {
 }
 wuint64 _w_toolkit_get_thread_id(w_toolkit *toolkit) {
 }
-wbool _w_toolkit_get_touch_enabled(w_toolkit *toolkit) {
+wresult _w_toolkit_get_touch_enabled(w_toolkit *toolkit) {
 }
 wresult _w_toolkit_map_0(w_toolkit *toolkit, w_control *from, w_control *to,
 		w_point *result, w_point *point) {
@@ -480,7 +480,7 @@ wresult _w_toolkit_map_1(w_toolkit *toolkit, w_control *from, w_control *to,
 	memcpy(result, rectangle, sizeof(w_rect));
 	if (from == to)
 		return TRUE;
-	wbool fromRTL = FALSE, toRTL = FALSE;
+	int fromRTL = FALSE, toRTL = FALSE;
 	w_point origin;
 	if (from != 0) {
 		/*_w_control_get_window_origin(from, &origin);
@@ -505,14 +505,14 @@ wresult _w_toolkit_map_1(w_toolkit *toolkit, w_control *from, w_control *to,
 		result->x -= result->width;
 	return TRUE;
 }
-wbool _w_toolkit_post(w_toolkit *toolkit, w_event *event) {
+wresult _w_toolkit_post(w_toolkit *toolkit, w_event *event) {
 }
-wbool _w_toolkit_post_quit(w_toolkit *toolkit, int quit) {
+wresult _w_toolkit_post_quit(w_toolkit *toolkit, int quit) {
 	_W_TOOLKIT(toolkit)->exit_code = quit;
 	_W_TOOLKIT(toolkit)->exit_loop = 1;
 	return W_TRUE;
 }
-wbool _w_toolkit_read_and_dispatch(w_toolkit *toolkit) {
+wresult _w_toolkit_read_and_dispatch(w_toolkit *toolkit) {
 	/*runSkin ();
 	 runDeferredLayouts ();
 	 boolean events = false;
@@ -569,7 +569,7 @@ int _w_toolkit_run(w_toolkit *toolkit) {
 	}
 	return _W_TOOLKIT(toolkit)->exit_code;
 }
-wbool _w_toolkit_sleep(w_toolkit *toolkit) {
+wresult _w_toolkit_sleep(w_toolkit *toolkit) {
 	/*if (gdkEventCount == 0) {
 	 gdkEvents = null;
 	 gdkEventWidgets = null;
@@ -639,7 +639,7 @@ wbool _w_toolkit_sleep(w_toolkit *toolkit) {
 	return TRUE;
 }
 wresult _w_toolkit_exec(w_toolkit *toolkit, w_thread_start function, void *args,
-		wbool sync, wuint ms) {
+		int sync, wuint ms) {
 	pthread_t thread = pthread_self();
 	if (pthread_equal(thread, ((_w_toolkit*) toolkit)->guithread.id)) {
 		function(args);

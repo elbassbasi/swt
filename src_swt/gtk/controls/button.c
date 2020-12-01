@@ -28,7 +28,7 @@ int _w_button_check_style(int style) {
 	return style;
 }
 void _w_button_select_radio_0(_w_fixed *t, struct _w_event_platform *e,
-		wbool next) {
+		int next) {
 	_w_fixed *first;
 	w_widget *w;
 	w_event event;
@@ -110,12 +110,12 @@ int _w_button_get_alignment(w_button *button) {
 		return W_RIGHT;
 	return W_LEFT;
 }
-wbool _w_button_get_grayed(w_button *button) {
+wresult _w_button_get_grayed(w_button *button) {
 	return _W_WIDGET(button)->state & STATE_BUTTON_GRAYED;
 }
-wbool _w_button_get_image(w_button *button, w_image *image) {
+wresult _w_button_get_image(w_button *button, w_image *image) {
 }
-wbool _w_button_get_selection(w_button *button) {
+wresult _w_button_get_selection(w_button *button) {
 	if ((_W_WIDGET(button)->style & (W_CHECK | W_RADIO | W_TOGGLE)) == 0)
 		return W_FALSE;
 	return gtk_toggle_button_get_active(
@@ -267,7 +267,7 @@ wresult _w_button_set_alignment(w_button *button, int alignment) {
 	}
 	return W_TRUE;
 }
-wresult _w_button_set_grayed(w_button *button, wbool grayed) {
+wresult _w_button_set_grayed(w_button *button, int grayed) {
 	if ((_W_WIDGET(button)->style & W_CHECK) == 0)
 		return W_FALSE;
 	if (grayed) {
@@ -309,7 +309,7 @@ wresult _w_button_set_image(w_button *button, w_image *image) {
 	_w_button_set_alignment(button, _W_WIDGET(button)->style);
 	return W_TRUE;
 }
-wresult _w_button_set_selection(w_button *button, wbool selected) {
+wresult _w_button_set_selection(w_button *button, int selected) {
 	if ((_W_WIDGET(button)->style & (W_CHECK | W_RADIO | W_TOGGLE)) == 0)
 		return W_FALSE;
 	g_signal_handlers_block_matched(_W_WIDGET(button)->handle,
@@ -318,7 +318,7 @@ wresult _w_button_set_selection(w_button *button, wbool selected) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_W_WIDGET(button)->handle),
 			selected);
 	if ((_W_WIDGET(button)->style & W_CHECK) != 0) {
-		wbool grayed = _w_button_get_grayed(button);
+		int grayed = _w_button_get_grayed(button);
 		if (selected && grayed) {
 			gtk_toggle_button_set_inconsistent(
 					GTK_TOGGLE_BUTTON(_W_WIDGET(button)->handle), TRUE);
@@ -582,7 +582,7 @@ int _w_button_compute_size(w_widget *widget, struct w_event_compute_size *e,
 		gtk_widget_get_size_request(handles.box, &reqWidth, &reqHeight);
 		gtk_widget_set_size_request(handles.box, -1, -1);
 	}
-	wbool wrap = handles.label != 0 && (_W_WIDGET(widget)->style & W_WRAP) != 0
+	int wrap = handles.label != 0 && (_W_WIDGET(widget)->style & W_WRAP) != 0
 			&& gtk_widget_get_visible(handles.label);
 	if (wrap) {
 		int borderWidth = gtk_container_get_border_width(

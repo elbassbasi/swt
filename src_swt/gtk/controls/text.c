@@ -523,11 +523,11 @@ wresult _w_text_paste(w_text *text) {
 }
 wresult _w_text_select_all(w_text *text) {
 }
-wresult _w_text_set_doubleclick_enabled(w_text *text, wbool doubleClick) {
+wresult _w_text_set_doubleclick_enabled(w_text *text, int doubleClick) {
 }
 wresult _w_text_set_echochar(w_text *text, char echo) {
 }
-wresult _w_text_set_editable(w_text *text, wbool editable) {
+wresult _w_text_set_editable(w_text *text, int editable) {
 }
 wresult _w_text_set_message(w_text *text, const char *message, size_t length,
 		int enc) {

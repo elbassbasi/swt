@@ -274,7 +274,7 @@ int _w_label_compute_size(w_widget *widget, struct w_event_compute_size *e,
 	 * The fix is to use pango layout directly instead of the label size request
 	 * to calculate its preferred size.
 	 */
-	wbool fixWrap = handles.label != 0
+	int fixWrap = handles.label != 0
 			&& (_W_WIDGET(widget)->style & W_WRAP) != 0
 			&& gtk_widget_get_visible(handles.label);
 	if (fixWrap || frameHandle != 0) {

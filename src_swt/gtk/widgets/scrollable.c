@@ -120,15 +120,15 @@ wresult _w_scrollbar_get_thumb_track_bounds(w_scrollbar *scrollbar,
 	rect->y = 0;
 	gint has_stepper = 0;
 	gtk_widget_style_get(handle, "has-backward-stepper", &has_stepper, NULL);
-	wbool hasB = has_stepper != 0;
+	int hasB = has_stepper != 0;
 	gtk_widget_style_get(handle, "has-secondary-backward-stepper", &has_stepper,
 	NULL);
-	wbool hasB2 = has_stepper != 0;
+	int hasB2 = has_stepper != 0;
 	gtk_widget_style_get(handle, "has-forward-stepper", &has_stepper, NULL);
-	wbool hasF = has_stepper != 0;
+	int hasF = has_stepper != 0;
 	gtk_widget_style_get(handle, "has-secondary-forward-stepper", &has_stepper,
 	NULL);
-	wbool hasF2 = has_stepper != 0;
+	int hasF2 = has_stepper != 0;
 	GtkAllocation allocation;
 	gtk_widget_get_allocation(handle, &allocation);
 	if ((_W_SCROLLBAR(scrollbar)->style & W_VERTICAL) != 0) {
@@ -225,7 +225,7 @@ wresult _w_scrollbar_is_visible(w_scrollbar *scrollbar) {
 	}
 	return W_FALSE;
 }
-wresult _w_scrollbar_set_enabled(w_scrollbar *scrollbar, wbool enabled) {
+wresult _w_scrollbar_set_enabled(w_scrollbar *scrollbar, int enabled) {
 	GtkWidget *handle = _w_scrollbar_get_handle(scrollbar);
 	gtk_widget_set_sensitive(handle, enabled);
 	return W_TRUE;
@@ -357,7 +357,7 @@ wresult _w_scrollbar_set_values(w_scrollbar *scrollbar,
 			0, 0, 0, (void*) SIGNAL_VALUE_CHANGED);
 	return W_TRUE;
 }
-wresult _w_scrollbar_set_visible_0(w_scrollbar *scrollbar, wbool visible) {
+wresult _w_scrollbar_set_visible_0(w_scrollbar *scrollbar, int visible) {
 	w_scrollable *scrollable = _W_SCROLLBAR(scrollbar)->parent;
 	_w_widget_reserved *reserved = _w_widget_get_reserved(W_WIDGET(scrollable));
 	GtkWidget *scrolledHandle =
@@ -385,7 +385,7 @@ wresult _w_scrollbar_set_visible_0(w_scrollbar *scrollbar, wbool visible) {
 			vsp);
 	return W_TRUE;
 }
-wresult _w_scrollbar_set_visible(w_scrollbar *scrollbar, wbool visible) {
+wresult _w_scrollbar_set_visible(w_scrollbar *scrollbar, int visible) {
 	if (_w_scrollbar_set_visible_0(scrollbar, visible)) {
 		/*sendEvent (visible ? SWT.Show : SWT.Hide);
 		 parent.sendEvent (SWT.Resize);*/
@@ -568,7 +568,7 @@ wresult _w_scrollable_send_leave_notify(w_control *control,
 			_W_WIDGET_RESERVED(reserved));
 	return scrolledHandle != 0;
 }
-void _w_scrollable_set_orientation(w_control *control, wbool create,
+void _w_scrollable_set_orientation(w_control *control, int create,
 		_w_control_reserved *reserved) {
 	_w_control_set_orientation_0(control, create, reserved);
 	GtkWidget *scrolledHandle =
@@ -904,7 +904,7 @@ gboolean _gtk_scrollbar_event_after(w_widget *widget, _w_event_platform *e,
 		wuint64 style = _gtk_scrollbar_style(scrolledHandle, e->widget);
 		GdkEventButton *gdkEventButton = (GdkEventButton*) gtkEvent;
 		int detail;
-		wbool dragSent;
+		int dragSent;
 		if (style & W_VSCROLL) {
 			detail = _W_SCROLLABLE(widget)->vdetail;
 			dragSent = _W_WIDGET(widget)->state & STATE_VSCROLLBAR_DRAGSEND;

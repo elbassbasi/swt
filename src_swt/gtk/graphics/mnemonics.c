@@ -8,7 +8,7 @@
 #include "graphics.h"
 #include "../widgets/toolkit.h"
 int _mnemonics_fix_0(struct _mnemonics *mnemonics, const char *text,
-		size_t text_length, wbool replace, int *process) {
+		size_t text_length, int replace, int *process) {
 	char ch, _t[2], _l;
 	size_t length = 0;
 	for (size_t i = 0; (i < text_length && (ch = text[i]) != 0); i++) {
@@ -45,7 +45,7 @@ int _mnemonics_fix_0(struct _mnemonics *mnemonics, const char *text,
 	return length;
 }
 void _mnemonics_fix(_mnemonics *mnemonics, const char *text, size_t text_length,
-		wbool replace) {
+		int replace) {
 	int process = 0, length;
 	if (gtk_toolkit->mem_tmp_allocated == 0) {
 		mnemonics->length = gtk_toolkit->mem_tmp_total_size - 1;

@@ -59,7 +59,7 @@ _w_fixed* _w_composite_iterator_find_next(_w_fixed *fixed, w_control **control,
 		return fixed->next;
 	}
 }
-wbool _w_composite_iterator_next(w_iterator *it, void *obj) {
+wresult _w_composite_iterator_next(w_iterator *it, void *obj) {
 	if (_W_COMPOSITE_ITERATOR(it)->i != 0) {
 		_W_COMPOSITE_ITERATOR(it)->i = _w_composite_iterator_find_next(
 		_W_COMPOSITE_ITERATOR(it)->i, (w_control**) obj,
@@ -114,7 +114,7 @@ wresult _w_composite_changed(w_composite *_this, w_control **changed,
 			return W_ERROR_INVALID_ARGUMENT;
 		if (!w_widget_is_ok(W_WIDGET(control)))
 			return W_ERROR_INVALID_ARGUMENT;
-		wbool ancestor = W_FALSE;
+		int ancestor = W_FALSE;
 		w_composite *composite = _W_CONTROL(control)->parent;
 		while (composite != 0) {
 			ancestor = composite == _this;
@@ -436,7 +436,7 @@ wresult _w_composite_draw_background(w_composite *composite, w_graphics *gc,
 	return W_TRUE;
 }
 
-wresult _w_composite_enable_widget(w_control *control, wbool enabled,
+wresult _w_composite_enable_widget(w_control *control, int enabled,
 		_w_control_reserved *reserved) {
 	if ((_W_WIDGET(control)->state & STATE_CANVAS) != 0)
 		return W_TRUE;
@@ -625,7 +625,7 @@ wresult _w_composite_get_tab_list(w_composite *composite, w_iterator *it) {
 	_W_COMPOSITE_ITERATOR(it)->tablist = 1;
 	return W_TRUE;
 }
-wbool _w_composite_has_border(w_composite *composite,
+int _w_composite_has_border(w_composite *composite,
 		_w_composite_reserved *reserved) {
 	return (_W_WIDGET(composite)->style & W_BORDER) != 0;
 }
@@ -676,7 +676,7 @@ wresult _w_composite_layout_changed(w_composite *_this, w_control **changed,
 				return W_ERROR_INVALID_ARGUMENT;
 			if (!w_widget_is_ok(W_WIDGET(control)))
 				return W_ERROR_INVALID_ARGUMENT;
-			wbool ancestor = W_FALSE;
+			int ancestor = W_FALSE;
 			w_composite *composite = _W_CONTROL(control)->parent;
 			while (composite != 0) {
 				ancestor = composite == _this;
@@ -839,7 +839,7 @@ void _w_composite_move_children(w_composite *composite, int oldWidth) {
 	}
 }
 void _w_composite_minimum_size(w_composite *composite, w_size *size, int wHint,
-		int hHint, wbool changed) {
+		int hHint, int changed) {
 	w_iterator children;
 	w_iterator_init(&children);
 	w_composite_get_children(composite, &children);
@@ -1022,7 +1022,7 @@ wresult _w_composite_set_layout_deferred(w_composite *composite, int defer) {
 	}
 	return W_TRUE;
 }
-void _w_composite_set_orientation(w_control *control, wbool create,
+void _w_composite_set_orientation(w_control *control, int create,
 		_w_control_reserved *reserved) {
 	_w_scrollable_set_orientation(control, create, reserved);
 	if (!create) {
@@ -1056,7 +1056,7 @@ int _w_composite_set_scrollbar_visible(w_widget *scrollable, int style,
 	return changed;
 }
 
-wresult _w_composite_set_tab_group_focus(w_widget *widget, wbool next,
+wresult _w_composite_set_tab_group_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved) {
 	wresult setTabItemFocus;
 	wresult isTabItem;
@@ -1066,7 +1066,7 @@ wresult _w_composite_set_tab_group_focus(w_widget *widget, wbool next,
 		setTabItemFocus = reserved->set_tab_item_focus(widget, next, reserved);
 		return setTabItemFocus;
 	}
-	wbool takeFocus = (_W_WIDGET(widget)->style & W_NO_FOCUS) == 0;
+	int takeFocus = (_W_WIDGET(widget)->style & W_NO_FOCUS) == 0;
 	if ((_W_WIDGET(widget)->state & STATE_CANVAS) != 0)
 		takeFocus = W_TRUE/*hooksKeys()*/;
 	//if (socketHandle != 0)
@@ -1093,7 +1093,7 @@ wresult _w_composite_set_tab_group_focus(w_widget *widget, wbool next,
 	return W_FALSE;
 }
 
-wresult _w_composite_set_tab_item_focus(w_widget *widget, wbool next,
+wresult _w_composite_set_tab_item_focus(w_widget *widget, int next,
 		_w_widget_reserved *reserved) {
 	wresult result = _w_control_set_tab_item_focus(widget, next, reserved);
 	if (result <= 0)
@@ -1226,7 +1226,7 @@ void _w_composite_update_layout(w_control *_this, int flags,
 		return;
 	}
 	if ((_W_WIDGET(_this)->state & STATE_LAYOUT_NEEDED) != 0) {
-		wbool changed = (_W_WIDGET(_this)->state & STATE_LAYOUT_CHANGED) != 0;
+		int changed = (_W_WIDGET(_this)->state & STATE_LAYOUT_CHANGED) != 0;
 		_W_WIDGET(_this)->state &=
 				~(STATE_LAYOUT_NEEDED | STATE_LAYOUT_CHANGED);
 		//display.runSkin();
