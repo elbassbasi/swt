@@ -8,14 +8,17 @@
 #if defined( __WIN32__) || defined(__WIN64__)
 w_toolkit* w_toolkit_get_platform() {
 	if (win_toolkit == 0) {
-		const int _w_toolkit_size = sizeof(_w_toolkit);
-		win_toolkit = malloc(sizeof(_w_toolkit));
+		const int total_size = 0x10000;
+		const int toolkit_size = sizeof(_w_toolkit);
+		const int tmp_size = total_size - toolkit_size;
+		win_toolkit = malloc(total_size);
 		if (win_toolkit == 0) {
 			fprintf(stderr, "Error : Do not initialize toolkit\n");
 			exit(EXIT_FAILURE);
 			return 0;
 		}
 		memset(win_toolkit, 0, sizeof(_w_toolkit));
+		win_toolkit->tmp_alloc = tmp_size;
 		_w_toolkit_init(win_toolkit);
 	}
 	return (w_toolkit*) win_toolkit;

@@ -815,16 +815,16 @@ wresult _w_treecolumn_get_text(w_item *item, w_alloc *text) {
 	wresult result = W_FALSE;
 	HDITEMW hdItem;
 	hdItem.mask = HDI_TEXT;
-	hdItem.pszText = win_toolkit->tmp_wchar;
-	hdItem.cchTextMax = sizeof(win_toolkit->tmp_wchar)
-			/ sizeof(win_toolkit->tmp_wchar[0]);
+	hdItem.pszText = win_toolkit->tmp;
+	hdItem.cchTextMax = win_toolkit->tmp_alloc
+			/ sizeof(WCHAR);
 	if (SendMessageW(_W_TREE(_W_TREECOLUMN(item)->tree)->hwndHeader,
 	HDM_GETITEMW,
 	_W_TREECOLUMN(item)->index, (LPARAM) &hdItem)) {
 		wtext = hdItem.pszText;
 		if (hdItem.cchTextMax
-				> sizeof(win_toolkit->tmp_wchar)
-						/ sizeof(win_toolkit->tmp_wchar[0])) {
+				> win_toolkit->tmp_alloc
+						/ sizeof(WCHAR)) {
 			new_wtext = malloc(hdItem.cchTextMax * sizeof(WCHAR));
 			if (new_wtext == 0) {
 				return W_FALSE;

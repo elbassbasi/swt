@@ -75,13 +75,15 @@ w_image* _w_shell_get_image(w_shell *shell);
 int _w_shell_get_maximized(w_shell *shell);
 w_menu* _w_shell_get_menu_bar(w_shell *shell);
 int _w_shell_get_minimized(w_shell *shell);
-w_string_ref* _w_shell_get_text(w_shell *shell);
+wresult _w_shell_get_text(w_shell *shell, w_alloc alloc, void *user_data,
+		int enc);
 wresult _w_shell_set_default_button(w_shell *shell, struct w_button *button);
 wresult _w_shell_set_image(w_shell *shell, w_image *image);
 wresult _w_shell_set_maximized(w_shell *shell, int maximized);
 wresult _w_shell_set_menu_bar(w_shell *shell, w_menu *menu);
 wresult _w_shell_set_minimized(w_shell *shell, int minimized);
-wresult _w_shell_set_text(w_shell *shell, const char *text);
+wresult _w_shell_set_text(w_shell *shell, const char *text, size_t length,
+		int enc);
 wresult _w_shell_get_shell(w_control *control,w_shell** shell);
 int _SHELL_WM_CLOSE(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved);

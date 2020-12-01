@@ -371,8 +371,9 @@ wresult _w_toolbar_insert(w_toolbar *toolbar, w_toolitem *item,
 	lpButton.idCommand = 1;
 	lpButton.fsStyle = (byte) bits;
 	lpButton.fsState = (byte) TBSTATE_ENABLED;
+	int l, _l;
 	if (text != 0) {
-		int l = strlen(text), _l;
+		l = strlen(text);
 		_l = w_utf8_to_utf16(text, l, 0, 0);
 		t = _w_toolkit_malloc((_l + 1) * sizeof(WCHAR));
 		w_utf8_to_utf16(text, l, t, _l + 1);
@@ -396,7 +397,7 @@ wresult _w_toolbar_insert(w_toolbar *toolbar, w_toolitem *item,
 	LRESULT result = SendMessageW(_W_WIDGET(toolbar)->handle, TB_INSERTBUTTONW,
 			index, (LPARAM) &lpButton);
 	if (t != 0)
-		_w_toolkit_free(t);
+		_w_toolkit_free(t,(_l + 1) * sizeof(WCHAR));
 	if (result == 0) {
 		return W_ERROR_ITEM_NOT_ADDED;
 	}

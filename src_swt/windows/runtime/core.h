@@ -44,6 +44,10 @@ void unicode_free(struct UnicodeString *string);
 void unicode_alloc(struct UnicodeString *string, size_t size);
 void unicode_alloc_tmp(struct UnicodeString *string);
 w_string_ref* unicode_to_ref(WCHAR *text, int length);
+WCHAR* _win_text_fix(const char *text, size_t text_length, size_t *newlength,
+		int enc);
+void _win_text_free(const char *text, WCHAR *alloc,int length);
+wresult _win_text_set(WCHAR* text,int length,w_alloc alloc,void* user_data,int enc);
 #define WM_NOTIFY_CHILD (WM_USER + 1)
 #define WM_CTLCOLOR_CHILD (WM_USER + 2)
 #define WM_COMMAND_CHILD (WM_USER + 3)

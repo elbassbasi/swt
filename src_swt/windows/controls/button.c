@@ -159,7 +159,7 @@ wresult _w_button_get_selection(w_button *button) {
 	return _w_button_is_checked(button);
 }
 wresult _w_button_get_text(w_button *button, w_alloc *text) {
-	int l, _l = sizeof(win_toolkit->tmp_wchar)
+	/*int l, _l = sizeof(win_toolkit->tmp_wchar)
 			/ sizeof(win_toolkit->tmp_wchar[0]);
 	WCHAR *tmp = win_toolkit->tmp_wchar;
 	l = GetWindowTextW(_W_WIDGET(button)->handle, tmp, _l);
@@ -182,7 +182,7 @@ wresult _w_button_get_text(w_button *button, w_alloc *text) {
 	}
 	if (str == 0)
 		return W_ERROR_NO_MEMORY;
-	return W_TRUE;
+	return W_TRUE;*/
 }
 wresult _w_button_set_alignment(w_button *button, int alignment) {
 }
@@ -755,7 +755,7 @@ int _w_button_compute_size(w_widget *widget, struct w_event_compute_size *e,
 							}
 						}
 						DrawTextW(hDC, buffer, -1, &rect, flags);
-						_w_toolkit_free(buffer);
+						_w_toolkit_free(buffer,(length + 1) * sizeof(WCHAR));
 					}
 					width += rect.right - rect.left;
 					height = w_max(height, rect.bottom - rect.top);

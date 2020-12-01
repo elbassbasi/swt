@@ -306,12 +306,11 @@ int _TABFOLDER_WM_DRAWCHILD(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	reserved->def_proc(widget, e, reserved);
 	if (_W_WIDGET(widget)->style & W_CLOSE) {
-		static const int tmp_count = sizeof(win_toolkit->tmp_wchar)
-				/ sizeof(win_toolkit->tmp_wchar[0]);
+		int tmp_count = win_toolkit->tmp_alloc / sizeof(WCHAR);
 		DRAWITEMSTRUCT *lpDIS = (DRAWITEMSTRUCT*) e->lparam;
 		TC_ITEMW tci;
 		tci.mask = TCIF_IMAGE | TCIF_STATE | TCIF_TEXT;
-		tci.pszText = &win_toolkit->tmp_wchar[tmp_count / 2];
+		tci.pszText = &win_toolkit->tmp[tmp_count / 2];
 		tci.cchTextMax = tmp_count / 2;
 		tci.dwStateMask = TCIS_HIGHLIGHTED;
 		if (!SendMessageW(_W_WIDGET(widget)->handle, TCM_GETITEMW,
@@ -429,7 +428,7 @@ int _TABFOLDER_WM_DRAWCHILD(w_widget *widget, struct _w_event_platform *e,
 			crOldColor = SetTextColor(lpDIS->hDC, GetSysColor(COLOR_BTNTEXT));
 
 		rect.top += ((lpDIS->itemState & ODS_SELECTED) != 0) ? 4 : 3;
-		char *text = (char*) win_toolkit->tmp_wchar;
+		char *text = (char*) win_toolkit->tmp;
 		int count = w_utf8_from_utf16(tci.pszText, -1, text, tmp_count);
 		text[tmp_count - 1] = 0;
 		bounds.x = rect.left;

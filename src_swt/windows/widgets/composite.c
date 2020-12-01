@@ -347,7 +347,7 @@ int _COMPOSITE_WM_PAINT(w_widget *widget, _w_event_platform *e,
 						HRGN newSysRgn = ExtCreateRegion(_rgnXForm, nBytes,
 								lpRgnData);
 						DeleteObject(sysRgn);
-						_w_toolkit_free(lpRgnData);
+						_w_toolkit_free(lpRgnData,nBytes);
 						sysRgn = newSysRgn;
 					}
 				}
@@ -428,7 +428,7 @@ int _COMPOSITE_WM_PAINT(w_widget *widget, _w_event_platform *e,
 						event.gc = W_GRAPHICS(&gc);
 						_w_widget_send_event(widget, (w_event*) &event);
 					}
-					_w_toolkit_free(lpRgnData);
+					_w_toolkit_free(lpRgnData,nBytes);
 				}
 			} else {
 				if ((_W_WIDGET(widget)->style

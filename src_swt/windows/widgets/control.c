@@ -123,11 +123,10 @@ wresult _w_control_create(w_control *control, w_composite *parent,
 	 }*/
 	return W_TRUE;
 }
-void _w_control_def_proc(w_widget *widget, _w_event_platform *e) {
-	struct _w_control_reserved *reserved = _W_CONTROL_RESERVED(
-			_w_widget_get_reserved(widget));
-	if (reserved->default_proc != 0) {
-		e->result = CallWindowProcW(reserved->default_proc, e->hwnd, e->msg,
+void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
+		struct _w_widget_reserved *reserved) {
+	if (_W_CONTROL_RESERVED(reserved)->default_proc != 0) {
+		e->result = CallWindowProcW(_W_CONTROL_RESERVED(reserved)->default_proc, e->hwnd, e->msg,
 				e->wparam, e->lparam);
 	} else
 		e->result = DefWindowProcW(e->hwnd, e->msg, e->wparam, e->lparam);

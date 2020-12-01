@@ -1605,18 +1605,14 @@ int _TREE_WM_NOTIFY_GETDISPINFO(w_widget *widget, struct _w_event_platform *e,
 		event.value = &value;
 		w_value_init(&value);
 		w_value_set_string(&value,
-				(char*) &win_toolkit->tmp_wchar[sizeof(win_toolkit->tmp_wchar)
-						/ 2 * sizeof(WCHAR)],
-				sizeof(win_toolkit->tmp_wchar) / sizeof(WCHAR),
-				W_VALUE_USER_MEMORY);
+				(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc / 2],
+				win_toolkit->tmp_alloc / sizeof(WCHAR), W_VALUE_USER_MEMORY);
 		result = w_widget_send_event(widget, (w_event*) &event);
 		if (result) {
 			result = W_TRUE;
-			char *text =
-					w_value_string_copy_is_needed(&value,
-							(char*) &win_toolkit->tmp_wchar[sizeof(win_toolkit->tmp_wchar)
-									/ 2 * sizeof(WCHAR)],
-							sizeof(win_toolkit->tmp_wchar) / sizeof(WCHAR));
+			char *text = w_value_string_copy_is_needed(&value,
+					(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc / 2],
+					win_toolkit->tmp_alloc / sizeof(WCHAR));
 			lptvdi->item.cchTextMax = w_utf8_to_utf16(text, -1,
 					lptvdi->item.pszText, lptvdi->item.cchTextMax);
 		} else {
@@ -1925,7 +1921,7 @@ int _TREE_WM_NOTIFY_CDDS_ITEMPREPAINT(w_widget *widget,
 					clrSortBk, 0, 0);
 		} else {
 			if (IsWindowEnabled(
-					_W_WIDGET(widget)->handle) /*|| findImageControl () != null*/) {
+			_W_WIDGET(widget)->handle) /*|| findImageControl () != null*/) {
 				//_w_control_draw_background_1(W_CONTROL(widget),hDC,&nmcd->nmcd.rc);
 			} else {
 				/*_w_control_fill_background(W_CONTROL(widget), hDC,
@@ -2345,7 +2341,7 @@ void _TREE_WM_NOTIFY_CDDS_init(struct cdds_item *item) {
 	GetClientRect(scrolledHandle, &item->clientRect);
 	if (_W_TREE(item->widget)->hwndHeader != 0) {
 		MapWindowPoints(_W_TREE(item->widget)->hwndParent,
-				_W_WIDGET(item->widget)->handle, (LPPOINT) &item->clientRect, 2);
+		_W_WIDGET(item->widget)->handle, (LPPOINT) &item->clientRect, 2);
 		/*if (columnCount != 0) {
 		 order = new int [columnCount];
 		 OS.SendMessage (_W_TREE(widget)->hwndHeader, OS.HDM_GETORDERARRAY, columnCount, order);
@@ -2380,11 +2376,10 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawtext(struct cdds_item *item) {
 			TV_ITEMW tvi;
 			tvi.mask = TVIF_TEXT | TVIF_HANDLE;
 			tvi.hItem = (HTREEITEM) item->nmcd->nmcd.dwItemSpec;
-			tvi.pszText = win_toolkit->tmp_wchar;
-			tvi.cchTextMax = sizeof(win_toolkit->tmp_wchar)
-					/ sizeof(win_toolkit->tmp_wchar[0]);
+			tvi.pszText = win_toolkit->tmp;
+			tvi.cchTextMax = win_toolkit->tmp_alloc / sizeof(WCHAR);
 			string_length = SendMessageW(
-					_W_WIDGET(item->widget)->handle, TVM_GETITEMW, 0, (WPARAM) &tvi);
+			_W_WIDGET(item->widget)->handle, TVM_GETITEMW, 0, (WPARAM) &tvi);
 			string = tvi.pszText;
 			string_length = tvi.cchTextMax;
 		} else {
@@ -2398,25 +2393,24 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawtext(struct cdds_item *item) {
 			item->event.value = &value;
 			w_value_init(&value);
 			w_value_set_string(&value,
-					(char*) &win_toolkit->tmp_wchar[sizeof(win_toolkit->tmp_wchar)
-							/ 2 * sizeof(WCHAR)],
-					sizeof(win_toolkit->tmp_wchar) / sizeof(WCHAR),
+					(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc / 2],
+					win_toolkit->tmp_alloc / sizeof(WCHAR),
 					W_VALUE_USER_MEMORY);
 			ret = w_widget_send_event(item->widget, (w_event*) &item->event);
 			if (ret) {
 				ret = 0;
 				char *text =
 						w_value_string_copy_is_needed(&value,
-								(char*) &win_toolkit->tmp_wchar[sizeof(win_toolkit->tmp_wchar)
+								(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc
 										/ 2 * sizeof(WCHAR)],
-								sizeof(win_toolkit->tmp_wchar) / sizeof(WCHAR));
+										win_toolkit->tmp_alloc / sizeof(WCHAR));
 				string_length = w_utf8_to_utf16(text, -1, 0, 0);
 				if ((string_length + 1)
-						>= sizeof(win_toolkit->tmp_wchar) / sizeof(WCHAR)) {
+						>= win_toolkit->tmp_alloc / sizeof(WCHAR)) {
 					string = malloc(string_length + 1);
 					ret = 1;
 				} else {
-					string = win_toolkit->tmp_wchar;
+					string = win_toolkit->tmp;
 				}
 				if (string != 0)
 					w_utf8_to_utf16(text, -1, string, string_length + 1);
@@ -2523,7 +2517,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawitem(struct cdds_item *item) {
 						== item->nmcd->nmcd.dwItemSpec) {
 					if (_W_WIDGET(item->widget)->handle == GetFocus()) {
 						int uiState = SendMessageW(
-								_W_WIDGET(item->widget)->handle,
+						_W_WIDGET(item->widget)->handle,
 						WM_QUERYUISTATE, 0, 0);
 						if ((uiState & UISF_HIDEFOCUS) == 0)
 							item->event.focused = 1;
@@ -2588,7 +2582,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawitem(struct cdds_item *item) {
 							FALSE;
 							if ((_W_WIDGET(item->widget)->handle == GetFocus() /*|| display.getHighContrast ()*/)
 									&& IsWindowEnabled(
-											_W_WIDGET(item->widget)->handle)) {
+									_W_WIDGET(item->widget)->handle)) {
 								item->clrTextBk = GetSysColor(
 								COLOR_HIGHLIGHT);
 							} else {
@@ -2642,7 +2636,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawitem(struct cdds_item *item) {
 						_W_TREE(item->widget)->selectionForeground = newTextClr;
 						if (!_W_TREE(item->widget)->explorerTheme) {
 							if (item->clrTextBk == 0 && IsWindowEnabled(
-									_W_WIDGET(item->widget)->handle)) {
+							_W_WIDGET(item->widget)->handle)) {
 								/*Control control = findBackgroundControl ();
 								 if (control == null) control = this;
 								 clrTextBk = control.getBackgroundPixel ();*/
@@ -2687,7 +2681,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawitem(struct cdds_item *item) {
 			 if (images != null) image = images [index];*/
 		}
 		HIMAGELIST himagelist = (HIMAGELIST) SendMessageW(
-				_W_WIDGET(item->widget)->handle, TVM_GETIMAGELIST,
+		_W_WIDGET(item->widget)->handle, TVM_GETIMAGELIST,
 		TVSIL_NORMAL, 0);
 		int cx = 0, cy = 0;
 		if (himagelist != 0)
@@ -2743,7 +2737,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_paintitem(struct cdds_item *item) {
 	_W_TREE_BOUNDS_GET_TEXT | _W_TREE_BOUNDS_GET_IMAGE);
 	int nSavedDC = SaveDC(hDC);
 	_w_graphics_init(&item->gc, hDC);
-	if (w_font_isok(item->attr.font)>0) {
+	if (w_font_isok(item->attr.font) > 0) {
 		w_graphics_set_font(&item->gc, item->attr.font);
 	}
 	w_graphics_set_foreground(&item->gc, GetTextColor(hDC));
@@ -2791,7 +2785,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_paintitem(struct cdds_item *item) {
 			|| (_W_WIDGET(item->widget)->style & W_FULL_SELECTION) != 0) {
 				if (_W_WIDGET(item->widget)->handle == GetFocus()) {
 					int uiState = (int) SendMessageW(
-							_W_WIDGET(item->widget)->handle, WM_QUERYUISTATE, 0, 0);
+					_W_WIDGET(item->widget)->handle, WM_QUERYUISTATE, 0, 0);
 					if ((uiState & UISF_HIDEFOCUS) == 0)
 						//event.detail |= W_FOCUSED;
 						item->event.focused = 1;
@@ -3444,7 +3438,7 @@ int _TREE_WM_NOTIFY_ITEMEXPANDING(w_widget *widget, struct _w_event_platform *e,
 				 * if tree item has no children remove + image
 				 */
 				HTREEITEM hFirstItem = (HTREEITEM) SendMessageW(
-						_W_WIDGET(widget)->handle, TVM_GETNEXTITEM,
+				_W_WIDGET(widget)->handle, TVM_GETNEXTITEM,
 				TVGN_CHILD, (LPARAM) treeView->itemNew.hItem);
 				if (hFirstItem == 0) {
 					tvItem.mask = TVIF_CHILDREN;

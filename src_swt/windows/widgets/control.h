@@ -55,7 +55,8 @@ void _w_control_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle);
 wresult _w_control_create(w_control *control, w_composite *parent,
 		const char *clazz, DWORD dwExStyle, DWORD dwStyle);
-void _w_control_def_proc(w_widget *widget, _w_event_platform *e);
+void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
+		struct _w_widget_reserved *reserved);
 HWND _w_control_h(w_control *control);
 /*
  *  function

@@ -108,7 +108,7 @@ void _w_themedata_draw_text(w_themedata *data, w_graphics *gc, w_rect *bounds,
 			}*/
 		}
 		SelectObject(_W_GRAPHICS(gc)->handle, oldFont);
-		_w_toolkit_free(chars);
+		_w_toolkit_free(chars,(charsength + 1) * sizeof(WCHAR));
 	}
 }
 void _w_themedata_get_bounds(w_themedata *data, int part, w_rect *result,

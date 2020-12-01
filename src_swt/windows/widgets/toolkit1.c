@@ -80,10 +80,26 @@ void _w_toolkit_init_dll(_w_toolkit *toolkit) {
 
 }
 void* _w_toolkit_malloc(size_t size) {
-	return malloc(size);
+	if ((win_toolkit->tmp_length + size) < win_toolkit->tmp_alloc) {
+		int i = win_toolkit->tmp_length;
+		win_toolkit->tmp_length += size;
+		return &win_toolkit->tmp[i];
+	} else {
+		return malloc(size);
+	}
 }
-void _w_toolkit_free(void *ptr) {
-	free(ptr);
+void* _w_toolkit_malloc_all(size_t *size) {
+	*size = win_toolkit->tmp_alloc - win_toolkit->tmp_length;
+	int i = win_toolkit->tmp_length;
+	win_toolkit->tmp_length += *size;
+	return &win_toolkit->tmp[i];
+}
+void _w_toolkit_free(void *ptr, size_t size) {
+	wintptr diff = ptr - (void*) win_toolkit->tmp;
+	if (diff >= 0 && diff < win_toolkit->tmp_alloc) {
+		win_toolkit->tmp_length -= size;
+	} else
+		free(ptr);
 }
 void _w_toolkit_add_shell(_w_shell *shell) {
 	shell->next = 0;
@@ -195,9 +211,9 @@ wresult _w_toolkit_messagebox_open(w_toolkit *toolkit,
 	 * anyway and not rely on MB_MODAL to work by making the
 	 * parent be temporarily modal.
 	 */
-	HWND hwndOwner =
-			messagebox->parent != 0 ?
-					_W_WIDGET(messagebox->parent)->handle : 0;
+	HWND hwndOwner = messagebox->parent != 0 ?
+	_W_WIDGET(messagebox->parent)->handle :
+												0;
 	/*Display display = parent != null ? parent.getDisplay (): Display.getCurrent ();
 	 Dialog oldModal = null;
 	 if ((bits & MB_TASKMODAL) != 0) {

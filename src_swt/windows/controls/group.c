@@ -140,7 +140,7 @@ int _w_group_compute_size(w_widget *widget, struct w_event_compute_size *e,
 			W_COMCTL32_VERSION >= VERSION(6, 0) && IsAppThemed() ? 0 : 1;
 			e->size->width = w_max(e->size->width,
 					rect.right - rect.left + CLIENT_INSET * 6 + offsetY);
-			_w_toolkit_free(buffer);
+			_w_toolkit_free(buffer,(length + 3) * sizeof(WCHAR));
 		}
 	}
 	return ret;

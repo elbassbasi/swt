@@ -316,7 +316,18 @@ w_menu* _w_shell_get_menu_bar(w_shell *shell) {
 }
 int _w_shell_get_minimized(w_shell *shell) {
 }
-w_string_ref* _w_shell_get_text(w_shell *shell) {
+wresult _w_shell_get_text(w_shell *shell, w_alloc alloc, void *user_data,
+		int enc) {
+	wresult result;
+	int length = GetWindowTextLengthW(_W_WIDGET(shell)->handle);
+	WCHAR *s = _w_toolkit_malloc(length);
+	if (s != 0) {
+		GetWindowTextW(_W_WIDGET(shell)->handle, s, length);
+		result = _win_text_set(s, length, alloc, user_data, enc);
+		_w_toolkit_free(s, length);
+		return result;
+	} else
+		return W_ERROR_NO_MEMORY;
 }
 wresult _w_shell_set_default_button(w_shell *shell, struct w_button *button) {
 }
@@ -343,13 +354,14 @@ wresult _w_shell_set_menu_bar(w_shell *shell, w_menu *menu) {
 }
 wresult _w_shell_set_minimized(w_shell *shell, int minimized) {
 }
-wresult _w_shell_set_text(w_shell *shell, const char *text) {
+wresult _w_shell_set_text(w_shell *shell, const char *text, size_t length,
+		int enc) {
 	if (text == 0)
 		text = "";
-	struct UnicodeString str;
-	unicode_set(&str, text, -1);
-	WINBOOL result = SetWindowTextW(_W_WIDGET(shell)->handle, str.str);
-	unicode_free(&str);
+	size_t newlength;
+	WCHAR *s = _win_text_fix(text, length, &newlength, enc);
+	WINBOOL result = SetWindowTextW(_W_WIDGET(shell)->handle, s);
+	_win_text_free(text, s, newlength);
 	if (result)
 		return W_TRUE;
 	else
@@ -379,12 +391,7 @@ int _SHELL_WM_CLOSE(w_widget *widget, struct _w_event_platform *e,
 	 if (result != null) return result;
 	 if (isEnabled () && isActive ()) closeWidget ();
 	 return LRESULT.ZERO;*/
-	w_event event;
-	event.type = W_EVENT_CLOSE;
-	event.platform_event = (w_event_platform*) e;
-	event.widget = widget;
-	event.data = 0;
-	_w_widget_send_event(widget, &event);
+	_w_shell_close_widget(W_SHELL(widget), e);
 	e->result = 0;
 	return W_FALSE;
 }

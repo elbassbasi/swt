@@ -109,7 +109,9 @@ typedef struct _w_toolkit {
 	_W_CLASS_DECL(tracker); //
 	_W_CLASS_DECL(tray); //
 	struct _w_trayitem_class class_trayitem; //
-	WCHAR tmp_wchar[0x200];
+	size_t tmp_alloc;
+	size_t tmp_length;
+	char tmp[0];
 } _w_toolkit;
 extern _w_toolkit *win_toolkit;
 typedef struct _w_shells_iterator {
@@ -133,15 +135,18 @@ void _w_toolkit_init_dll(_w_toolkit *toolkit);
 void _w_toolkit_registre_class(_w_toolkit *toolkit);
 void _w_toolkit_registre_free(w_widget *widget, w_widget_post_event_proc _proc);
 void* _w_toolkit_malloc(size_t size);
-void _w_toolkit_free(void* ptr);
+void* _w_toolkit_malloc_all(size_t *size);
+void _w_toolkit_free(void *ptr,size_t size);
 HTHEME _w_theme_get_htheme(int index, const char *clazz);
 /**
  * public function
  */
 void _w_toolkit_dispose(w_toolkit *_toolkit);
 wresult _w_toolkit_check_widget(w_toolkit *toolkit, w_widget *widget);
-wresult _w_toolkit_check_widgetdata(w_toolkit *toolkit, w_widgetdata *widgetdata);
-struct _w_widget_class* _w_toolkit_get_class(w_toolkit *toolkit, wushort clazz_id);
+wresult _w_toolkit_check_widgetdata(w_toolkit *toolkit,
+		w_widgetdata *widgetdata);
+struct _w_widget_class* _w_toolkit_get_class(w_toolkit *toolkit,
+		wushort clazz_id);
 struct w_theme* _w_toolkit_get_theme(w_toolkit *toolkit);
 wresult _w_toolkit_async_exec(w_toolkit *toolkit, w_thread_start function,
 		void *args);
@@ -160,12 +165,14 @@ int _w_toolkit_get_double_click_time(w_toolkit *toolkit);
 w_control* _w_toolkit_get_focus_control(w_toolkit *toolkit);
 wresult _w_toolkit_get_high_contrast(w_toolkit *toolkit);
 int _w_toolkit_get_icon_depth(w_toolkit *toolkit);
-size_t _w_toolkit_get_icon_sizes(w_toolkit *toolkit, w_size *sizes, size_t length);
+size_t _w_toolkit_get_icon_sizes(w_toolkit *toolkit, w_size *sizes,
+		size_t length);
 void _w_toolkit_get_shells(w_toolkit *toolkit, w_iterator *shells);
 w_color _w_toolkit_get_system_color(w_toolkit *toolkit, wuint id);
 w_cursor* _w_toolkit_get_system_cursor(w_toolkit *toolkit, wuint id);
 w_font* _w_toolkit_get_system_font(w_toolkit *toolkit);
-wresult _w_toolkit_get_system_image(w_toolkit *toolkit, wuint id, w_image *image);
+wresult _w_toolkit_get_system_image(w_toolkit *toolkit, wuint id,
+		w_image *image);
 w_menu* _w_toolkit_get_system_menu(w_toolkit *toolkit);
 struct w_taskbar* _w_toolkit_get_system_taskbar(w_toolkit *toolkit);
 struct w_tray* _w_toolkit_get_system_tray(w_toolkit *toolkit);
@@ -177,7 +184,7 @@ wresult _w_toolkit_map_0(w_toolkit *toolkit, w_control *from, w_control *to,
 wresult _w_toolkit_map_1(w_toolkit *toolkit, w_control *from, w_control *to,
 		w_rect *result, w_rect *rectangle);
 wresult _w_toolkit_post(w_toolkit *toolkit, w_event *event);
-wresult _w_toolkit_post_quit(w_toolkit *toolkit,int quit);
+wresult _w_toolkit_post_quit(w_toolkit *toolkit, int quit);
 wresult _w_toolkit_read_and_dispatch(w_toolkit *toolkit);
 wresult _w_toolkit_set_cursor_location(w_toolkit *toolkit, w_point *point);
 int _w_toolkit_run(w_toolkit *toolkit);
