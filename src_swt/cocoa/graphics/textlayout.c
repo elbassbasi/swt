@@ -11,7 +11,7 @@ void w_textstyle_init(w_textstyle *style){
 }
  void w_textlayout_init(w_textlayout *textlayout){}
  void w_textlayout_dispose(w_textlayout *textlayout){}
- wbool w_textlayout_isok(w_textlayout *textlayout){}
+ wresult w_textlayout_isok(w_textlayout *textlayout){}
  wresult w_textlayout_create(w_textlayout *textlayout){}
  wresult w_textlayout_draw(w_textlayout *textlayout, w_graphics *gc,
         int x, int y, int selectionStart, int selectionEnd,
@@ -21,50 +21,51 @@ void w_textlayout_draw_border(w_textlayout *textlayout, w_graphics *gc, int x,
  int w_textlayout_get_alignment(w_textlayout *textlayout){}
  int w_textlayout_get_ascent(w_textlayout *textlayout){}
  void w_textlayout_get_bounds(w_textlayout *textlayout, int start,
-        int end, w_rect *rect){}
+ int end, w_rect *rect, int enc){}
  void w_textlayout_get_bounds_unicode(w_textlayout *textlayout, int start,
         int end, w_rect *rect){}
  int w_textlayout_get_descent(w_textlayout *textlayout){}
  w_font* w_textlayout_get_font(w_textlayout *textlayout){}
  int w_textlayout_get_indent(w_textlayout *textlayout){}
- wbool w_textlayout_get_justify(w_textlayout *textlayout){}
- int w_textlayout_get_level(w_textlayout *textlayout, int offset){}
+ wresult w_textlayout_get_justify(w_textlayout *textlayout){}
+ int w_textlayout_get_level(w_textlayout *textlayout, int offset,
+ int enc){}
  int w_textlayout_get_level_unicode(w_textlayout *textlayout, int offset){}
  void w_textlayout_get_line_bounds(w_textlayout *textlayout,
         int lineIndex, w_rect *rect){}
  int w_textlayout_get_line_count(w_textlayout *textlayout){}
- int w_textlayout_get_line_index(w_textlayout *textlayout,
-        int offset){}
+ int w_textlayout_get_line_index(w_textlayout *textlayout, int offset,
+ int enc){}
  int w_textlayout_get_line_index_unicode(w_textlayout *textlayout,
         int offset){}
  wresult w_textlayout_get_line_metrics(w_textlayout *textlayout,
         int lineIndex, w_fontmetrics *fontmetrics){}
  int w_textlayout_get_line_offset(w_textlayout *textlayout,
-        int lineIndex){}
+ int lineIndex, int enc){}
  int w_textlayout_get_line_offset_unicode(w_textlayout *textlayout,
         int lineIndex){}
  wresult w_textlayout_get_location(w_textlayout *textlayout,
-        int offset, wbool trailing, w_point *pt){}
+ int offset, int trailing, w_point *pt, int enc){}
  wresult w_textlayout_get_location_unicode(w_textlayout *textlayout,
-        int offset, wbool trailing, w_point *pt){}
+        int offset, int trailing, w_point *pt){}
  int w_textlayout_get_next_offset(w_textlayout *textlayout,
-        int offset, int movement){}
+ int offset, int movement, int enc){}
  int w_textlayout_get_next_offset_unicode(w_textlayout *textlayout,
         int offset, int movement){}
  int w_textlayout_get_offset(w_textlayout *textlayout, w_point *point,
-        int *trailing, int trailing_count){}
+ int *trailing, int trailing_count, int enc){}
  int w_textlayout_get_offset_unicode(w_textlayout *textlayout, w_point *point,
         int *trailing, int trailing_count){}
  int w_textlayout_get_orientation(w_textlayout *textlayout){}
  int w_textlayout_get_previous_offset(w_textlayout *textlayout,
-        int offset, int movement){}
+ int offset, int movement, int enc){}
  int w_textlayout_get_previous_offset_unicode(w_textlayout *textlayout,
         int offset, int movement){}
  wresult w_textlayout_get_ranges(w_textlayout *textlayout,
         w_iterator *ranges){}
  int w_textlayout_get_spacing(w_textlayout *textlayout){}
  wresult w_textlayout_get_style(w_textlayout *textlayout, int offset,
-        w_textstyle *style){}
+ w_textstyle *style, int enc){}
  wresult w_textlayout_get_style_unicode(w_textlayout *textlayout, int offset,
         w_textstyle *style){}
  int w_textlayout_get_tabs(w_textlayout *textlayout, int *tabs,
@@ -81,12 +82,12 @@ void w_textlayout_draw_border(w_textlayout *textlayout, w_graphics *gc, int x,
  wresult w_textlayout_set_font(w_textlayout *textlayout, w_font *font){}
  wresult w_textlayout_set_indent(w_textlayout *textlayout, int indent){}
  wresult w_textlayout_set_justify(w_textlayout *textlayout,
-        wbool justify){}
+        int justify){}
  wresult w_textlayout_set_orientation(w_textlayout *textlayout,
         int orientation){}
  wresult w_textlayout_set_spacing(w_textlayout *textlayout, int spacing){}
  wresult w_textlayout_set_style(w_textlayout *textlayout,
-        w_textstyle *style, int start, int end){}
+ w_textstyle *style, int start, int end, int enc){}
  wresult w_textlayout_set_style_unicode(w_textlayout *textlayout,
         w_textstyle *style, int start, int end){}
  wresult w_textlayout_set_tabs(w_textlayout *textlayout, int *tabs,

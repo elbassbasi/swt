@@ -9,7 +9,7 @@
 #include "toolkit.h"
 wresult _w_composite_create_handle(w_widget *widget, _w_widget_reserved *reserved){
     _W_WIDGET(widget)->state |= STATE_CANVAS;
-    wbool scrolled = (_W_WIDGET(widget)->style & (W_VSCROLL | W_HSCROLL)) != 0;
+    int scrolled = (_W_WIDGET(widget)->style & (W_VSCROLL | W_HSCROLL)) != 0;
     if (!scrolled)  _W_WIDGET(widget)->state |= STATE_THEME_BACKGROUND;
     NSScrollView* scrollView = 0;
         if (scrolled /*|| _W_CONTROL_RESERVED(reserved)->has_border()*/) {
@@ -33,7 +33,7 @@ wresult _w_composite_create_handle(w_widget *widget, _w_widget_reserved *reserve
     }
 }
 wresult _w_composite_create_0(w_widget *widget,int style,NSScrollView** scrollView,NSView** view) {
-        wbool scrolled = (style & (W_VSCROLL | W_HSCROLL)) != 0;
+        int scrolled = (style & (W_VSCROLL | W_HSCROLL)) != 0;
         if (!scrolled)  _W_WIDGET(widget)->state |= STATE_THEME_BACKGROUND;
         if (scrolled ||  (style & W_BORDER) != 0 ) {
             NSScrollView* scrollWidget = NSScrollView_new(widget);
@@ -93,7 +93,7 @@ wresult _w_composite_create(w_widget *widget, w_widget *parent, int style,
     }
     return ret;
 }
-wbool _w_composite_iterator_next(w_iterator *it, void *obj) {
+wresult _w_composite_iterator_next(w_iterator *it, void *obj) {
     _w_composite_iterator* _it =(_w_composite_iterator*) it;
     *((w_control**) obj) = 0;
     if(_it->i >= _it->count)
@@ -163,7 +163,7 @@ void _w_composite_set_layout_deferred(w_composite *composite, int defer) {
 	}
 }
 void _w_composite_minimum_size(w_composite *composite, w_size *size, int wHint,
-		int hHint, wbool changed) {
+		int hHint, int changed) {
 	w_iterator children;
 	w_iterator_init(&children);
 	w_composite_get_children(composite, &children);
@@ -227,7 +227,7 @@ void _w_composite_update_layout(w_control *_this, int flags,
         return;
     }
     if ((_W_WIDGET(_this)->state & STATE_LAYOUT_NEEDED) != 0) {
-        wbool changed = (_W_WIDGET(_this)->state & STATE_LAYOUT_CHANGED) != 0;
+        int changed = (_W_WIDGET(_this)->state & STATE_LAYOUT_CHANGED) != 0;
         _W_WIDGET(_this)->state &=
                 ~(STATE_LAYOUT_NEEDED | STATE_LAYOUT_CHANGED);
         //display.runSkin();

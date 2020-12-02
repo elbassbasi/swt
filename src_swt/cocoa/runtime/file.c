@@ -12,7 +12,7 @@ FILE* w_fopen(const char *file, const char *mode) {
 }
 typedef struct w_iterator_dir {
 } w_iterator_dir;
-wbool _w_iterator_dir_next(w_iterator *it, void *obj) {
+wresult _w_iterator_dir_next(w_iterator *it, void *obj) {
 }
 wresult _w_iterator_dir_reset(w_iterator *it) {
 	return W_TRUE;

@@ -20,9 +20,9 @@ int _w_treecolumn_get_id(w_treecolumn *column) {
 }
 int _w_treecolumn_get_image(w_treecolumn *column) {
 }
-wbool _w_treecolumn_get_moveable(w_treecolumn *column) {
+wresult _w_treecolumn_get_moveable(w_treecolumn *column) {
 }
-wbool _w_treecolumn_get_resizable(w_treecolumn *column) {
+wresult _w_treecolumn_get_resizable(w_treecolumn *column) {
 }
 w_string_ref* _w_treecolumn_get_tooltip_text(w_treecolumn *column) {
 }
@@ -36,9 +36,9 @@ wresult _w_treecolumn_set_id(w_treecolumn *column, int id) {
 }
 wresult _w_treecolumn_set_image(w_treecolumn *column, int image) {
 }
-wresult _w_treecolumn_set_moveable(w_treecolumn *column, wbool moveable) {
+wresult _w_treecolumn_set_moveable(w_treecolumn *column, int moveable) {
 }
-wresult _w_treecolumn_set_resizable(w_treecolumn *column, wbool resizable) {
+wresult _w_treecolumn_set_resizable(w_treecolumn *column, int resizable) {
 }
 wresult _w_treecolumn_set_tooltip_text(w_treecolumn *column,
 		const char *text) {
@@ -60,21 +60,21 @@ wresult _w_treecolumn_set_text(w_item *item, const char *string) {
 /*
  * tree item
  */
-wresult _w_treeitem_clear(w_treeitem *item, int index, wbool all) {
+wresult _w_treeitem_clear(w_treeitem *item, int index, int all) {
 }
-wresult _w_treeitem_clear_all(w_treeitem *item, wbool all) {
+wresult _w_treeitem_clear_all(w_treeitem *item, int all) {
 }
 void _w_treeitem_get_bounds(w_treeitem *item, w_rect *bounds) {
 }
-wbool _w_treeitem_get_checked(w_treeitem *item) {
+wresult _w_treeitem_get_checked(w_treeitem *item) {
 }
-wbool _w_treeitem_get_expanded(w_treeitem *item) {
+wresult _w_treeitem_get_expanded(w_treeitem *item) {
 }
-wbool _w_treeitem_get_first_child(w_treeitem *item, w_treeitem *child) {
+wresult _w_treeitem_get_first_child(w_treeitem *item, w_treeitem *child) {
 }
-wbool _w_treeitem_get_grayed(w_treeitem *item) {
+wresult _w_treeitem_get_grayed(w_treeitem *item) {
 }
-wbool _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
+wresult _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
 }
 int _w_treeitem_get_item_count(w_treeitem *item) {
 }
@@ -82,15 +82,15 @@ void _w_treeitem_get_items(w_treeitem *item, w_iterator *items) {
 }
 int _w_treeitem_get_image(w_treeitem *item) {
 }
-wbool _w_treeitem_get_last_child(w_treeitem *item, w_treeitem *child) {
+wresult _w_treeitem_get_last_child(w_treeitem *item, w_treeitem *child) {
 }
-wbool _w_treeitem_get_next_sibling(w_treeitem *item, w_treeitem *next) {
+wresult _w_treeitem_get_next_sibling(w_treeitem *item, w_treeitem *next) {
 }
 w_tree* _w_treeitem_get_parent(w_treeitem *item) {
 }
-wbool _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
+wresult _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
 }
-wbool _w_treeitem_get_prev_sibling(w_treeitem *item, w_treeitem *prev) {
+wresult _w_treeitem_get_prev_sibling(w_treeitem *item, w_treeitem *prev) {
 }
 wresult _w_treeitem_insert_item(w_treeitem *item, w_treeitem *subitem,
 		const char *text, int index) {
@@ -166,11 +166,11 @@ wresult _w_treeitem_insert_item_after(w_treeitem *item, w_treeitem *subitem,
 }
 wresult _w_treeitem_remove_all(w_treeitem *item) {
 }
-wresult _w_treeitem_set_checked(w_treeitem *item, wbool checked) {
+wresult _w_treeitem_set_checked(w_treeitem *item, int checked) {
 }
-wresult _w_treeitem_set_expanded(w_treeitem *item, wbool expanded) {
+wresult _w_treeitem_set_expanded(w_treeitem *item, int expanded) {
 }
-wresult _w_treeitem_set_grayed(w_treeitem *item, wbool grayed) {
+wresult _w_treeitem_set_grayed(w_treeitem *item, int grayed) {
 }
 wresult _w_treeitem_set_image(w_treeitem *item, int image) {
 }
@@ -197,7 +197,7 @@ wresult _w_treeitem_set_text(w_item *item, const char *string) {
 void _w_treeitem_copy(w_widgetdata *from, w_widgetdata *to) {
 
 }
-wbool _w_treeitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_treeitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 
 }
 /*
@@ -211,9 +211,9 @@ int _w_tree_get_gridline_width(w_tree *tree) {
 }
 int _w_tree_get_header_height(w_tree *tree) {
 }
-wbool _w_tree_get_header_visible(w_tree *tree) {
+wresult _w_tree_get_header_visible(w_tree *tree) {
 }
-wbool _w_tree_get_column(w_tree *tree, int index, w_treecolumn *column) {
+wresult _w_tree_get_column(w_tree *tree, int index, w_treecolumn *column) {
 }
 int _w_tree_get_column_count(w_tree *tree) {
 }
@@ -223,15 +223,15 @@ void _w_tree_get_columns(w_tree *tree, w_iterator *columns) {
 }
 w_imagelist* _w_tree_get_imagelist(w_tree *tree) {
 }
-wbool _w_tree_get_item(w_tree *tree, w_point *point, w_treeitem *item) {
+wresult _w_tree_get_item(w_tree *tree, w_point *point, w_treeitem *item) {
 }
 int _w_tree_get_item_height(w_tree *tree) {
 }
-wbool _w_tree_get_lines_visible(w_tree *tree) {
+wresult _w_tree_get_lines_visible(w_tree *tree) {
 }
-wbool _w_tree_get_parent_item(w_tree *tree, w_treeitem *item) {
+wresult _w_tree_get_parent_item(w_tree *tree, w_treeitem *item) {
 }
-wbool _w_tree_get_root_item(w_tree *tree, w_treeitem *root) {
+wresult _w_tree_get_root_item(w_tree *tree, w_treeitem *root) {
     _w_widget_reserved* reserved = _w_widget_get_reserved(W_WIDGET(tree));
     _W_TREEITEM(root)->view =(NSOutlineView*) _W_CONTROL_RESERVED(reserved)->get_view(W_WIDGET(tree));
     _W_TREEITEM(root)->handle = 0;
@@ -243,11 +243,11 @@ void _w_tree_get_selection(w_tree *tree, w_iterator *selection) {
 }
 int _w_tree_get_selection_count(w_tree *tree) {
 }
-wbool _w_tree_get_sort_column(w_tree *tree, w_treecolumn *column) {
+wresult _w_tree_get_sort_column(w_tree *tree, w_treecolumn *column) {
 }
 int _w_tree_get_sort_direction(w_tree *tree) {
 }
-wbool _w_tree_get_top_item(w_tree *tree, w_treeitem *topitem) {
+wresult _w_tree_get_top_item(w_tree *tree, w_treeitem *topitem) {
 }
 wresult _w_tree_insert_first_column(w_tree *tree,
 		struct _w_tree_reserved *reserved) {
@@ -265,11 +265,11 @@ wresult _w_tree_set_imagelist(w_tree *tree, w_imagelist *imagelist) {
 	return W_TRUE;
 }
 wresult _w_tree_set_insert_mark(w_tree *tree, w_treeitem *item,
-		wbool before) {
+		int before) {
 }
 wresult _w_tree_set_item_height(w_tree *tree, int itemHeight) {
 }
-wresult _w_tree_set_lines_visible(w_tree *tree, wbool show) {
+wresult _w_tree_set_lines_visible(w_tree *tree, int show) {
 }
 wresult _w_tree_select(w_tree *tree, w_treeitem *item) {
 }
@@ -277,7 +277,7 @@ wresult _w_tree_select_all(w_tree *tree) {
 }
 wresult _w_tree_set_column_order(w_tree *tree, int *order, size_t length) {
 }
-wresult _w_tree_set_header_visible(w_tree *tree, wbool show) {
+wresult _w_tree_set_header_visible(w_tree *tree, int show) {
 	return W_TRUE;
 }
 wresult _w_tree_set_selection(w_tree *tree, w_treeitem *item) {
