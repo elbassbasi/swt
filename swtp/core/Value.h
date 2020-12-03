@@ -1,7 +1,7 @@
 /*
  * Value.h
  *
- *  Created on: 12 ao�t 2019
+ *  Created on: 12 aout 2019
  *      Author: azeddine El Bassbasi
  */
 
@@ -52,6 +52,9 @@ public:
 	}
 	void Free() {
 		w_value_free(this);
+	}
+	const char* GetString(char *temp, size_t length) {
+		return w_value_get_string(this, temp, length);
 	}
 	void SetInt(long long int int_) {
 		w_value_set_int(this, int_);
@@ -108,7 +111,11 @@ public:
 		return ret;
 	}
 	int Print(const char *format, va_list args) {
-		return w_value_vprint(this, format, args);
+		return Print(0, 0, format, args);
+	}
+	int Print(w_alloc alloc, void *user_data, const char *format,
+			va_list args) {
+		return w_value_vprint(this, alloc, user_data, format, args);
 	}
 };
 

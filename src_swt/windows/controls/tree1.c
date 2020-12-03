@@ -1610,7 +1610,7 @@ int _TREE_WM_NOTIFY_GETDISPINFO(w_widget *widget, struct _w_event_platform *e,
 		result = w_widget_send_event(widget, (w_event*) &event);
 		if (result) {
 			result = W_TRUE;
-			char *text = w_value_string_copy_is_needed(&value,
+			char *text = w_value_get_string(&value,
 					(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc / 2],
 					win_toolkit->tmp_alloc / sizeof(WCHAR));
 			lptvdi->item.cchTextMax = w_utf8_to_utf16(text, -1,
@@ -2400,7 +2400,7 @@ void _TREE_WM_NOTIFY_CDDS_ITEMPOSTPAINT_drawtext(struct cdds_item *item) {
 			if (ret) {
 				ret = 0;
 				char *text =
-						w_value_string_copy_is_needed(&value,
+						w_value_get_string(&value,
 								(char*) &win_toolkit->tmp[win_toolkit->tmp_alloc
 										/ 2 * sizeof(WCHAR)],
 										win_toolkit->tmp_alloc / sizeof(WCHAR));

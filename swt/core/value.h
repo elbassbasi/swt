@@ -14,25 +14,22 @@ extern "C" {
 typedef enum {
 	W_VALUE_UNKNOWN = 0, //
 	W_VALUE_POINTER,
-	// integer
 	W_VALUE_BOOL,
-	W_VALUE_CHAR,
-	W_VLAUE_SHORT,
 	W_VALUE_INT,
-	W_VALUE_INT64,
-	// float
 	W_VALUE_FLOAT,
 	W_VALUE_DOUBLE,
 	//string
-	W_VALUE_UTF8,
+	W_VALUE_STRING_UTF8,
 	W_VALUE_STRING_REF,
 } w_value_type;
 typedef struct w_value w_value;
 typedef struct w_value_class {
 	wushort type;
 	wushort flags;
+	const char *name;
 	wresult (*free)(w_value *value);
-	wresult (*convert_to)(w_value *value, w_value *v2);
+	wresult (*convert_to)(w_value *value, w_value *v2, w_alloc alloc,
+			void *user_data);
 } w_value_class;
 
 enum {
@@ -47,16 +44,14 @@ enum {
 	 * @see W_VALUE_STRING ,W_VALUE_POINTER
 	 */
 	W_VALUE_USER_MEMORY = 1 << 1,
-	/*
-	 * unsigned
-	 * @see by W_VALUE_CHAR,W_VLAUE_SHORT,W_VALUE_INT,W_VALUE_INT64
-	 */
-	W_VALUE_UNSIGNED = 1 << 0,
+	W_VALUE_CHAR = 1,
+	W_VLAUE_SHORT = 2,
+	W_VALUE_INT32 = 3,
+	W_VALUE_INT64 = 4,
+	W_VALUE_UNSIGNED = 1 << 5,
 };
 struct w_value {
 	w_value_class *clazz;
-	wuint flags;
-	wuint size;
 	union {
 		wint64 INT64;
 		double DOUBLE;
@@ -64,6 +59,9 @@ struct w_value {
 		void *pointer;
 		char *string;
 	};
+	wuint flags;
+	wuint size;
+	void *reserved;
 };
 //init
 SWT_PUBLIC void w_value_registre_class(w_value_class *clazz);
@@ -93,14 +91,16 @@ SWT_PUBLIC wint64 w_value_get_int(w_value *value);
 SWT_PUBLIC float w_value_get_float(w_value *value);
 SWT_PUBLIC double w_value_get_double(w_value *value);
 
-SWT_PUBLIC const char* w_value_get_string(w_value *value);
+SWT_PUBLIC const char* w_value_get_string_0(w_value *value, w_alloc alloc,
+		void *user_data, int flags);
+SWT_PUBLIC const char* w_value_get_string(w_value *value, char *text,
+		size_t length);
 SWT_PUBLIC char* w_value_string_create(w_value *value, size_t length);
 SWT_PUBLIC void w_value_string_copy(w_value *value, char *text, size_t length);
-SWT_PUBLIC char* w_value_string_copy_is_needed(w_value *value, char *text,
-		size_t length);
-SWT_PUBLIC int w_value_print(w_value *value, const char *Template, ...);
-SWT_PUBLIC int w_value_vprint(w_value *value, const char *Template,
-		va_list args);
+SWT_PUBLIC int w_value_print(w_value *value, w_alloc alloc, void *user_data,
+		const char *Template, ...);
+SWT_PUBLIC int w_value_vprint(w_value *value, w_alloc alloc, void *user_data,
+		const char *Template, va_list args);
 #ifdef __cplusplus
 }
 #endif
