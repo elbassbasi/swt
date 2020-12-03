@@ -53,8 +53,14 @@ public:
 	void Free() {
 		w_value_free(this);
 	}
+	/*
+	 * @param temp
+	 */
+	const char* GetString(char *temp, size_t length, int flags) {
+		return w_value_get_string(this, temp, length, flags);
+	}
 	const char* GetString(char *temp, size_t length) {
-		return w_value_get_string(this, temp, length);
+		return GetString(temp, length, W_VALUE_STRING_COPY_IS_NEED);
 	}
 	void SetInt(long long int int_) {
 		w_value_set_int(this, int_);

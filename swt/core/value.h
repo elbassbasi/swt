@@ -28,7 +28,7 @@ typedef struct w_value_class {
 	wushort flags;
 	const char *name;
 	wresult (*free)(w_value *value);
-	wresult (*convert_to)(w_value *value, w_value *v2, w_alloc alloc,
+	wresult (*convert_to)(w_value *from, w_value *to, w_alloc alloc,
 			void *user_data);
 } w_value_class;
 
@@ -44,6 +44,7 @@ enum {
 	 * @see W_VALUE_STRING ,W_VALUE_POINTER
 	 */
 	W_VALUE_USER_MEMORY = 1 << 1,
+	W_VALUE_STRING_COPY_IS_NEED = 1 << 2,
 	W_VALUE_CHAR = 1,
 	W_VLAUE_SHORT = 2,
 	W_VALUE_INT32 = 3,
@@ -94,7 +95,7 @@ SWT_PUBLIC double w_value_get_double(w_value *value);
 SWT_PUBLIC const char* w_value_get_string_0(w_value *value, w_alloc alloc,
 		void *user_data, int flags);
 SWT_PUBLIC const char* w_value_get_string(w_value *value, char *text,
-		size_t length);
+		size_t length, int flags);
 SWT_PUBLIC char* w_value_string_create(w_value *value, size_t length);
 SWT_PUBLIC void w_value_string_copy(w_value *value, char *text, size_t length);
 SWT_PUBLIC int w_value_print(w_value *value, w_alloc alloc, void *user_data,

@@ -58,30 +58,28 @@ wresult w_value_int_free(w_value *value) {
 }
 wresult w_value_int_convert(w_value *value, w_value *v2, w_alloc alloc,
 		void *user_data) {
-	if (v2->clazz != 0) {
-		switch (v2->clazz->type) {
-		case W_VALUE_POINTER:
-			v2->pointer = 0;
-			break;
-		case W_VALUE_BOOL:
-		case W_VALUE_INT:
-			v2->INT64 = value->INT64;
-			break;
-		case W_VALUE_FLOAT:
-			v2->FLOAT = value->INT64;
-			break;
-		case W_VALUE_DOUBLE:
-			v2->DOUBLE = value->INT64;
-			break;
-		case W_VALUE_STRING_UTF8: {
-			w_value_print(v2, alloc, user_data, "%ld", value->INT64);
-		}
-			break;
-		default:
-			return W_FALSE;
-		}
-		return W_TRUE;
+	switch (v2->clazz->type) {
+	case W_VALUE_POINTER:
+		v2->pointer = 0;
+		break;
+	case W_VALUE_BOOL:
+	case W_VALUE_INT:
+		v2->INT64 = value->INT64;
+		break;
+	case W_VALUE_FLOAT:
+		v2->FLOAT = value->INT64;
+		break;
+	case W_VALUE_DOUBLE:
+		v2->DOUBLE = value->INT64;
+		break;
+	case W_VALUE_STRING_UTF8: {
+		w_value_print(v2, alloc, user_data, "%ld", value->INT64);
 	}
+		break;
+	default:
+		return W_FALSE;
+	}
+	return W_TRUE;
 	return W_FALSE;
 }
 /*
@@ -89,15 +87,13 @@ wresult w_value_int_convert(w_value *value, w_value *v2, w_alloc alloc,
  */
 wresult w_value_bool_convert(w_value *value, w_value *v2, w_alloc alloc,
 		void *user_data) {
-	if (v2->clazz != 0) {
-		if (v2->clazz->type == W_VALUE_STRING_UTF8) {
-			if (value->INT64) {
-				w_value_set_string(v2, "true", -1, 0);
-			} else {
-				w_value_set_string(v2, "false", -1, 0);
-			}
-			return W_TRUE;
+	if (v2->clazz->type == W_VALUE_STRING_UTF8) {
+		if (value->INT64) {
+			w_value_set_string(v2, "true", -1, 0);
+		} else {
+			w_value_set_string(v2, "false", -1, 0);
 		}
+		return W_TRUE;
 	}
 	return w_value_int_convert(value, v2, alloc, user_data);
 }
@@ -123,30 +119,27 @@ wresult w_value_float_free(w_value *value) {
 }
 wresult w_value_float_convert(w_value *value, w_value *v2, w_alloc alloc,
 		void *user_data) {
-	if (v2->clazz != 0) {
-		switch (v2->clazz->type) {
-		case W_VALUE_POINTER:
-			v2->pointer = 0;
-			break;
-		case W_VALUE_BOOL:
-		case W_VALUE_INT:
-			v2->INT64 = value->INT64;
-			break;
-		case W_VALUE_FLOAT:
-			v2->FLOAT = value->INT64;
-			break;
-		case W_VALUE_DOUBLE:
-			v2->DOUBLE = value->INT64;
-			break;
-		case W_VALUE_STRING_UTF8:
-			w_value_print(v2, alloc, user_data, "%f", value->FLOAT);
-			break;
-		default:
-			return W_FALSE;
-		}
-		return W_TRUE;
+	switch (v2->clazz->type) {
+	case W_VALUE_POINTER:
+		v2->pointer = 0;
+		break;
+	case W_VALUE_BOOL:
+	case W_VALUE_INT:
+		v2->INT64 = value->INT64;
+		break;
+	case W_VALUE_FLOAT:
+		v2->FLOAT = value->INT64;
+		break;
+	case W_VALUE_DOUBLE:
+		v2->DOUBLE = value->INT64;
+		break;
+	case W_VALUE_STRING_UTF8:
+		w_value_print(v2, alloc, user_data, "%f", value->FLOAT);
+		break;
+	default:
+		return W_FALSE;
 	}
-	return W_FALSE;
+	return W_TRUE;
 }
 w_value_class w_value_float_class = { //
 		W_VALUE_FLOAT, //
@@ -163,31 +156,28 @@ wresult w_value_double_free(w_value *value) {
 }
 wresult w_value_double_convert(w_value *value, w_value *v2, w_alloc alloc,
 		void *user_data) {
-	if (v2->clazz != 0) {
-		switch (v2->clazz->type) {
-		case W_VALUE_POINTER:
-			v2->pointer = 0;
-			break;
-		case W_VALUE_BOOL:
-		case W_VALUE_INT:
-			v2->INT64 = value->INT64;
-			break;
-		case W_VALUE_FLOAT:
-			v2->FLOAT = value->INT64;
-			break;
-		case W_VALUE_DOUBLE:
-			v2->DOUBLE = value->INT64;
-			break;
-		case W_VALUE_STRING_UTF8: {
-			w_value_print(v2, alloc, user_data, "%lf", value->DOUBLE);
-		}
-			break;
-		default:
-			return W_FALSE;
-		}
-		return W_TRUE;
+	switch (v2->clazz->type) {
+	case W_VALUE_POINTER:
+		v2->pointer = 0;
+		break;
+	case W_VALUE_BOOL:
+	case W_VALUE_INT:
+		v2->INT64 = value->INT64;
+		break;
+	case W_VALUE_FLOAT:
+		v2->FLOAT = value->INT64;
+		break;
+	case W_VALUE_DOUBLE:
+		v2->DOUBLE = value->INT64;
+		break;
+	case W_VALUE_STRING_UTF8: {
+		w_value_print(v2, alloc, user_data, "%lf", value->DOUBLE);
 	}
-	return W_FALSE;
+		break;
+	default:
+		return W_FALSE;
+	}
+	return W_TRUE;
 }
 w_value_class w_value_double_class = { //
 		W_VALUE_DOUBLE, //
@@ -204,30 +194,27 @@ wresult w_value_utf8_free(w_value *value) {
 }
 wresult w_value_utf8_convert(w_value *value, w_value *v2, w_alloc alloc,
 		void *user_data) {
-	if (v2->clazz != 0) {
-		switch (v2->clazz->type) {
-		case W_VALUE_POINTER:
-			value->INT64 = ((wint64*) v2->pointer)[0];
-			break;
-		case W_VALUE_BOOL:
-		case W_VALUE_INT:
-			value->INT64 = v2->INT64;
-			break;
-		case W_VALUE_FLOAT:
-			value->INT64 = v2->FLOAT;
-			break;
-		case W_VALUE_DOUBLE:
-			value->INT64 = v2->DOUBLE;
-			break;
-		case W_VALUE_STRING_UTF8:
-			value->INT64 = atoll(v2->string);
-			break;
-		default:
-			return W_FALSE;
-		}
-		return W_TRUE;
+	switch (v2->clazz->type) {
+	case W_VALUE_POINTER:
+		value->INT64 = ((wint64*) v2->pointer)[0];
+		break;
+	case W_VALUE_BOOL:
+	case W_VALUE_INT:
+		value->INT64 = v2->INT64;
+		break;
+	case W_VALUE_FLOAT:
+		value->INT64 = v2->FLOAT;
+		break;
+	case W_VALUE_DOUBLE:
+		value->INT64 = v2->DOUBLE;
+		break;
+	case W_VALUE_STRING_UTF8:
+		value->INT64 = atoll(v2->string);
+		break;
+	default:
+		return W_FALSE;
 	}
-	return W_FALSE;
+	return W_TRUE;
 }
 w_value_class w_value_utf8_class = { //
 		W_VALUE_STRING_UTF8, //
@@ -361,12 +348,13 @@ const char* w_value_get_string_0(w_value *value, w_alloc alloc, void *user_data,
 	w_value_free(&v2);
 	return v2.string;
 }
-const char* w_value_get_string(w_value *value, char *text, size_t length) {
+const char* w_value_get_string(w_value *value, char *text, size_t length,
+		int flags) {
 	w_alloc_buffer buffer;
 	buffer.buffer = text;
 	buffer.total_size = 0;
 	buffer.size = length;
-	return w_value_get_string_0(value, w_alloc_buffer_copy, &buffer, 0);
+	return w_value_get_string_0(value, w_alloc_buffer_copy, &buffer, flags);
 }
 void w_value_string_copy(w_value *value, char *text, size_t length) {
 }
