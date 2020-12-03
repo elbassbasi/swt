@@ -9,72 +9,71 @@
 #define SWTP_CORE_VALUE_H_
 #include "String.h"
 
-class SWTP_PUBLIC WValue {
+class SWTP_PUBLIC WValue: public w_value {
 public:
-	w_value v;
 	WValue() {
-		w_value_init(&v);
+		w_value_init(this);
 	}
 	WValue(bool _bool) {
-		w_value_init_bool(&v, _bool);
+		w_value_init_bool(this, _bool);
 	}
 	WValue(char _char) {
-		w_value_init_char(&v, _char);
+		w_value_init_char(this, _char);
 	}
 	WValue(short _short) {
-		w_value_init_short(&v, _short);
+		w_value_init_short(this, _short);
 	}
 	WValue(int _int) {
-		w_value_init_int(&v, _int);
+		w_value_init_int(this, _int);
 	}
 	WValue(wint64 _int) {
-		w_value_init_int64(&v, _int);
+		w_value_init_int64(this, _int);
 	}
 	WValue(float _float) {
-		w_value_init_float(&v, _float);
+		w_value_init_float(this, _float);
 	}
 	WValue(double _double) {
-		w_value_init_double(&v, _double);
+		w_value_init_double(this, _double);
 	}
 	WValue(const char *string) {
-		w_value_init_string(&v, string, -1, 0);
+		w_value_init_string(this, string, -1, 0);
 	}
 	WValue(const char *string, bool clone) {
-		w_value_init_string(&v, string, -1, clone ? W_VALUE_FREE_MEMORY : 0);
+		w_value_init_string(this, string, -1, clone ? W_VALUE_FREE_MEMORY : 0);
 	}
 	template<typename T>
 	WValue(T *v) {
-		w_value_init(&v);
-		this->v.clazz = &T::value_class;
-		this->v.pointer = v;
+		w_value_init(this);
+		this->clazz = &T::value_class;
+		this->pointer = v;
 	}
 	~WValue() {
-		w_value_free(&v);
+		w_value_free(this);
 	}
 	void Free() {
-		w_value_free(&v);
+		w_value_free(this);
 	}
 	void SetInt(long long int int_) {
-		w_value_set_int(&v, int_);
+		w_value_set_int(this, int_);
 	}
 	bool IsInt() {
-		return v.clazz->type == W_VALUE_INT;
+		return this->clazz->type == W_VALUE_INT;
 	}
 	void SetFloat(double float_) {
-		w_value_set_float(&v, float_);
+		w_value_set_float(this, float_);
 	}
 	bool SetString(const char *string, size_t length, int flags) {
-		return w_value_set_string(&v, string, length, flags);
+		return w_value_set_string(this, string, length, flags);
 	}
 	bool SetUserString(const char *string, size_t length, bool free) {
 		return SetString(string, length,
 				free ? W_VALUE_FREE_MEMORY | W_VALUE_USER_MEMORY : W_VALUE_USER_MEMORY);
 	}
 	void SetPointer(void *pointer, size_t length, int flags) {
-		w_value_set_pointer(&v, pointer, length, flags);
+		w_value_set_pointer(this, pointer, length, flags);
 	}
 	void SetPointer(void *pointer, size_t length) {
-		w_value_set_pointer(&v, pointer, length, 0);
+		w_value_set_pointer(this, pointer, length, 0);
 	}
 	void SetUserPointer(void *pointer, size_t length) {
 		SetPointer(pointer, length, W_VALUE_USER_MEMORY);
@@ -92,7 +91,7 @@ public:
 		return SetString(string, length, W_VALUE_FREE_MEMORY);
 	}
 	/*void SetString(WString &str) {
-	 w_value_set_string_ref(&v, str.ref);
+	 w_value_set_string_ref(this, str.ref);
 	 }*/
 	int Print(const char *format, ...) {
 		va_list args;
@@ -109,7 +108,7 @@ public:
 		return ret;
 	}
 	int Print(const char *format, va_list args) {
-		return w_value_vprint(&v, format, args);
+		return w_value_vprint(this, format, args);
 	}
 };
 
