@@ -92,7 +92,7 @@ wresult _w_datetime_create(w_widget *widget, w_widget *parent, int style,
 
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_datetime_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), W_COMPOSITE(parent),
+	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
 			(style & W_CALENDAR) != 0 ? MONTHCAL_CLASSA : DATETIMEPICK_CLASSA,
 			dwExStyle, dwStyle);
 	if (result > 0) {

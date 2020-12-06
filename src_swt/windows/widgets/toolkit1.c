@@ -77,6 +77,10 @@ void _w_toolkit_init_dll(_w_toolkit *toolkit) {
 				info.dwMinorVersion);
 	}
 	toolkit->comctrl32_version = _w_toolkit_get_dll_version("comctl32.dll");
+	/* Get the DBCS flag */
+	int dbcsEnabled = GetSystemMetrics (SM_DBCSENABLED) != 0;
+	int immEnabled = GetSystemMetrics (SM_IMMENABLED) != 0;
+	win_toolkit->IsDBLocale = dbcsEnabled || immEnabled;
 
 }
 void* _w_toolkit_malloc(size_t size) {

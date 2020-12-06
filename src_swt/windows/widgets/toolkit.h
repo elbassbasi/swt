@@ -27,6 +27,7 @@ extern struct _w_theme_class win32_theme;
 #define _W_CLASS_DECL_ITEM(x) _W_CLASS_DECL(x);\
 		struct _w_##x##item_class class_##x##item
 #define BRUSHES_SIZE 32
+#define ID_START 108
 typedef struct _w_toolkit {
 	w_toolkit toolkit;
 	int win32_version;
@@ -61,6 +62,8 @@ typedef struct _w_toolkit {
 	unsigned lastNull :1;
 	unsigned lastDead :1;
 	unsigned mnemonicKeyHit :1;
+	unsigned IsDBLocale:1;
+	unsigned TrimEnabled : 1;
 	w_theme systemtheme;
 	HTHEME themes[_W_THEME_CLASS_LAST];
 	HBRUSH brushes[BRUSHES_SIZE];

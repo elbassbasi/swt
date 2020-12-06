@@ -1112,7 +1112,8 @@ int _WIDGET_WM_MOUSEMOVE(w_widget *widget, struct _w_event_platform *e,
 	int pos = GetMessagePos();
 	if (pos != win_toolkit->lastMouse || win_toolkit->captureChanged) {
 #if !IsWinCE
-		wresult trackMouse = (_W_WIDGET(widget)->state & STATE_TRACK_MOUSE) != 0;
+		wresult trackMouse = (_W_WIDGET(widget)->state & STATE_TRACK_MOUSE)
+				!= 0;
 		if (trackMouse) {
 			TRACKMOUSEEVENT lpEventTrack;
 			lpEventTrack.cbSize = sizeof(lpEventTrack);
@@ -1965,8 +1966,8 @@ int _WIDGET_WM_PAINT(w_widget *widget, struct _w_event_platform *e,
 int _w_widget_post_event(w_widget *widget, struct w_event *ee) {
 	switch (ee->type) {
 	case W_EVENT_PLATFORM: {
-		struct _w_widget_reserved *reserved = _w_widget_get_reserved(widget);
-		struct _w_event_platform *e = (struct _w_event_platform*) ee;
+		_w_widget_reserved *reserved = _w_widget_get_reserved(widget);
+		_w_event_platform *e = (struct _w_event_platform*) ee;
 		reserved->def_proc(widget, (_w_event_platform*) ee, reserved);
 		return W_TRUE;
 	}
@@ -1984,7 +1985,7 @@ void _w_widget_class_init(struct _w_widget_class *clazz) {
 	/*
 	 * reserved
 	 */
-	struct _w_widget_reserved *reserved = _W_WIDGET_RESERVED(
+	_w_widget_reserved *reserved = _W_WIDGET_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
 	reserved->def_proc = _w_widget_def_proc;
 }

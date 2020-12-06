@@ -35,6 +35,7 @@ int _w_composite_is_layout_deferred(w_composite *composite);
 void _w_composite_do_layout(w_composite *composite, int changed, int all);
 void _w_composite_set_layout(w_composite *composite, w_layout *layout);
 void _w_composite_set_layout_deferred(w_composite *composite, int defer);
+wresult _w_composite_create_handle (w_control *control, _w_control_reserved *reserved);
 /*
  * post event proc
  */

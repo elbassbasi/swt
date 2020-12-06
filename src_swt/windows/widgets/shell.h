@@ -10,6 +10,7 @@
 
 #if defined( __WIN32__) || defined(__WIN64__)
 #include "canvas.h"
+#include "tooltip.h"
 struct _w_shell_accel_item {
 	int accelerator;
 	HMENU menu;
@@ -26,13 +27,21 @@ typedef struct _w_shell {
 	struct _w_canvas canvas;
 	struct _w_shell *next;
 	struct _w_shell *prev;
+	struct _w_tooltip *tooltips;
 	struct w_menu *menubar;
 	struct _w_shell_accel *accel;
+	int id;
 	HACCEL hAccel;
+	HWND toolTipHandle;
+	HWND balloonTipHandle;
+	HWND menuItemToolTipHandle;
+	WNDPROC windowProc;
 } _w_shell;
 
 struct _w_shell_reserved {
 	struct _w_canvas_reserved canvas;
+	WNDPROC ToolTipProc;
+	WNDPROC DialogProc;
 
 };
 #define _W_SHELL(x) ((_w_shell*)x)
@@ -43,7 +52,7 @@ struct _w_shell_reserved {
 #define _W_SHELL_MAXIMUM_TRIM 128
 #define _W_SHELL_BORDER 3
 #define ISCUSTOMRESIZE(style) ((style & W_NO_TRIM) == 0 && (style & (W_RESIZE | W_ON_TOP)) == (W_RESIZE | W_ON_TOP))
-wuint64 _w_shell_check_style(w_shell *parent, wuint64 style);
+wuint64 _w_shell_check_style(w_widget *widget, wuint64 style);
 const char* _w_shell_window_class(w_widget *parent, int style);
 void _w_shell_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle);

@@ -13,7 +13,7 @@ extern "C" {
 #endif
 typedef struct w_menu {
 	w_widget widget;
-	void *handle[6];
+	void *handle[0x10];
 } w_menu;
 typedef struct w_menuitem {
 	w_widgetdata widgetdata;
