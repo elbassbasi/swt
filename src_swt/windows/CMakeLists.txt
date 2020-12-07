@@ -18,4 +18,4 @@ set(src_windows ${src_windows_core} ${src_windows_runtime} ${src_windows_graphic
     add_library(swt SHARED ${src_windows} ${src_common} ${src_swtp})
     target_include_directories(swt PRIVATE ../..)
 	target_compile_definitions(swt PRIVATE SWTBUILD)
-    target_link_libraries(swt gdiplus uxtheme oleaut32 gdi32 ole32 uuid comctl32 msimg32 opengl32 usp10)
+    target_link_libraries(swt gdiplus uxtheme oleaut32 gdi32 ole32 uuid comctl32 msimg32 opengl32 usp10 Imm32)

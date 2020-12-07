@@ -42,7 +42,7 @@ wresult _w_sash_create(w_widget *widget, w_widget *parent, int style,
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_control_style(widget, parent, style, &dwExStyle, &dwStyle);
 	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
-			WindowName, dwExStyle, dwStyle);
+			WindowClass, dwExStyle, dwStyle);
 	if (result > 0) {
 		_W_WIDGET(widget)->style = style;
 		_W_WIDGET(widget)->post_event = post_event;

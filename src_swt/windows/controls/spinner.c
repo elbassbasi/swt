@@ -27,7 +27,7 @@ void _w_spinner_style(w_widget *widget, w_widget *parent, int style,
 }
 wresult _w_spinner_create(w_widget *widget, w_widget *parent, int style,
 		w_widget_post_event_proc post_event) {
-	wresult result = _w_composite_create(widget, parent, style, post_event);
+	wresult result = _w_control_create(widget, parent, style, post_event);
 	if (result < 0)
 		return result;
 	_W_WIDGET(widget)->state &= ~(STATE_CANVAS | STATE_THEME_BACKGROUND);

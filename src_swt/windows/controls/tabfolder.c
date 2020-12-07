@@ -304,7 +304,7 @@ int _TABFOLDER_WM_SIZE(w_widget *widget, struct _w_event_platform *e,
 }
 int _TABFOLDER_WM_DRAWCHILD(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
-	reserved->def_proc(widget, e, reserved);
+	reserved->window_proc(widget, e, reserved);
 	if (_W_WIDGET(widget)->style & W_CLOSE) {
 		int tmp_count = win_toolkit->tmp_alloc / sizeof(WCHAR);
 		DRAWITEMSTRUCT *lpDIS = (DRAWITEMSTRUCT*) e->lparam;

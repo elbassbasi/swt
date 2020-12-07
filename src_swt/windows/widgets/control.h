@@ -19,7 +19,8 @@
 #define STATE_THEME_BACKGROUND (1 << (STATE_WIDGET_END + 5))
 #define STATE_PARENT_BACKGROUND (1 << (STATE_WIDGET_END + 6))
 #define STATE_DISABLED (1 << (STATE_WIDGET_END + 7))
-#define STATE_CONTROL_END (STATE_WIDGET_END + 6)
+#define STATE_HIDDEN (1 << (STATE_WIDGET_END + 8))
+#define STATE_CONTROL_END (STATE_WIDGET_END + 8)
 
 typedef struct _w_control {
 	struct _w_widget widget;
@@ -29,15 +30,18 @@ typedef struct _w_control {
 	};
 	int background;
 	int foreground;
+	int drawCount;
 	w_cursor *cursor;
 	w_menu *menu;
 	w_composite *parent;
 	HBITMAP backgroundImage;
 	//HBRUSH hBrush;
 } _w_control;
-typedef struct _w_control_reserved {
-	struct _w_widget_reserved widget;
-	WNDPROC default_proc;
+typedef struct _w_control_reserved _w_control_reserved;
+struct _w_control_reserved {
+	_w_widget_reserved widget;
+	WNDPROC _window_proc;
+	WNDPROC (*get_window_proc)(w_control *control,_w_control_reserved *reserved);
 	HWND (*topHandle)(w_control *control);
 	HWND (*borderHandle)(w_control *control);
 	wresult (*create_widget)(w_control *control, _w_control_reserved *reserved);
@@ -61,15 +65,11 @@ typedef struct _w_control_reserved {
 	wresult (*check_gesture)(w_control *control, _w_control_reserved *reserved);
 	wresult (*set_background)(w_control *control,
 			_w_control_reserved *reserved);
-	wresult (*set_background)(w_control *control,
-			_w_control_reserved *reserved);
 	HWND (*widget_parent)(w_control *control, _w_control_reserved *reserved);
 	DWORD (*widget_style)(w_control *control, _w_control_reserved *reserved);
 	DWORD (*widget_extstyle)(w_control *control, _w_control_reserved *reserved);
 	const char* (*window_class)(w_control *control,
 			_w_control_reserved *reserved);
-	CREATESTRUCTW* (*widget_create_struct)(w_control *control,
-			CREATESTRUCTW *st, _w_control_reserved *reserved);
 	int (*compute_size)(w_widget *widget, w_event_compute_size *e,
 			_w_widget_reserved *reserved);
 	int (*get_client_area)(w_widget *widget, w_event_client_area *e,
@@ -77,7 +77,7 @@ typedef struct _w_control_reserved {
 	int (*compute_trim)(w_widget *widget, w_event_compute_trim *e,
 			_w_widget_reserved *reserved);
 	dispatch_message messages[_WM_LAST];
-} _w_control_reserved;
+};
 #define _W_CONTROL(x) ((_w_control*)x)
 #define _W_CONTROL_RESERVED(x) ((_w_control_reserved*)x)
 #define _W_CONTROL_GET_RESERVED(x) ((_w_control_reserved*)_w_widget_get_reserved(W_WIDGET(x)))
@@ -92,6 +92,20 @@ wresult _w_control_create_0(w_control *control, w_composite *parent,
 void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
 		struct _w_widget_reserved *reserved);
 HWND _w_control_h(w_control *control);
+DWORD _w_control_widget_extstyle(w_control *control,
+		_w_control_reserved *reserved);
+const char* _w_control_window_class(w_control *control,
+		_w_control_reserved *reserved);
+DWORD _w_control_widget_style(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_create_handle(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_subclass(w_control *control, _w_control_reserved *reserved);
+wresult _w_control_unsubclass(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_create(w_widget *widget, w_widget *parent, wuint64 style,
+		w_widget_post_event_proc post_event);
+//#define _w_control_get_drawing(x) (((_w_control*)x)->drawCount <= 0)
 /*
  *  function
  */

@@ -105,15 +105,15 @@ wresult _w_control_create_0(w_control *control, w_composite *parent,
 
 	WNDPROC window_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
 	GWLP_WNDPROC);
-	if (window_proc != _w_widget_proc) {
+	if (window_proc != _w_widget_window_proc) {
 		struct _w_control_reserved *reserved = _W_CONTROL_RESERVED(
 				_w_widget_get_reserved(W_WIDGET(control)));
-		if (reserved->default_proc == 0) {
-			reserved->default_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
+		if (reserved->_window_proc == 0) {
+			reserved->_window_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
 			GWLP_WNDPROC);
 		}
 		SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR) control);
-		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR) _w_widget_proc);
+		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR) _w_widget_window_proc);
 	}
 	//SendMessage (hwnd, WM_SETFONT,win_toolkit->system_font, 0);
 	/*	if (OS.IsDBLocale && hwndParent != 0) {
@@ -122,14 +122,6 @@ wresult _w_control_create_0(w_control *control, w_composite *parent,
 	 OS.ImmReleaseContext(hwndParent, hIMC);
 	 }*/
 	return W_TRUE;
-}
-void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
-		struct _w_widget_reserved *reserved) {
-	if (_W_CONTROL_RESERVED(reserved)->default_proc != 0) {
-		e->result = CallWindowProcW(_W_CONTROL_RESERVED(reserved)->default_proc,
-				e->hwnd, e->msg, e->wparam, e->lparam);
-	} else
-		e->result = DefWindowProcW(e->hwnd, e->msg, e->wparam, e->lparam);
 }
 HWND _w_control_h(w_control *control) {
 	return _W_WIDGET(control)->handle;
@@ -422,8 +414,7 @@ int _w_control_get_border_width(w_control *control) {
 	return 0;
 }
 wresult _w_control_get_drawing(w_control *control) {
-	//return drawCount <= 0;
-	return TRUE;
+	return _W_CONTROL(control)->drawCount <= 0;
 }
 w_cursor* _w_control_get_cursor(w_control *control) {
 	if (_W_CONTROL(control)->cursor == 0) {
@@ -849,7 +840,7 @@ int _CONTROL_WM_DESTROY(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	w_event _e;
 	int style = _W_WIDGET(widget)->style;
-	WNDPROC last_proc = _W_CONTROL_RESERVED(reserved)->default_proc;
+	WNDPROC last_proc = _W_CONTROL_RESERVED(reserved)->_window_proc;
 	w_widget_post_event_proc _proc = _W_WIDGET(widget)->post_event;
 	_W_WIDGET(widget)->state |= STATE_DISPOSED;
 	_e.type = W_EVENT_DISPOSE;
@@ -859,7 +850,7 @@ int _CONTROL_WM_DESTROY(w_widget *widget, struct _w_event_platform *e,
 	_w_widget_send_event(widget, (w_event*) &_e);
 	SetWindowLongPtrW(e->hwnd, GWLP_USERDATA, (LONG_PTR) 0);
 	SetWindowLongPtrW(e->hwnd, GWLP_WNDPROC, (LONG_PTR) last_proc);
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	_W_WIDGET(widget)->clazz = 0;
 	if (style & W_FREE_MEMORY) {
 		_w_toolkit_registre_free(widget, _proc);
@@ -1530,12 +1521,12 @@ int _CONTROL_WM_NULL(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	return W_FALSE;
 }
-wresult _w_control_post_event_platform(w_widget *widget,_w_event_platform *ee,
+wresult _w_control_post_event_platform(w_widget *widget, _w_event_platform *ee,
 		_w_widget_reserved *reserved) {
 	wresult ret = W_FALSE;
 	if (ee->msg
 			< (sizeof(win_toolkit->wm_msg) / sizeof(win_toolkit->wm_msg[0]))) {
-		unsigned char msgid = win_toolkit->wm_msg[ee->msg];
+		wuchar msgid = win_toolkit->wm_msg[ee->msg];
 		if (msgid != 0) {
 			/*printf("%.*s %8x %8x %8x\n", 20, ___message[msgid],
 			 (unsigned int) ee->hwnd, (unsigned int) ee->wparam,
@@ -1545,7 +1536,7 @@ wresult _w_control_post_event_platform(w_widget *widget,_w_event_platform *ee,
 		}
 	}
 	if (ret == W_FALSE) {
-		reserved->def_proc(widget, ee, reserved);
+		reserved->call_window_proc(widget, ee, reserved);
 	}
 	return ret;
 }
@@ -1571,8 +1562,8 @@ int _w_control_post_event(w_widget *widget, struct w_event *ee) {
 	switch (ee->type) {
 	case W_EVENT_PLATFORM:
 		reserved = _w_widget_get_reserved(widget);
-		return _w_control_post_event_platform(widget,
-				(_w_event_platform*) ee, reserved);
+		return _w_control_post_event_platform(widget, (_w_event_platform*) ee,
+				reserved);
 		break;
 	case W_EVENT_COMPUTE_SIZE:
 		reserved = _w_widget_get_reserved(widget);
@@ -1622,27 +1613,25 @@ wresult _w_control_create(w_widget *widget, w_widget *parent, wuint64 style,
 	_W_WIDGET(widget)->style = reserved->check_style(widget, style);
 	return reserved->create_widget(W_CONTROL(widget), reserved);
 }
-wuint64 _w_control_check_style(w_widget *widget, wuint64 style){
+wuint64 _w_control_check_style(w_widget *widget, wuint64 style) {
 	return style;
 }
 wresult _w_control_create_widget(w_control *control,
 		_w_control_reserved *reserved) {
 	_W_WIDGET(control)->state |= STATE_DRAG_DETECT;
 	reserved->check_orientation(control, _W_CONTROL(control)->parent, reserved);
-	wresult result = reserved->create_handle(control,
-	_W_CONTROL(control)->parent, reserved);
+	wresult result = reserved->create_handle(control, reserved);
 	if (result <= 0)
 		return result;
-	reserved->check_background(control, _W_CONTROL(control)->parent, reserved);
-	reserved->check_buffered(control, _W_CONTROL(control)->parent, reserved);
-	reserved->check_composited(control, _W_CONTROL(control)->parent, reserved);
-	reserved->set_default_font(control, _W_CONTROL(control)->parent, reserved);
-	reserved->check_mirrored(control, _W_CONTROL(control)->parent, reserved);
-	reserved->check_border(control, _W_CONTROL(control)->parent, reserved);
-	reserved->check_gesture(control, _W_CONTROL(control)->parent, reserved);
+	reserved->check_background(control, reserved);
+	reserved->check_buffered(control, reserved);
+	reserved->check_composited(control, reserved);
+	reserved->set_default_font(control, reserved);
+	reserved->check_mirrored(control, reserved);
+	reserved->check_border(control, reserved);
+	reserved->check_gesture(control, reserved);
 	if ((_W_WIDGET(control)->state & STATE_PARENT_BACKGROUND) != 0) {
-		reserved->set_background(control, _W_CONTROL(control)->parent,
-				reserved);
+		reserved->set_background(control, reserved);
 	}
 	return result;
 }
@@ -1652,22 +1641,21 @@ wresult _w_control_check_orientation(w_control *control, w_composite *parent,
 }
 HWND _CreateWindow(DWORD dwExStyle, const char *lpClassName, DWORD dwStyle,
 		HWND hWndParent, LPVOID lpParam) {
-	WCHAR clazz[50];
-	w_utf8_to_utf16(lpClassName, -1, clazz, sizeof(clazz) / sizeof(clazz[0]));
-	return CreateWindowExW(dwExStyle, clazz, 0, dwStyle, CW_USEDEFAULT, 0,
+	size_t newlength;
+	WCHAR *clazz = _win_text_fix(lpClassName, -1, &newlength, W_ENCODING_UTF8);
+	HWND hwnd = CreateWindowExW(dwExStyle, clazz, 0, dwStyle, CW_USEDEFAULT, 0,
 	CW_USEDEFAULT, 0, hWndParent, 0, hinst, lpParam);
+	_win_text_free(lpClassName, clazz, newlength);
+	return hwnd;
 }
 wresult _w_control_create_handle(w_control *control,
 		_w_control_reserved *reserved) {
 	HWND hwndParent = reserved->widget_parent(control, reserved);
 	const char *_clazz = reserved->window_class(control, reserved);
 	DWORD style, extstyle;
-	CREATESTRUCTW *createstruct, tmp;
 	style = reserved->widget_style(control, reserved);
 	extstyle = reserved->widget_extstyle(control, reserved);
-	createstruct = reserved->widget_create_struct(control, &tmp, reserved);
-	HWND handle = _CreateWindow(extstyle, _clazz, style, hwndParent,
-			createstruct);
+	HWND handle = _CreateWindow(extstyle, _clazz, style, hwndParent, 0);
 	if (handle == 0)
 		return W_ERROR_NO_HANDLES;
 	_W_WIDGET(control)->handle = handle;
@@ -1676,17 +1664,20 @@ wresult _w_control_create_handle(w_control *control,
 		_W_COMPOSITE(parent)->children_count++;
 	}
 	_W_WIDGET(control)->handle = handle;
+	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_USERDATA,
+			(LONG_PTR) control);
+	reserved->subclass(control, reserved);
 
-	WNDPROC window_proc = (WNDPROC) GetWindowLongPtrW(handle,
-	GWLP_WNDPROC);
-	if (window_proc != _w_widget_proc) {
-		if (reserved->default_proc == 0) {
-			reserved->default_proc = (WNDPROC) GetWindowLongPtrW(handle,
-			GWLP_WNDPROC);
-		}
-		SetWindowLongPtrW(handle, GWLP_USERDATA, (LONG_PTR) control);
-		SetWindowLongPtrW(handle, GWLP_WNDPROC, (LONG_PTR) _w_widget_proc);
-	}
+	/*WNDPROC window_proc = (WNDPROC) GetWindowLongPtrW(handle,
+	 GWLP_WNDPROC);
+	 if (window_proc != _w_widget_window_proc) {
+	 if (reserved->_window_proc == 0) {
+	 reserved->_window_proc = (WNDPROC) GetWindowLongPtrW(handle,
+	 GWLP_WNDPROC);
+	 }
+	 SetWindowLongPtrW(handle, GWLP_USERDATA, (LONG_PTR) control);
+	 SetWindowLongPtrW(handle, GWLP_WNDPROC, (LONG_PTR) _w_widget_window_proc);
+	 }*/
 	if (win_toolkit->IsDBLocale && hwndParent != 0) {
 		HIMC hIMC = ImmGetContext(hwndParent);
 		ImmAssociateContext(handle, hIMC);
@@ -1697,10 +1688,10 @@ wresult _w_control_create_handle(w_control *control,
 wresult _w_control_subclass(w_control *control, _w_control_reserved *reserved) {
 	WNDPROC oldProc = (WNDPROC) GetWindowLongPtrW(_W_WIDGET(control)->handle,
 	GWLP_WNDPROC);
-	if (reserved->default_proc == 0) {
-		reserved->default_proc = oldProc;
+	if (reserved->_window_proc == 0) {
+		reserved->_window_proc = oldProc;
 	}
-	WNDPROC newProc = _w_widget_proc;
+	WNDPROC newProc = _w_widget_window_proc;
 	if (oldProc == newProc)
 		return W_TRUE;
 	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_WNDPROC,
@@ -1709,13 +1700,30 @@ wresult _w_control_subclass(w_control *control, _w_control_reserved *reserved) {
 }
 wresult _w_control_unsubclass(w_control *control,
 		_w_control_reserved *reserved) {
-	WNDPROC newProc = reserved->default_proc;
-	WNDPROC oldProc = _w_widget_proc;
+	WNDPROC newProc = reserved->_window_proc;
+	WNDPROC oldProc = _w_widget_window_proc;
 	if (oldProc == newProc)
 		return W_TRUE;
 	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_WNDPROC,
 			(LONG_PTR) newProc);
 	return W_TRUE;
+}
+wresult _w_control_call_window_proc(w_widget *widget, _w_event_platform *e,
+		_w_widget_reserved *reserved) {
+	if (_W_WIDGET(widget)->handle == 0) {
+		e->result = 0;
+		return W_FALSE;
+	} else {
+		if (_W_CONTROL_RESERVED(reserved)->_window_proc
+				!= _w_widget_window_proc) {
+			e->result = CallWindowProcW(
+					_W_CONTROL_RESERVED(reserved)->_window_proc, e->hwnd,
+					e->msg, e->wparam, e->lparam);
+		} else {
+			e->result = DefWindowProcW(e->hwnd, e->msg, e->wparam, e->lparam);
+		}
+		return W_TRUE;
+	}
 }
 wresult _w_control_check_background(w_control *control,
 		_w_control_reserved *reserved) {
@@ -1745,7 +1753,7 @@ wresult _w_control_check_gesture(w_control *control,
 		_w_control_reserved *reserved) {
 
 }
-wresult _w_control_set_background(w_control *control,
+wresult _w_control_set_background_0(w_control *control,
 		_w_control_reserved *reserved) {
 
 }
@@ -1881,13 +1889,14 @@ void _w_control_class_init(struct _w_control_class *clazz) {
 	//reserved
 	_w_control_reserved *reserved = _W_CONTROL_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
+	_W_WIDGET_RESERVED(reserved)->call_window_proc =
+			_w_control_call_window_proc;
 	reserved->check_style = _w_control_check_style;
 	reserved->compute_size = _w_control_compute_size;
 	reserved->get_client_area = _w_control_get_client_area;
 	reserved->compute_trim = _w_control_compute_trim;
 	reserved->topHandle = _w_control_h;
 	reserved->borderHandle = _w_control_h;
-	reserved->widget.def_proc = _w_control_def_proc;
 	reserved->create_widget = _w_control_create_widget;
 	reserved->check_orientation = _w_control_check_orientation;
 	reserved->create_handle = _w_control_create_handle;
@@ -1898,13 +1907,13 @@ void _w_control_class_init(struct _w_control_class *clazz) {
 	reserved->check_mirrored = _w_control_check_mirrored;
 	reserved->check_border = _w_control_check_border;
 	reserved->check_gesture = _w_control_check_gesture;
-	reserved->set_background = _w_control_set_background;
-	reserved->set_background = _w_control_set_background;
+	reserved->set_background = _w_control_set_background_0;
 	reserved->widget_parent = _w_control_widget_parent;
 	reserved->widget_style = _w_control_widget_style;
 	reserved->widget_extstyle = _w_control_widget_extstyle;
 	reserved->window_class = _w_control_window_class;
-	reserved->widget_create_struct = _w_control_widget_create_struct;
+	reserved->subclass = _w_control_subclass;
+	reserved->unsubclass = _w_control_unsubclass;
 	//messages
 	dispatch_message *msg = reserved->messages;
 	for (size_t i = 0;
