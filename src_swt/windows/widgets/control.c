@@ -7,6 +7,7 @@
 #if defined( __WIN32__) || defined(__WIN64__)
 #include "control.h"
 #include "toolkit.h"
+#ifdef DEBUG
 const char *___message[] = { "", "WM_ACTIVATE", "WM_CAPTURECHANGED",
 		"WM_CHANGEUISTATE", "WM_CHAR", "WM_CLEAR", "WM_CLOSE", "WM_COMMAND",
 		"WM_CONTEXTMENU", "WM_CTLCOLOR", "WM_CUT", "WM_CREATE", "WM_DESTROY",
@@ -33,6 +34,7 @@ const char *___message[] = { "", "WM_ACTIVATE", "WM_CAPTURECHANGED",
 		"WM_WINDOWPOSCHANGED", "WM_WINDOWPOSCHANGING", "WM_XBUTTONDBLCLK",
 		"WM_XBUTTONDOWN", "WM_XBUTTONUP", "WM_DPICHANGED", "WM_MENUCOMMAND",
 		"WM_CTLCOLOR_CHILD", };
+#endif
 /*
  * internal function
  */
@@ -77,7 +79,7 @@ void _w_control_style(w_widget *widget, w_widget *parent, int style,
 //	if ((style & SWT.CLIP_CHILDREN) != 0) bits |= OS.WS_CLIPCHILDREN;
 //	return bits;
 }
-wresult _w_control_create(w_control *control, w_composite *parent,
+wresult _w_control_create_0(w_control *control, w_composite *parent,
 		const char *clazz, DWORD dwExStyle, DWORD dwStyle) {
 	struct UnicodeString str;
 	unicode_set(&str, clazz, -1);
@@ -105,15 +107,15 @@ wresult _w_control_create(w_control *control, w_composite *parent,
 
 	WNDPROC window_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
 	GWLP_WNDPROC);
-	if (window_proc != _w_widget_proc) {
+	if (window_proc != _w_widget_window_proc) {
 		struct _w_control_reserved *reserved = _W_CONTROL_RESERVED(
 				_w_widget_get_reserved(W_WIDGET(control)));
-		if (reserved->default_proc == 0) {
-			reserved->default_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
+		if (reserved->_window_proc == 0) {
+			reserved->_window_proc = (WNDPROC) GetWindowLongPtrW(hwnd,
 			GWLP_WNDPROC);
 		}
 		SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR) control);
-		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR) _w_widget_proc);
+		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR) _w_widget_window_proc);
 	}
 	//SendMessage (hwnd, WM_SETFONT,win_toolkit->system_font, 0);
 	/*	if (OS.IsDBLocale && hwndParent != 0) {
@@ -122,14 +124,6 @@ wresult _w_control_create(w_control *control, w_composite *parent,
 	 OS.ImmReleaseContext(hwndParent, hIMC);
 	 }*/
 	return W_TRUE;
-}
-void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
-		struct _w_widget_reserved *reserved) {
-	if (_W_CONTROL_RESERVED(reserved)->default_proc != 0) {
-		e->result = CallWindowProcW(_W_CONTROL_RESERVED(reserved)->default_proc, e->hwnd, e->msg,
-				e->wparam, e->lparam);
-	} else
-		e->result = DefWindowProcW(e->hwnd, e->msg, e->wparam, e->lparam);
 }
 HWND _w_control_h(w_control *control) {
 	return _W_WIDGET(control)->handle;
@@ -422,8 +416,7 @@ int _w_control_get_border_width(w_control *control) {
 	return 0;
 }
 wresult _w_control_get_drawing(w_control *control) {
-	//return drawCount <= 0;
-	return TRUE;
+	return _W_CONTROL(control)->drawCount <= 0;
 }
 w_cursor* _w_control_get_cursor(w_control *control) {
 	if (_W_CONTROL(control)->cursor == 0) {
@@ -842,6 +835,10 @@ void _w_control_init_graphics(w_control *control, w_graphics *gc, HDC hDC,
 		_W_GRAPHICS(gc)->state |= W_GRAPHICS_UISF_HIDEACCEL;
 	}
 }
+int _w_control_is_active (w_control* control){
+	return W_TRUE;
+
+}
 /*
  *
  */
@@ -849,7 +846,7 @@ int _CONTROL_WM_DESTROY(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	w_event _e;
 	int style = _W_WIDGET(widget)->style;
-	WNDPROC last_proc = _W_CONTROL_RESERVED(reserved)->default_proc;
+	WNDPROC last_proc = _W_CONTROL_RESERVED(reserved)->_window_proc;
 	w_widget_post_event_proc _proc = _W_WIDGET(widget)->post_event;
 	_W_WIDGET(widget)->state |= STATE_DISPOSED;
 	_e.type = W_EVENT_DISPOSE;
@@ -859,7 +856,7 @@ int _CONTROL_WM_DESTROY(w_widget *widget, struct _w_event_platform *e,
 	_w_widget_send_event(widget, (w_event*) &_e);
 	SetWindowLongPtrW(e->hwnd, GWLP_USERDATA, (LONG_PTR) 0);
 	SetWindowLongPtrW(e->hwnd, GWLP_WNDPROC, (LONG_PTR) last_proc);
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	_W_WIDGET(widget)->clazz = 0;
 	if (style & W_FREE_MEMORY) {
 		_w_toolkit_registre_free(widget, _proc);
@@ -1530,12 +1527,12 @@ int _CONTROL_WM_NULL(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	return W_FALSE;
 }
-int _w_control_dispath_message(w_widget *widget, struct _w_event_platform *ee,
-		struct _w_widget_reserved *reserved) {
+wresult _w_control_post_event_platform(w_widget *widget, _w_event_platform *ee,
+		_w_widget_reserved *reserved) {
 	wresult ret = W_FALSE;
 	if (ee->msg
 			< (sizeof(win_toolkit->wm_msg) / sizeof(win_toolkit->wm_msg[0]))) {
-		unsigned char msgid = win_toolkit->wm_msg[ee->msg];
+		wuchar msgid = win_toolkit->wm_msg[ee->msg];
 		if (msgid != 0) {
 			/*printf("%.*s %8x %8x %8x\n", 20, ___message[msgid],
 			 (unsigned int) ee->hwnd, (unsigned int) ee->wparam,
@@ -1545,7 +1542,7 @@ int _w_control_dispath_message(w_widget *widget, struct _w_event_platform *ee,
 		}
 	}
 	if (ret == W_FALSE) {
-		reserved->def_proc(widget, ee, reserved);
+		reserved->call_window_proc(widget, ee, reserved);
 	}
 	return ret;
 }
@@ -1571,8 +1568,8 @@ int _w_control_post_event(w_widget *widget, struct w_event *ee) {
 	switch (ee->type) {
 	case W_EVENT_PLATFORM:
 		reserved = _w_widget_get_reserved(widget);
-		return _w_control_dispath_message(widget,
-				(struct _w_event_platform*) ee, reserved);
+		return _w_control_post_event_platform(widget, (_w_event_platform*) ee,
+				reserved);
 		break;
 	case W_EVENT_COMPUTE_SIZE:
 		reserved = _w_widget_get_reserved(widget);
@@ -1603,14 +1600,238 @@ void _w_control_dispose(w_widget *widget) {
 	//if ((_W_WIDGET(widget)->state & STATE_DISPOSED) == 0) {
 	if (widget->clazz != 0) {
 		struct _w_control_reserved *reserved = _W_CONTROL_RESERVED(
-				_w_widget_get_reserved( W_WIDGET(widget)));
+				_w_widget_get_reserved(W_WIDGET(widget)));
 		HWND tophandle = reserved->topHandle(W_CONTROL(widget));
 		DestroyWindow(tophandle);
 	}
 }
+wresult _w_control_create(w_widget *widget, w_widget *parent, wuint64 style,
+		w_widget_post_event_proc post_event) {
+	if (parent == 0)
+		return W_ERROR_NULL_ARGUMENT;
+	if (w_widget_is_ok(parent) <= 0)
+		return W_ERROR_INVALID_ARGUMENT;
+	if (w_widget_class_id(parent) < _W_CLASS_COMPOSITE)
+		return W_ERROR_INVALID_ARGUMENT;
+	_W_CONTROL(widget)->parent = W_COMPOSITE(parent);
+	_W_WIDGET(widget)->post_event = post_event;
+	_w_control_reserved *reserved = _W_CONTROL_GET_RESERVED(widget);
+	_W_WIDGET(widget)->style = reserved->check_style(widget, style);
+	return reserved->create_widget(W_CONTROL(widget), reserved);
+}
+wuint64 _w_control_check_style(w_widget *widget, wuint64 style) {
+	return style;
+}
+wresult _w_control_create_widget(w_control *control,
+		_w_control_reserved *reserved) {
+	_W_WIDGET(control)->state |= STATE_DRAG_DETECT;
+	reserved->check_orientation(control, _W_CONTROL(control)->parent, reserved);
+	wresult result = reserved->create_handle(control, reserved);
+	if (result <= 0)
+		return result;
+	reserved->check_background(control, reserved);
+	reserved->check_buffered(control, reserved);
+	reserved->check_composited(control, reserved);
+	reserved->set_default_font(control, reserved);
+	reserved->check_mirrored(control, reserved);
+	reserved->check_border(control, reserved);
+	reserved->check_gesture(control, reserved);
+	if ((_W_WIDGET(control)->state & STATE_PARENT_BACKGROUND) != 0) {
+		reserved->set_background(control, reserved);
+	}
+	return result;
+}
+wresult _w_control_check_orientation(w_control *control, w_composite *parent,
+		_w_control_reserved *reserved) {
+
+}
+HWND _CreateWindow(DWORD dwExStyle, const char *lpClassName, DWORD dwStyle,
+		HWND hWndParent, LPVOID lpParam) {
+	size_t newlength;
+	WCHAR *clazz = _win_text_fix(lpClassName, -1, &newlength, W_ENCODING_UTF8);
+	HWND hwnd = CreateWindowExW(dwExStyle, clazz, 0, dwStyle, CW_USEDEFAULT, 0,
+	CW_USEDEFAULT, 0, hWndParent, 0, hinst, lpParam);
+	_win_text_free(lpClassName, clazz, newlength);
+	return hwnd;
+}
+wresult _w_control_create_handle(w_control *control,
+		_w_control_reserved *reserved) {
+	HWND hwndParent = reserved->widget_parent(control, reserved);
+	const char *_clazz = reserved->window_class(control, reserved);
+	DWORD style, extstyle;
+	style = reserved->widget_style(control, reserved);
+	extstyle = reserved->widget_extstyle(control, reserved);
+	HWND handle = _CreateWindow(extstyle, _clazz, style, hwndParent, 0);
+	if (handle == 0)
+		return W_ERROR_NO_HANDLES;
+	_W_WIDGET(control)->handle = handle;
+	w_composite *parent = _W_CONTROL(control)->parent;
+	if (parent != 0) {
+		_W_COMPOSITE(parent)->children_count++;
+	}
+	_W_WIDGET(control)->handle = handle;
+	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_USERDATA,
+			(LONG_PTR) control);
+	reserved->subclass(control, reserved);
+
+	/*WNDPROC window_proc = (WNDPROC) GetWindowLongPtrW(handle,
+	 GWLP_WNDPROC);
+	 if (window_proc != _w_widget_window_proc) {
+	 if (reserved->_window_proc == 0) {
+	 reserved->_window_proc = (WNDPROC) GetWindowLongPtrW(handle,
+	 GWLP_WNDPROC);
+	 }
+	 SetWindowLongPtrW(handle, GWLP_USERDATA, (LONG_PTR) control);
+	 SetWindowLongPtrW(handle, GWLP_WNDPROC, (LONG_PTR) _w_widget_window_proc);
+	 }*/
+	if (win_toolkit->IsDBLocale && hwndParent != 0) {
+		HIMC hIMC = ImmGetContext(hwndParent);
+		ImmAssociateContext(handle, hIMC);
+		ImmReleaseContext(hwndParent, hIMC);
+	}
+	return W_TRUE;
+}
+wresult _w_control_subclass(w_control *control, _w_control_reserved *reserved) {
+	WNDPROC oldProc = (WNDPROC) GetWindowLongPtrW(_W_WIDGET(control)->handle,
+	GWLP_WNDPROC);
+	if (reserved->_window_proc == 0) {
+		reserved->_window_proc = oldProc;
+	}
+	WNDPROC newProc = _w_widget_window_proc;
+	if (oldProc == newProc)
+		return W_TRUE;
+	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_WNDPROC,
+			(LONG_PTR) newProc);
+	return W_TRUE;
+}
+wresult _w_control_unsubclass(w_control *control,
+		_w_control_reserved *reserved) {
+	WNDPROC newProc = reserved->_window_proc;
+	WNDPROC oldProc = _w_widget_window_proc;
+	if (oldProc == newProc)
+		return W_TRUE;
+	SetWindowLongPtrW(_W_WIDGET(control)->handle, GWLP_WNDPROC,
+			(LONG_PTR) newProc);
+	return W_TRUE;
+}
+wresult _w_control_call_window_proc(w_widget *widget, _w_event_platform *e,
+		_w_widget_reserved *reserved) {
+	if (_W_WIDGET(widget)->handle == 0) {
+		e->result = 0;
+		return W_FALSE;
+	} else {
+		if (_W_CONTROL_RESERVED(reserved)->_window_proc
+				!= _w_widget_window_proc) {
+			e->result = CallWindowProcW(
+					_W_CONTROL_RESERVED(reserved)->_window_proc, e->hwnd,
+					e->msg, e->wparam, e->lparam);
+		} else {
+			e->result = DefWindowProcW(e->hwnd, e->msg, e->wparam, e->lparam);
+		}
+		return W_TRUE;
+	}
+}
+wresult _w_control_check_background(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_check_buffered(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_check_composited(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_set_default_font(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_check_mirrored(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_check_border(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_check_gesture(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+wresult _w_control_set_background_0(w_control *control,
+		_w_control_reserved *reserved) {
+
+}
+HWND _w_control_widget_parent(w_control *control,
+		_w_control_reserved *reserved) {
+	return _W_WIDGET(_W_CONTROL(control)->parent)->handle;
+}
+DWORD _w_control_widget_style(w_control *control,
+		_w_control_reserved *reserved) {
+	wuint64 style = _W_WIDGET(control)->style;
+	/* Force clipping of siblings by setting WS_CLIPSIBLINGS */
+	DWORD bits = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
+//	if ((style & SWT.BORDER) != 0) {
+//		if ((style & SWT.FLAT) != 0) bits |= OS.WS_BORDER;
+//	}
+	//if (OS.IsPPC) {
+	if ((style & W_BORDER) != 0)
+		bits |= WS_BORDER;
+	//}
+	return bits;
+
+	/*
+	 * This code is intentionally commented.  When clipping
+	 * of both siblings and children is not enforced, it is
+	 * possible for application code to draw outside of the
+	 * control.
+	 */
+//	int bits = OS.WS_CHILD | OS.WS_VISIBLE;
+//	if ((style & SWT.CLIP_SIBLINGS) != 0) bits |= OS.WS_CLIPSIBLINGS;
+//	if ((style & SWT.CLIP_CHILDREN) != 0) bits |= OS.WS_CLIPCHILDREN;
+//	return bits;
+}
+DWORD _w_control_widget_extstyle(w_control *control,
+		_w_control_reserved *reserved) {
+	DWORD bits = 0;
+	wuint64 style = _W_WIDGET(control)->style;
+	//if (!IsPPC) {
+	if ((style & W_BORDER) != 0)
+		bits |= WS_EX_CLIENTEDGE;
+	//}
+//	if ((style & SWT.BORDER) != 0) {
+//		if ((style & SWT.FLAT) == 0) bits |= OS.WS_EX_CLIENTEDGE;
+//	}
+	/*
+	 * Feature in Windows NT.  When CreateWindowEx() is called with
+	 * WS_EX_LAYOUTRTL or WS_EX_NOINHERITLAYOUT, CreateWindowEx()
+	 * fails to create the HWND. The fix is to not use these bits.
+	 */
+	if (WIN32_VERSION < VERSION(4, 10)) {
+		return bits;
+	}
+	bits |= WS_EX_NOINHERITLAYOUT;
+	if ((style & W_RIGHT_TO_LEFT) != 0)
+		bits |= WS_EX_LAYOUTRTL;
+	if ((style & W_FLIP_TEXT_DIRECTION) != 0)
+		bits |= WS_EX_RTLREADING;
+	return bits;
+}
+const char* _w_control_window_class(w_control *control,
+		_w_control_reserved *reserved) {
+	return 0;
+}
+CREATESTRUCTW* _w_control_widget_create_struct(w_control *control,
+		CREATESTRUCTW *st, _w_control_reserved *reserved) {
+	return 0;
+}
 void _w_control_class_init(struct _w_control_class *clazz) {
 	_w_widget_class_init(W_WIDGET_CLASS(clazz));
-//clazz
+	/*
+	 *
+	 */
+	W_WIDGET_CLASS(clazz)->create = _w_control_create;
 	W_WIDGET_CLASS(clazz)->post_event = _w_control_post_event;
 	W_WIDGET_CLASS(clazz)->dispose = _w_control_dispose;
 	clazz->get_graphics = _w_control_get_graphics;
@@ -1672,81 +1893,101 @@ void _w_control_class_init(struct _w_control_class *clazz) {
 	clazz->kill_timer = _w_control_kill_timer;
 
 	//reserved
-	struct _w_control_reserved *reserved = _W_CONTROL_RESERVED(
+	_w_control_reserved *reserved = _W_CONTROL_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
+	_W_WIDGET_RESERVED(reserved)->call_window_proc =
+			_w_control_call_window_proc;
+	reserved->check_style = _w_control_check_style;
+	reserved->compute_size = _w_control_compute_size;
+	reserved->get_client_area = _w_control_get_client_area;
+	reserved->compute_trim = _w_control_compute_trim;
 	reserved->topHandle = _w_control_h;
 	reserved->borderHandle = _w_control_h;
-	reserved->widget.def_proc = _w_control_def_proc;
+	reserved->create_widget = _w_control_create_widget;
+	reserved->check_orientation = _w_control_check_orientation;
+	reserved->create_handle = _w_control_create_handle;
+	reserved->check_background = _w_control_check_background;
+	reserved->check_buffered = _w_control_check_buffered;
+	reserved->check_composited = _w_control_check_composited;
+	reserved->set_default_font = _w_control_set_default_font;
+	reserved->check_mirrored = _w_control_check_mirrored;
+	reserved->check_border = _w_control_check_border;
+	reserved->check_gesture = _w_control_check_gesture;
+	reserved->set_background = _w_control_set_background_0;
+	reserved->widget_parent = _w_control_widget_parent;
+	reserved->widget_style = _w_control_widget_style;
+	reserved->widget_extstyle = _w_control_widget_extstyle;
+	reserved->window_class = _w_control_window_class;
+	reserved->subclass = _w_control_subclass;
+	reserved->unsubclass = _w_control_unsubclass;
 	//messages
-	struct _w_control_reserved *msg = reserved;
-	for (size_t i = 0; i < (sizeof(msg->messages) / sizeof(msg->messages[0]));
+	dispatch_message *msg = reserved->messages;
+	for (size_t i = 0;
+			i < (sizeof(reserved->messages) / sizeof(reserved->messages[0]));
 			i++) {
-		msg->messages[i] = _CONTROL_WM_NULL;
+		reserved->messages[i] = _CONTROL_WM_NULL;
 	}
-	msg->compute_size = _w_control_compute_size;
-	msg->get_client_area = _w_control_get_client_area;
-	msg->compute_trim = _w_control_compute_trim;
-	msg->messages[_WM_DESTROY] = _CONTROL_WM_DESTROY;
-	msg->messages[_WM_SIZE] = _CONTROL_WM_SIZE;
-	msg->messages[_WM_TIMER] = _CONTROL_WM_TIMER;
-	msg->messages[_WM_CREATE] = _CONTROL_WM_CREATE;
-	msg->messages[_WM_CTLCOLOR] = _CONTROL_WM_CTLCOLOR;
-	msg->messages[_WM_CAPTURECHANGED] = _WIDGET_WM_CAPTURECHANGED;
-	msg->messages[_WM_CHANGEUISTATE] = _CONTROL_WM_CHANGEUISTATE;
-	msg->messages[_WM_CHAR] = _WIDGET_WM_CHAR;
-	msg->messages[_WM_COMMAND] = _CONTROL_WM_COMMAND;
-	msg->messages[_WM_CONTEXTMENU] = _WIDGET_WM_CONTEXTMENU;
-	msg->messages[_WM_DRAWITEM] = _CONTROL_WM_DRAWITEM;
-	msg->messages[_WM_ERASEBKGND] = _CONTROL_WM_ERASEBKGND;
-	msg->messages[_WM_GETOBJECT] = _CONTROL_WM_GETOBJECT;
-	msg->messages[_WM_HELP] = _CONTROL_WM_HELP;
-	msg->messages[_WM_HSCROLL] = _CONTROL_WM_HSCROLL;
-	msg->messages[_WM_IME_CHAR] = _WIDGET_WM_IME_CHAR;
-	msg->messages[_WM_INPUTLANGCHANGE] = _CONTROL_WM_INPUTLANGCHANGE;
-	msg->messages[_WM_KEYDOWN] = _WIDGET_WM_KEYDOWN;
-	msg->messages[_WM_KEYUP] = _WIDGET_WM_KEYUP;
-	msg->messages[_WM_KILLFOCUS] = _WIDGET_WM_KILLFOCUS;
-	msg->messages[_WM_MEASUREITEM] = _CONTROL_WM_MEASUREITEM;
-	msg->messages[_WM_MENUCHAR] = _CONTROL_WM_MENUCHAR;
-	msg->messages[_WM_MENUSELECT] = _CONTROL_WM_MENUSELECT;
-	msg->messages[_WM_MOVE] = _CONTROL_WM_MOVE;
-	msg->messages[_WM_NCHITTEST] = _CONTROL_WM_NCHITTEST;
-	msg->messages[_WM_NOTIFY] = _CONTROL_WM_NOTIFY;
-	msg->messages[_WM_PAINT] = _CONTROL_WM_PAINT;
-	msg->messages[_WM_SETCURSOR] = _CONTROL_WM_SETCURSOR;
-	msg->messages[_WM_SETFOCUS] = _WIDGET_WM_SETFOCUS;
-	msg->messages[_WM_SYSCHAR] = _WIDGET_WM_SYSCHAR;
-	msg->messages[_WM_SYSCOMMAND] = _CONTROL_WM_SYSCOMMAND;
-	msg->messages[_WM_SYSKEYDOWN] = _WIDGET_WM_SYSKEYDOWN;
-	msg->messages[_WM_SYSKEYUP] = _WIDGET_WM_SYSKEYUP;
-	msg->messages[_WM_TABLET_FLICK] = _CONTROL_WM_TABLET_FLICK;
-	msg->messages[_WM_TOUCH] = _CONTROL_WM_TOUCH;
-	msg->messages[_WM_VSCROLL] = _CONTROL_WM_VSCROLL;
-	msg->messages[_WM_WINDOWPOSCHANGED] = _CONTROL_WM_WINDOWPOSCHANGED;
-	msg->messages[_WM_WINDOWPOSCHANGING] = _CONTROL_WM_WINDOWPOSCHANGING;
-	msg->messages[_WM_CTLCOLORCHILD] = _CONTROL_WM_CTLCOLORCHILD;
-	msg->messages[_WM_GETDLGCODE] = _CONTROL_WM_GETDLGCODE;
+	msg[_WM_DESTROY] = _CONTROL_WM_DESTROY;
+	msg[_WM_SIZE] = _CONTROL_WM_SIZE;
+	msg[_WM_TIMER] = _CONTROL_WM_TIMER;
+	msg[_WM_CREATE] = _CONTROL_WM_CREATE;
+	msg[_WM_CTLCOLOR] = _CONTROL_WM_CTLCOLOR;
+	msg[_WM_CAPTURECHANGED] = _WIDGET_WM_CAPTURECHANGED;
+	msg[_WM_CHANGEUISTATE] = _CONTROL_WM_CHANGEUISTATE;
+	msg[_WM_CHAR] = _WIDGET_WM_CHAR;
+	msg[_WM_COMMAND] = _CONTROL_WM_COMMAND;
+	msg[_WM_CONTEXTMENU] = _WIDGET_WM_CONTEXTMENU;
+	msg[_WM_DRAWITEM] = _CONTROL_WM_DRAWITEM;
+	msg[_WM_ERASEBKGND] = _CONTROL_WM_ERASEBKGND;
+	msg[_WM_GETOBJECT] = _CONTROL_WM_GETOBJECT;
+	msg[_WM_HELP] = _CONTROL_WM_HELP;
+	msg[_WM_HSCROLL] = _CONTROL_WM_HSCROLL;
+	msg[_WM_IME_CHAR] = _WIDGET_WM_IME_CHAR;
+	msg[_WM_INPUTLANGCHANGE] = _CONTROL_WM_INPUTLANGCHANGE;
+	msg[_WM_KEYDOWN] = _WIDGET_WM_KEYDOWN;
+	msg[_WM_KEYUP] = _WIDGET_WM_KEYUP;
+	msg[_WM_KILLFOCUS] = _WIDGET_WM_KILLFOCUS;
+	msg[_WM_MEASUREITEM] = _CONTROL_WM_MEASUREITEM;
+	msg[_WM_MENUCHAR] = _CONTROL_WM_MENUCHAR;
+	msg[_WM_MENUSELECT] = _CONTROL_WM_MENUSELECT;
+	msg[_WM_MOVE] = _CONTROL_WM_MOVE;
+	msg[_WM_NCHITTEST] = _CONTROL_WM_NCHITTEST;
+	msg[_WM_NOTIFY] = _CONTROL_WM_NOTIFY;
+	msg[_WM_PAINT] = _CONTROL_WM_PAINT;
+	msg[_WM_SETCURSOR] = _CONTROL_WM_SETCURSOR;
+	msg[_WM_SETFOCUS] = _WIDGET_WM_SETFOCUS;
+	msg[_WM_SYSCHAR] = _WIDGET_WM_SYSCHAR;
+	msg[_WM_SYSCOMMAND] = _CONTROL_WM_SYSCOMMAND;
+	msg[_WM_SYSKEYDOWN] = _WIDGET_WM_SYSKEYDOWN;
+	msg[_WM_SYSKEYUP] = _WIDGET_WM_SYSKEYUP;
+	msg[_WM_TABLET_FLICK] = _CONTROL_WM_TABLET_FLICK;
+	msg[_WM_TOUCH] = _CONTROL_WM_TOUCH;
+	msg[_WM_VSCROLL] = _CONTROL_WM_VSCROLL;
+	msg[_WM_WINDOWPOSCHANGED] = _CONTROL_WM_WINDOWPOSCHANGED;
+	msg[_WM_WINDOWPOSCHANGING] = _CONTROL_WM_WINDOWPOSCHANGING;
+	msg[_WM_CTLCOLORCHILD] = _CONTROL_WM_CTLCOLORCHILD;
+	msg[_WM_GETDLGCODE] = _CONTROL_WM_GETDLGCODE;
 
 	//mouse message
-	msg->messages[_WM_LBUTTONDBLCLK] = _WIDGET_WM_LBUTTONDBLCLK;
-	msg->messages[_WM_LBUTTONDOWN] = _WIDGET_WM_LBUTTONDOWN;
-	msg->messages[_WM_LBUTTONUP] = _WIDGET_WM_LBUTTONUP;
-	msg->messages[_WM_MBUTTONDBLCLK] = _WIDGET_WM_MBUTTONDBLCLK;
-	msg->messages[_WM_MBUTTONDOWN] = _WIDGET_WM_MBUTTONDOWN;
-	msg->messages[_WM_MBUTTONUP] = _WIDGET_WM_MBUTTONUP;
-	msg->messages[_WM_MOUSEHOVER] = _WIDGET_WM_MOUSEHOVER;
-	msg->messages[_WM_MOUSELEAVE] = _WIDGET_WM_MOUSELEAVE;
-	msg->messages[_WM_MOUSEMOVE] = _WIDGET_WM_MOUSEMOVE;
-	msg->messages[_WM_MOUSEWHEEL] = _WIDGET_WM_MOUSEWHEEL;
-	msg->messages[_WM_RBUTTONDBLCLK] = _WIDGET_WM_RBUTTONDBLCLK;
-	msg->messages[_WM_RBUTTONDOWN] = _WIDGET_WM_RBUTTONDOWN;
-	msg->messages[_WM_RBUTTONUP] = _WIDGET_WM_RBUTTONUP;
-	msg->messages[_WM_XBUTTONDBLCLK] = _WIDGET_WM_XBUTTONDBLCLK;
-	msg->messages[_WM_XBUTTONDOWN] = _WIDGET_WM_XBUTTONDOWN;
-	msg->messages[_WM_XBUTTONUP] = _WIDGET_WM_XBUTTONUP;
-	msg->messages[_WM_MENUCOMMAND] = _MENU_WM_MENUCOMMAND;
-	msg->messages[_WM_INITMENUPOPUP] = _MENU_WM_INITMENUPOPUP;
-	msg->messages[_WM_UNINITMENUPOPUP] = _MENU_WM_UNINITMENUPOPUP;
+	msg[_WM_LBUTTONDBLCLK] = _WIDGET_WM_LBUTTONDBLCLK;
+	msg[_WM_LBUTTONDOWN] = _WIDGET_WM_LBUTTONDOWN;
+	msg[_WM_LBUTTONUP] = _WIDGET_WM_LBUTTONUP;
+	msg[_WM_MBUTTONDBLCLK] = _WIDGET_WM_MBUTTONDBLCLK;
+	msg[_WM_MBUTTONDOWN] = _WIDGET_WM_MBUTTONDOWN;
+	msg[_WM_MBUTTONUP] = _WIDGET_WM_MBUTTONUP;
+	msg[_WM_MOUSEHOVER] = _WIDGET_WM_MOUSEHOVER;
+	msg[_WM_MOUSELEAVE] = _WIDGET_WM_MOUSELEAVE;
+	msg[_WM_MOUSEMOVE] = _WIDGET_WM_MOUSEMOVE;
+	msg[_WM_MOUSEWHEEL] = _WIDGET_WM_MOUSEWHEEL;
+	msg[_WM_RBUTTONDBLCLK] = _WIDGET_WM_RBUTTONDBLCLK;
+	msg[_WM_RBUTTONDOWN] = _WIDGET_WM_RBUTTONDOWN;
+	msg[_WM_RBUTTONUP] = _WIDGET_WM_RBUTTONUP;
+	msg[_WM_XBUTTONDBLCLK] = _WIDGET_WM_XBUTTONDBLCLK;
+	msg[_WM_XBUTTONDOWN] = _WIDGET_WM_XBUTTONDOWN;
+	msg[_WM_XBUTTONUP] = _WIDGET_WM_XBUTTONUP;
+	msg[_WM_MENUCOMMAND] = _MENU_WM_MENUCOMMAND;
+	msg[_WM_INITMENUPOPUP] = _MENU_WM_INITMENUPOPUP;
+	msg[_WM_UNINITMENUPOPUP] = _MENU_WM_UNINITMENUPOPUP;
 }
 #endif
 

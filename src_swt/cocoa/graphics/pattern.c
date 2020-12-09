@@ -6,11 +6,11 @@
  */
 #ifdef __APPLE__
 #include "graphics.h"
-wbool w_pattern_init(w_pattern *pattren) {
+wresult w_pattern_init(w_pattern *pattren) {
 }
-wbool w_pattern_dispose(w_pattern *pattren) {
+wresult w_pattern_dispose(w_pattern *pattren) {
 }
-wbool w_pattern_isok(w_pattern *pattren) {
+wresult w_pattern_isok(w_pattern *pattren) {
 }
 wresult w_pattern_create_from_image(w_pattern *pattren, w_image *image) {
 }

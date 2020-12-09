@@ -11,7 +11,7 @@ void w_image_init(w_image *image) {
 void w_image_dispose(w_image *image) {
 
 }
-wbool w_image_is_ok(w_image *image) {
+wresult w_image_is_ok(w_image *image) {
 }
 wresult w_image_create_from_file(w_image *image, const char *file) {
 	return W_TRUE;
@@ -44,7 +44,7 @@ w_color shadow, w_image *destimage) {
 }
 void w_surface_init(w_surface *bitmap) {
 }
-wbool w_surface_is_ok(w_surface *bitmap) {
+wresult w_surface_is_ok(w_surface *bitmap) {
 }
 void w_surface_dispose(w_surface *bitmap) {
 }

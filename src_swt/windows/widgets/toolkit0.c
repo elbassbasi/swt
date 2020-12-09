@@ -11,13 +11,12 @@ w_toolkit* w_toolkit_get_platform() {
 		const int total_size = 0x10000;
 		const int toolkit_size = sizeof(_w_toolkit);
 		const int tmp_size = total_size - toolkit_size;
-		win_toolkit = malloc(total_size);
+		win_toolkit = calloc(1, total_size);
 		if (win_toolkit == 0) {
 			fprintf(stderr, "Error : Do not initialize toolkit\n");
 			exit(EXIT_FAILURE);
 			return 0;
 		}
-		memset(win_toolkit, 0, sizeof(_w_toolkit));
 		win_toolkit->tmp_alloc = tmp_size;
 		_w_toolkit_init(win_toolkit);
 	}
@@ -206,73 +205,51 @@ void _w_toolkit_get_shells_from_parent(w_shell *shell, w_iterator *iterator) {
 	_W_SHELLS_ITERATOR(iterator)->parent = shell;
 	_W_SHELLS_ITERATOR(iterator)->count = -1;
 }
+wuchar _system_colors[] = { //
+		[W_COLOR_WIDGET_DARK_SHADOW] = COLOR_3DDKSHADOW, //
+				[W_COLOR_WIDGET_NORMAL_SHADOW] = COLOR_3DSHADOW, //
+				[W_COLOR_WIDGET_LIGHT_SHADOW] = COLOR_3DLIGHT, //
+				[W_COLOR_WIDGET_HIGHLIGHT_SHADOW] = COLOR_3DHIGHLIGHT, //
+				[W_COLOR_WIDGET_BACKGROUND] = COLOR_3DFACE, //
+				[W_COLOR_WIDGET_BORDER] = COLOR_WINDOWFRAME, //
+				[W_COLOR_WIDGET_FOREGROUND] = COLOR_WINDOWTEXT, //
+				[W_COLOR_LIST_FOREGROUND] = COLOR_WINDOWTEXT, //
+				[W_COLOR_LIST_BACKGROUND] = COLOR_WINDOW, //
+				[W_COLOR_LIST_SELECTION] = COLOR_HIGHLIGHT, //
+				[W_COLOR_LIST_SELECTION_TEXT] = COLOR_HIGHLIGHTTEXT, //
+				[W_COLOR_LINK_FOREGROUND] = COLOR_HOTLIGHT, //
+				[W_COLOR_INFO_FOREGROUND] = COLOR_INFOTEXT, //
+				[W_COLOR_INFO_BACKGROUND] = COLOR_INFOBK, //
+				[W_COLOR_TITLE_FOREGROUND] = COLOR_CAPTIONTEXT, //
+				[W_COLOR_TITLE_BACKGROUND] = COLOR_ACTIVECAPTION, //
+				[W_COLOR_TITLE_BACKGROUND_GRADIENT
+						] = COLOR_GRADIENTACTIVECAPTION, //
+				[W_COLOR_TITLE_INACTIVE_FOREGROUND] = COLOR_INACTIVECAPTIONTEXT, //
+				[W_COLOR_TITLE_INACTIVE_BACKGROUND] = COLOR_INACTIVECAPTION, //
+				[W_COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT
+						] = COLOR_GRADIENTINACTIVECAPTION, //
+
+		};
 w_color _w_toolkit_get_system_color(w_toolkit *toolkit, wuint id) {
-	w_color pixel = 0x00000000;
-	switch (id) {
-	case W_COLOR_WIDGET_DARK_SHADOW:
-		pixel = GetSysColor(COLOR_3DDKSHADOW);
-		break;
-	case W_COLOR_WIDGET_NORMAL_SHADOW:
-		pixel = GetSysColor(COLOR_3DSHADOW);
-		break;
-	case W_COLOR_WIDGET_LIGHT_SHADOW:
-		pixel = GetSysColor(COLOR_3DLIGHT);
-		break;
-	case W_COLOR_WIDGET_HIGHLIGHT_SHADOW:
-		pixel = GetSysColor(COLOR_3DHIGHLIGHT);
-		break;
-	case W_COLOR_WIDGET_BACKGROUND:
-		pixel = GetSysColor(COLOR_3DFACE);
-		break;
-	case W_COLOR_WIDGET_BORDER:
-		pixel = GetSysColor(COLOR_WINDOWFRAME);
-		break;
-	case W_COLOR_WIDGET_FOREGROUND:
-	case W_COLOR_LIST_FOREGROUND:
-		pixel = GetSysColor(COLOR_WINDOWTEXT);
-		break;
-	case W_COLOR_LIST_BACKGROUND:
-		pixel = GetSysColor(COLOR_WINDOW);
-		break;
-	case W_COLOR_LIST_SELECTION:
-		pixel = GetSysColor(COLOR_HIGHLIGHT);
-		break;
-	case W_COLOR_LIST_SELECTION_TEXT:
-		pixel = GetSysColor(COLOR_HIGHLIGHTTEXT);
-		break;
-	case W_COLOR_LINK_FOREGROUND:
-		pixel = GetSysColor(COLOR_HOTLIGHT);
-		break;
-	case W_COLOR_INFO_FOREGROUND:
-		pixel = GetSysColor(COLOR_INFOTEXT);
-		break;
-	case W_COLOR_INFO_BACKGROUND:
-		pixel = GetSysColor(COLOR_INFOBK);
-		break;
-	case W_COLOR_TITLE_FOREGROUND:
-		pixel = GetSysColor(COLOR_CAPTIONTEXT);
-		break;
-	case W_COLOR_TITLE_BACKGROUND:
-		pixel = GetSysColor(COLOR_ACTIVECAPTION);
-		break;
-	case W_COLOR_TITLE_BACKGROUND_GRADIENT:
-		pixel = GetSysColor(COLOR_GRADIENTACTIVECAPTION);
-		if (pixel == 0)
-			pixel = GetSysColor(COLOR_ACTIVECAPTION);
-		break;
-	case W_COLOR_TITLE_INACTIVE_FOREGROUND:
-		pixel = GetSysColor(COLOR_INACTIVECAPTIONTEXT);
-		break;
-	case W_COLOR_TITLE_INACTIVE_BACKGROUND:
-		pixel = GetSysColor(COLOR_INACTIVECAPTION);
-		break;
-	case W_COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT:
-		pixel = GetSysColor(COLOR_GRADIENTINACTIVECAPTION);
-		if (pixel == 0)
-			pixel = GetSysColor(COLOR_INACTIVECAPTION);
-		break;
+	w_color color = 0x00000000;
+	if (id < sizeof(_system_colors) / sizeof(_system_colors[0])) {
+		int nIndex = _system_colors[id];
+		if (nIndex != 0) {
+			color = GetSysColor(nIndex);
+			if (color == 0) {
+				switch (id) {
+				case W_COLOR_TITLE_BACKGROUND_GRADIENT:
+					color = GetSysColor(COLOR_ACTIVECAPTION);
+					break;
+				case W_COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT:
+					color = GetSysColor(COLOR_INACTIVECAPTION);
+					break;
+				}
+
+			}
+		}
 	}
-	return pixel;
+	return color;
 }
 w_cursor* _w_toolkit_get_system_cursor(w_toolkit *toolkit, wuint style) {
 	if (((unsigned int) style) <= W_CURSOR_HAND) {

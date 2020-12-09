@@ -17,8 +17,8 @@
 #include "glcanvas.h"
 #include "ccanvas.h"
 #include "../controls/controls.h"
-extern const char *WindowName; //$NON-NLS-1$
-extern const char *WindowShadowName; //$NON-NLS-1$
+extern const char *WindowClass; //$NON-NLS-1$
+extern const char *WindowShadowClass; //$NON-NLS-1$
 extern const char *WindowOwnDCName; //$NON-NLS-1$
 extern struct _w_theme_class win32_theme;
 
@@ -27,6 +27,7 @@ extern struct _w_theme_class win32_theme;
 #define _W_CLASS_DECL_ITEM(x) _W_CLASS_DECL(x);\
 		struct _w_##x##item_class class_##x##item
 #define BRUSHES_SIZE 32
+#define ID_START 108
 typedef struct _w_toolkit {
 	w_toolkit toolkit;
 	int win32_version;
@@ -37,6 +38,7 @@ typedef struct _w_toolkit {
 	/* Focus */
 	int focusEvent;
 	w_control *focusControl;
+	w_control* lastHittestControl;
 	w_shell *activeShell;
 	_w_shell *shells;
 	int shells_count;
@@ -51,6 +53,8 @@ typedef struct _w_toolkit {
 	int scrollRemainder;
 	int scrollHRemainder;
 	HWND lastClickHwnd;
+	HPALETTE hPalette;
+	unsigned init_startup;
 	unsigned activePending :1;
 	unsigned ignoreActivate :1;
 	unsigned ignoreFocus :1;
@@ -61,27 +65,64 @@ typedef struct _w_toolkit {
 	unsigned lastNull :1;
 	unsigned lastDead :1;
 	unsigned mnemonicKeyHit :1;
+	unsigned IsDBLocale:1;
+	unsigned TrimEnabled : 1;
+	unsigned lockActiveWindow:1;
+	unsigned ignoreRestoreFocus:1;
 	w_theme systemtheme;
 	HTHEME themes[_W_THEME_CLASS_LAST];
 	HBRUSH brushes[BRUSHES_SIZE];
-	unsigned char wm_msg[WM_USER + 0x10];
+	wuchar wm_msg[WM_USER + 0x10];
 	struct _w_font systemfont;
 	struct _w_cursor cursors[W_CURSOR_HAND + 1];
+	/*
+	 * classes
+	 */
 	struct _w_widget_class *classes[_W_CLASS_LAST];
 	struct _w_toolkit_class class_toolkit;
-	struct _w_scrollbar_class class_scrollbar; //
-	_W_CLASS_DECL(shell); //
-	_W_CLASS_DECL(button); //
-	_W_CLASS_DECL(sash); //
-	_W_CLASS_DECL(browser); //
-	_W_CLASS_DECL_ITEM(menu); //
-	_W_CLASS_DECL_ITEM(tree); //
+	/*
+	 * shell
+	 */
+	struct _w_shell_class class_shell;
+	struct _w_shell_reserved class_shell_reserved;
+	/*
+	 * canvas
+	 */
+	struct _w_canvas_class class_canvas;
+	struct _w_canvas_reserved class_canvas_reserved;
+	struct _w_caret_class class_caret;
+	struct _w_ime_class class_ime;
+	/*
+	 * composite
+	 */
+	struct _w_composite_class class_composite;
+	struct _w_composite_reserved class_composite_reserved;
+	struct _w_scrollbar_class class_scrollbar;
+	/*
+	 * ccanvas
+	 */
+	struct _w_ccanvas_class class_ccanvas;
+	struct _w_ccanvas_reserved class_ccanvas_reserved;
+	/*
+	 * dragsource
+	 */
+	struct _w_dragsource_class class_dragsource;
+	/*
+	 * droptarget
+	 */
+	struct _w_droptarget_class class_droptarget;
+	/*
+	 *
+	 */
+	struct _w_tabitem_class class_tabfolderitem;
 	struct _w_treecolumn_class class_treecolumn; //
+
+	_W_CLASS_DECL(button); //
+	_W_CLASS_DECL_ITEM(menu); //
+	_W_CLASS_DECL(browser); //
+	_W_CLASS_DECL_ITEM(tree); //
 	_W_CLASS_DECL(tabfolder); //
-	struct _w_tabitem_class class_tabfolderitem; //
-	_W_CLASS_DECL(composite); //
-	_W_CLASS_DECL(canvas); //
-	_W_CLASS_DECL(ccanvas); //
+	_W_CLASS_DECL(sash); //
 	_W_CLASS_DECL(glcanvas); //
 	_W_CLASS_DECL_ITEM(combo); //
 	_W_CLASS_DECL(coolbar); //

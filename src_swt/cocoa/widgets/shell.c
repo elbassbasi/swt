@@ -47,7 +47,7 @@ wuint64 _w_shell_check_style(w_widget *control, wuint64 style) {
 }
 wresult _w_shell_create_embedded(w_widget *widget, w_widget *parent,
 		wuint64 style, w_widget_post_event_proc post_event, void *handle,
-		wbool embedded) {
+		int embedded) {
 	if (parent != 0) {
 		if (!w_widget_is_ok(parent))
 			return W_ERROR_INVALID_ARGUMENT;
@@ -895,7 +895,7 @@ void _w_shell_removeObserversFromWindow () {
 	//layout (null, SWT.DEFER);
 }
 
-void _w_shell_sendToolTipEvent (wbool enter) {
+void _w_shell_sendToolTipEvent (int enter) {
 	/*if (!isVisible()) return;
 	NSWindow eventWindow = view.window();
 	if (tooltipTag == 0) {
@@ -1003,7 +1003,7 @@ wresult _w_shell_set_bounds (w_control* shell,w_point* location,w_size* size) {
     if (_w_shell_get_full_screen(W_SHELL(shell))>0){
         _w_shell_set_full_screen(W_SHELL(shell), W_FALSE);
     }
-	wbool sheet = NSWindow_isSheet(_W_SHELL(shell)->window);
+	int sheet = NSWindow_isSheet(_W_SHELL(shell)->window);
 	if (sheet && location!=0 && size==0) return;
     w_rect frame,screenframe;
     NSArray* screens = NSScreen_screens();
@@ -1064,7 +1064,7 @@ void _w_shell_setClipRegion (NSView* view) {
 }
 
 //@Override
- void _w_shell_setEnabled (wbool enabled) {
+ void _w_shell_setEnabled (int enabled) {
 	/*checkWidget();
 	if (((state & DISABLED) == 0) == enabled) return;
 	super.setEnabled (enabled);
@@ -1072,7 +1072,7 @@ void _w_shell_setClipRegion (NSView* view) {
 		if (!restoreFocus ()) traverseGroup (false);
 	}*/
 }
-wresult _w_shell_set_full_screen(w_shell *shell, wbool fullScreen) {
+wresult _w_shell_set_full_screen(w_shell *shell, int fullScreen) {
 	/*checkWidget ();
 	if (window == null) return;
 	if (_getFullScreen () == fullScreen) return;
@@ -1169,16 +1169,16 @@ wresult _w_shell_set_images(w_shell *shell, w_image *image,
 		display.setMenuBar (menuBar);
 	}*/
 }
-wresult _w_shell_set_ime_input_mode(w_shell *shell, wbool mode) {
+wresult _w_shell_set_ime_input_mode(w_shell *shell, int mode) {
     return W_TRUE;
 }
-wresult _w_shell_set_maximized(w_shell *shell, wbool maximized) {
+wresult _w_shell_set_maximized(w_shell *shell, int maximized) {
 	if (_W_SHELL(shell)->window == 0) return W_FALSE;
 	if (NSWindow_isZoomed(_W_SHELL(shell)->window) == maximized) return W_TRUE;
     NSWindow_zoom(_W_SHELL(shell)->window, 0);
     return W_TRUE;
 }
-wresult _w_shell_set_minimized(w_shell *shell, wbool minimized) {
+wresult _w_shell_set_minimized(w_shell *shell, int minimized) {
 	if (_W_SHELL(shell)->window == 0) return W_FALSE;
 	//if (!getVisible()) return;
 	if (minimized) {
@@ -1199,7 +1199,7 @@ wresult _w_shell_set_minimized(w_shell *shell, wbool minimized) {
         _w_shell_set_bounds(W_CONTROL(shell), 0, &frame.sz);
 	}
 }
- wresult _w_shell_set_modified(w_shell *shell, wbool modified) {
+ wresult _w_shell_set_modified(w_shell *shell, int modified) {
      NSWindow_setDocumentEdited(_W_SHELL(shell)->window, modified);
      return W_TRUE;
 }
@@ -1245,7 +1245,7 @@ wresult _w_shell_set_text(w_shell *shell, const char *string,
 wresult _w_shell_set_text_unicode(w_shell *shell,
         const wchar_t *string, size_t length){}
 //@Override
- wresult _w_shell_set_visible (wbool visible) {
+ wresult _w_shell_set_visible (int visible) {
 	/*checkWidget();
 	int mask = SWT.PRIMARY_MODAL | SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL;
 	if ((style & mask) != 0) {
@@ -1263,7 +1263,7 @@ wresult _w_shell_set_text_unicode(w_shell *shell,
 		setWindowVisible (visible, false);
 	}*/
 }
-wresult _w_shell_set_window_visible (w_shell* shell,wbool visible, wbool key) {
+wresult _w_shell_set_window_visible (w_shell* shell,int visible, int key) {
     w_event e;
 	if (visible) {
 		if ((_W_WIDGET(shell)->state & STATE_HIDDEN) == 0) return;
@@ -1299,7 +1299,7 @@ wresult _w_shell_set_window_visible (w_shell* shell,wbool visible, wbool key) {
 			} else {
 				// If the parent window is miniaturized, the window will be shown
 				// when its parent is shown.
-				wbool parentMinimized = _W_CONTROL(shell)->parent != 0 && NSWindow_isMiniaturized(parentWindow);
+				int parentMinimized = _W_CONTROL(shell)->parent != 0 && NSWindow_isMiniaturized(parentWindow);
 				if (!parentMinimized) {
 					if (key && (_W_WIDGET(shell)->style & W_NO_FOCUS) == 0) {
                         _w_shell_make_key_and_order_front(shell);
@@ -1394,7 +1394,7 @@ void _w_shell_set_zorder(w_control *control,_w_control_reserved* reserved) {
 }
 
 //@Override
-void _w_shell_setZOrder (w_control* control, wbool above) {
+void _w_shell_setZOrder (w_control* control, int above) {
 	/*if (window == null) return;
 	if (!getVisible ()) return;
 	if (control == null) {
@@ -1418,7 +1418,7 @@ wresult _w_shell_traverseEscape () {
 }
 
 //@Override
-void _w_shell_updateCursorRects(wbool enabled) {
+void _w_shell_updateCursorRects(int enabled) {
 	//super.updateCursorRects(enabled);
 	//if (toolBar != null) toolBar.updateCursorRects(enabled);
 };
@@ -1432,7 +1432,7 @@ void _w_shell_updateOpaque () {
 	window.setOpaque (region == null && glContextCount == 0);*/
 }
 
-void _w_shell_updateParent (wbool visible) {
+void _w_shell_updateParent (int visible) {
 	/*if (window != null) {
 		if (visible) {
 			if (parent != null && parent.getVisible ()) {
@@ -1789,7 +1789,7 @@ void _w_shell_setSavedFocus (w_control* control) {
 	//savedFocus = control;
 }
 //@Override
-wresult _w_shell_traverse_item (w_control* control,wbool next) {
+wresult _w_shell_traverse_item (w_control* control,int next) {
 	return W_FALSE;
 }
 

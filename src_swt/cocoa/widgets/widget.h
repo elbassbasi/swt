@@ -179,12 +179,12 @@ typedef struct _w_widget_reserved {
 			_w_widget_reserved *reserved);
 	wresult (*create_widget)(w_widget *widget, _w_widget_reserved *reserved);
 	wresult (*create_handle)(w_widget *widget, _w_widget_reserved *reserved);
-	void (*set_orientation)(w_widget *widget, wbool create,
+	void (*set_orientation)(w_widget *widget, int create,
 			_w_widget_reserved *reserved);
 	wuint64 (*check_style)(w_widget *control, wuint64 style);
-	wresult (*set_tab_group_focus)(w_widget *widget, wbool next,
+	wresult (*set_tab_group_focus)(w_widget *widget, int next,
 			_w_widget_reserved *reserved);
-	wresult (*set_tab_item_focus)(w_widget *widget, wbool next,
+	wresult (*set_tab_item_focus)(w_widget *widget, int next,
 			_w_widget_reserved *reserved);
 	_w_msg msgs[_NS_LAST];
 } _w_widget_reserved;

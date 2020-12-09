@@ -160,7 +160,7 @@ wresult _w_browser_ie_stop(w_browser *browser) {
 /*
  *
  */
-wresult _w_browser_ie_create(w_widget *widget, w_widget *parent, int style,
+wresult _w_browser_ie_create(w_widget *widget, w_widget *parent, wuint64 style,
 		w_widget_post_event_proc post_event) {
 	HRESULT result;
 	wresult res = W_ERROR_NO_HANDLES;
@@ -169,7 +169,7 @@ wresult _w_browser_ie_create(w_widget *widget, w_widget *parent, int style,
 	result = CoCreateInstance(&CLSID_WebBrowser, NULL, CLSCTX_INPROC,
 			&IID_IWebBrowser, (void**) &browser);
 	if (browser != 0) {
-		res = _w_composite_create(widget, parent, style, post_event);
+		res = _w_control_create(widget, parent, style, post_event);
 		if (res > 0) {
 			result = browser->lpVtbl->QueryInterface(browser, &IID_IOleObject,
 					(void**) &oleObject);

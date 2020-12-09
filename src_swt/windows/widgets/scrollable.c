@@ -16,6 +16,31 @@ void _w_scrollable_style(w_widget *widget, w_widget *parent, int style,
 	if ((style & W_VSCROLL) != 0)
 		*dwStyle |= WS_VSCROLL;
 }
+DWORD _w_scrollable_widget_extstyle(w_control *control,
+		_w_control_reserved *reserved) {
+	return _w_control_widget_extstyle(control, reserved);
+	/*
+	 * This code is intentionally commented.  In future,
+	 * we may wish to support different standard Windows
+	 * edge styles.  The issue here is that not all of
+	 * these styles are available on the other platforms
+	 * this would need to be a hint.
+	 */
+//	if ((style & SWT.BORDER) != 0) return OS.WS_EX_CLIENTEDGE;
+//	if ((style & SWT.SHADOW_IN) != 0) return OS.WS_EX_STATICEDGE;
+//	return super.widgetExtStyle ();
+}
+const char* _w_scrollable_window_class(w_control *control,
+		_w_control_reserved *reserved){
+	return WindowClass;
+}
+DWORD _w_scrollable_widget_style (w_control *control,
+		_w_control_reserved *reserved) {
+	DWORD bits = _w_control_widget_style(control, reserved) | WS_TABSTOP;
+	if ((_W_WIDGET(control)->style & W_HSCROLL) != 0) bits |= WS_HSCROLL;
+	if ((_W_WIDGET(control)->style & W_VSCROLL) != 0) bits |= WS_VSCROLL;
+	return bits;
+}
 /*
  * public function for scrollbar
  */
@@ -49,8 +74,9 @@ int _w_scrollbar_get_minimum(w_scrollbar *scrollbar) {
 int _w_scrollbar_get_page_increment(w_scrollbar *scrollbar) {
 }
 int _w_scrollbar_get_selection(w_scrollbar *scrollbar) {
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -61,8 +87,9 @@ int _w_scrollbar_get_selection(w_scrollbar *scrollbar) {
 	return info.nPos;
 }
 int _w_scrollbar_get_thumb(w_scrollbar *scrollbar) {
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -86,8 +113,9 @@ void _w_scrollbar_set_values(w_scrollbar *scrollbar,
 		return;
 	if (values->pageIncrement < 1)
 		return;
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -109,8 +137,9 @@ void _w_scrollbar_set_maximum(w_scrollbar *scrollbar, int maximum) {
 		return;
 	SCROLLINFO info;
 	info.cbSize = sizeof(SCROLLINFO);
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -123,7 +152,8 @@ void _w_scrollbar_set_maximum(w_scrollbar *scrollbar, int maximum) {
 }
 void _w_scrollbar_set_minimum(w_scrollbar *scrollbar, int minimum) {
 }
-void _w_scrollbar_set_page_increment(w_scrollbar *scrollbar, int pageIncrement) {
+void _w_scrollbar_set_page_increment(w_scrollbar *scrollbar,
+		int pageIncrement) {
 }
 void _w_scrollbar_set_selection(w_scrollbar *scrollbar, int selection) {
 }
@@ -132,8 +162,9 @@ void _w_scrollbar_set_thumb(w_scrollbar *scrollbar, int thumb) {
 		return;
 	SCROLLINFO info;
 	info.cbSize = sizeof(SCROLLINFO);
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -150,8 +181,9 @@ void _w_scrollbar_get_thumb_bounds(w_scrollbar *scrollbar, w_rect *rect) {
 	//parent.forceResize ();
 	SCROLLBARINFO info;
 	info.cbSize = sizeof(SCROLLINFO);
-	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
-			_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
+	struct _w_scrollable_reserved *reserved =
+			_W_SCROLLABLE_RESERVED(
+					_w_widget_get_reserved(W_WIDGET(_W_SCROLLBAR(scrollbar)->scrollable)));
 	HWND hwnd = reserved->scrolledHandle(
 			W_CONTROL(_W_SCROLLBAR(scrollbar)->scrollable));
 	int type = _W_SCROLLBAR(scrollbar)->type;
@@ -290,7 +322,7 @@ int _wm_scroll(w_widget *widget, struct _w_event_platform *e, wresult update) {
 		SetScrollInfo(e->hwnd, type, &info, TRUE);
 	} else {
 		struct _w_widget_reserved *reserved = _w_widget_get_reserved(widget);
-		reserved->def_proc(widget, e, reserved);
+		reserved->window_proc(widget, e, reserved);
 	}
 
 	/* Do nothing when scrolling is ending */
@@ -354,7 +386,7 @@ int _SCROLLABLE_WM_MOUSEWHEEL(w_widget *widget, struct _w_event_platform *e,
 
 int _SCROLLABLE_WM_SIZE(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	_CONTROL_WM_SIZE(widget, e, reserved);
 	return W_TRUE;
 }
@@ -588,6 +620,9 @@ void _w_scrollable_class_init(struct _w_scrollable_class *clazz) {
 	 */
 	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
+	_W_CONTROL_RESERVED(reserved)->widget_style = _w_scrollable_widget_style;
+	_W_CONTROL_RESERVED(reserved)->widget_extstyle = _w_scrollable_widget_extstyle;
+	_W_CONTROL_RESERVED(reserved)->window_class = _w_scrollable_window_class;
 	reserved->scrolledHandle = _w_control_h;
 //messages
 	struct _w_control_reserved *msg = _W_CONTROL_RESERVED(reserved);

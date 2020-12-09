@@ -36,7 +36,6 @@ size_t _w_menuitem_iterator_get_count(w_iterator *it) {
 	return ((struct _w_menuitem_iterator*) it)->count;
 }
 _w_iterator_class _w_menuitem_iterator_class = { //
-		sizeof(struct _w_menuitem_iterator*), sizeof(_w_iterator_class), //
 				_w_menuitem_iterator_close, //
 				_w_menuitem_iterator_next, //
 				_w_menuitem_iterator_reset, //
@@ -293,7 +292,7 @@ void _w_menuitem_get_items(w_menuitem *item, w_iterator *items) {
 				parentItem);
 	}
 }
-unsigned short _w_menuitem_get_id(w_menuitem *item) {
+wushort _w_menuitem_get_id(w_menuitem *item) {
 	if (_W_MENUITEM(item)->index < 0)
 		return 0;
 	MENUITEMINFOW info;
@@ -301,7 +300,11 @@ unsigned short _w_menuitem_get_id(w_menuitem *item) {
 	info.fMask = MIIM_ID;
 	if (GetMenuItemInfoW(_W_MENUITEM(item)->parentItem,
 	_W_MENUITEM(item)->index, TRUE, &info)) {
-		return info.wID & 0xFFFF;
+		int id = info.wID & 0x1FFFF;
+		if (id < 0x100)
+			return 0;
+		else
+			return id >> 1;
 	} else
 		return 0;
 }
@@ -565,7 +568,7 @@ wresult _w_menuitem_set_enabled(w_menuitem *item, wresult enabled) {
 	}
 	return W_FALSE;
 }
-wresult _w_menuitem_set_id(w_menuitem *item, unsigned short id) {
+wresult _w_menuitem_set_id(w_menuitem *item, wushort id) {
 	if (_W_MENUITEM(item)->index < 0)
 		return W_FALSE;
 	MENUITEMINFOW info;
@@ -574,7 +577,8 @@ wresult _w_menuitem_set_id(w_menuitem *item, unsigned short id) {
 	info.wID = 0;
 	if (GetMenuItemInfoW(_W_MENUITEM(item)->parentItem,
 	_W_MENUITEM(item)->index, TRUE, &info)) {
-		info.wID = (info.wID & 0xFFFF0000) | (id & 0xFFFF);
+		int _id = (id & 0x1FFFF) << 1;
+		info.wID = (info.wID & 0xFFFE0000) | _id;
 		if (SetMenuItemInfoW(_W_MENUITEM(item)->parentItem,
 		_W_MENUITEM(item)->index, TRUE, &info)) {
 			return W_TRUE;
@@ -725,7 +729,7 @@ wresult _w_menu_set_visible(w_menu *menu, wresult visible) {
 	if ((_W_WIDGET(menu)->style & (W_BAR | W_DROP_DOWN)) != 0)
 		return W_FALSE;
 	w_shell *shell;
-	w_control_get_shell( _W_MENU(menu)->parent,&shell);
+	w_control_get_shell( _W_MENU(menu)->parent, &shell);
 	if (shell == 0)
 		return W_ERROR_INVALID_ARGUMENT;
 	HWND hwndParent = _W_WIDGET(shell)->handle;

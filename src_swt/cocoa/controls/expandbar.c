@@ -10,7 +10,7 @@
 w_control* _w_expanditem_get_control(w_expanditem *expanditem) {
 
 }
-wbool _w_expanditem_get_expanded(w_expanditem *expanditem) {
+wresult _w_expanditem_get_expanded(w_expanditem *expanditem) {
 }
 int _w_expanditem_get_header_height(w_expanditem *expanditem) {
 }
@@ -21,7 +21,7 @@ wresult _w_expanditem_set_control(w_expanditem *expanditem,
 		w_control *control) {
 
 }
-wresult _w_expanditem_set_expanded(w_expanditem *expanditem, wbool expanded) {
+wresult _w_expanditem_set_expanded(w_expanditem *expanditem, int expanded) {
 }
 wresult _w_expanditem_set_height(w_expanditem *expanditem, int height) {
 }

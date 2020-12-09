@@ -25,13 +25,13 @@ wresult w_path_add_path(w_path *path, w_path *frompath) {
 }
 wresult w_path_add_rectangle(w_path *path, w_rectf *rect) {
 }
-wresult w_path_add_string(w_path *path, const char *string, int length,
-		w_pointf *pt, w_font *font) {
+wresult w_path_add_string(w_path *path, const char *string, int length, int enc,
+w_pointf *pt, w_font *font) {
 }
 wresult w_path_close(w_path *path) {
 }
 wresult w_path_contains(w_path *path, w_pointf *pt, w_graphics *gc,
-wbool outline) {
+int outline) {
 }
 wresult w_path_cubicto(w_path *path, float cx1, float cy1, float cx2,
 		float cy2, float x, float y) {
@@ -44,7 +44,7 @@ wresult w_path_get_path_data(w_path *path, w_iterator *data) {
 }
 wresult w_path_lineto(w_path *path, float x, float y) {
 }
-wbool w_path_isok(w_path *path) {
+wresult w_path_isok(w_path *path) {
 }
 wresult w_path_moveto(w_path *path, float x, float y) {
 }

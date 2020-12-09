@@ -142,9 +142,9 @@ struct _w_shell_reserved {
  */
 wresult _w_shell_fix_resize (w_shell* shell);
 wresult _w_shell_close_widget (w_shell *shell,_w_event_platform *e);
-wresult _w_shell_set_window_visible (w_shell* shell,wbool visible, wbool key);
+wresult _w_shell_set_window_visible (w_shell* shell,int visible, int key);
 NSWindow* _w_shell_parent_window (w_shell *shell);
-wresult _w_shell_set_full_screen(w_shell *shell, wbool fullScreen);
+wresult _w_shell_set_full_screen(w_shell *shell, int fullScreen);
 void _w_shell_class_init(struct _w_shell_class *clazz);
 #endif
 #endif /* SRC_GTK_WIDGETS_SHELL_H_ */

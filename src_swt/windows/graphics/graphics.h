@@ -26,8 +26,10 @@ struct _w_image {
 HBITMAP _w_image_get_HBITMAP(w_image *image);
 #define _W_IMAGE(x) ((struct _w_image*)x)
 struct _w_cursor {
-	HCURSOR cursor;
+	HCURSOR handle;
+	int flags;
 };
+#define W_CURSOR_IS_ICON (1 << 0)
 #define _W_CURSOR(x) ((struct _w_cursor*)x)
 struct _w_imagelist {
 	HIMAGELIST imagelist;

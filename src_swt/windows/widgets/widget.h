@@ -152,20 +152,22 @@ typedef struct _w_widget {
 	void *data[5];
 	wuint state;
 } _w_widget;
-
-typedef struct _w_widget_reserved {
+typedef struct _w_widget_reserved _w_widget_reserved;
+struct _w_widget_reserved {
 	void (*destroy)(w_widget *widget);
-	void (*def_proc)(w_widget *widget, _w_event_platform *e,
-			struct _w_widget_reserved *reserved);
-} _w_widget_reserved;
-typedef int (*dispatch_message)(w_widget *widget, struct _w_event_platform *e,
-		struct _w_widget_reserved *reserved);
+	wresult (*window_proc)(w_widget *widget, _w_event_platform *e,
+			_w_widget_reserved *reserved);
+	wresult (*call_window_proc)(w_widget *widget, _w_event_platform *e,
+			_w_widget_reserved *reserved);
+};
+typedef wresult (*dispatch_message)(w_widget *widget, _w_event_platform *e,
+		_w_widget_reserved *reserved);
 #define _W_WIDGET(x) ((_w_widget*)x)
 #define _W_WIDGET_RESERVED(x) ((struct _w_widget_reserved*)x)
 struct _w_widget_reserved* _w_widget_get_reserved(w_widget *widget);
 int _w_widget_send_event(struct w_widget *widget, struct w_event *event);
 int _w_widget_post_event(struct w_widget *widget, struct w_event *e);
-LRESULT CALLBACK _w_widget_proc(HWND hWnd, UINT message, WPARAM wParam,
+LRESULT CALLBACK _w_widget_window_proc(HWND hWnd, UINT message, WPARAM wParam,
 		LPARAM lParam);
 int _w_widget_check_bits(int style, int int0, int int1, int int2, int int3,
 		int int4, int int5);

@@ -2,17 +2,40 @@ cmake_minimum_required(VERSION 3.0)
 
 project(swt VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 11)
-
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	MESSAGE(${CMAKE_BUILD_TYPE})
+	set(CMAKE_IS_RELEASE FALSE)
+else()
+	MESSAGE("${CMAKE_BUILD_TYPE}")
+	set(CMAKE_IS_RELEASE TRUE)
+endif()
+if(${CMAKE_IS_RELEASE})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # using Clang
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  # using Intel C++
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # using Visual Studio C++
+else()
+endif()
+endif()
+
 add_subdirectory(src_swt)
 add_subdirectory(src_cswt)
-add_subdirectory(src_swtp)
+#add_subdirectory(src_swtp)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 add_subdirectory(tests)
 endif()

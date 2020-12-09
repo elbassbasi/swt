@@ -36,17 +36,17 @@ void _w_scrollbar_copy(w_widgetdata *from, w_widgetdata *to) {
 w_scrollable* _w_scrollbar_get_parent(w_scrollbar *scrollbar) {
 	return _W_SCROLLBAR(scrollbar)->parent;
 }
-wbool _w_scrollbar_get_enabled(w_scrollbar *scrollbar) {
+wresult _w_scrollbar_get_enabled(w_scrollbar *scrollbar) {
 }
-wbool _w_scrollbar_is_enabled(w_scrollbar *scrollbar) {
+wresult _w_scrollbar_is_enabled(w_scrollbar *scrollbar) {
 }
-void _w_scrollbar_set_enabled(w_scrollbar *scrollbar, wbool enabled) {
+void _w_scrollbar_set_enabled(w_scrollbar *scrollbar, int enabled) {
 }
-wbool _w_scrollbar_get_visible(w_scrollbar *scrollbar) {
+wresult _w_scrollbar_get_visible(w_scrollbar *scrollbar) {
 }
-wbool _w_scrollbar_is_visible(w_scrollbar *scrollbar) {
+wresult _w_scrollbar_is_visible(w_scrollbar *scrollbar) {
 }
-void _w_scrollbar_set_visible(w_scrollbar *scrollbar, wbool visible) {
+void _w_scrollbar_set_visible(w_scrollbar *scrollbar, int visible) {
 }
 void _w_scrollbar_get_values(w_scrollbar *scrollbar,
 		struct w_scrollbar_value *values) {

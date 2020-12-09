@@ -7,12 +7,12 @@
 #if defined( __WIN32__) || defined(__WIN64__)
 #include "widget.h"
 #include "toolkit.h"
-LRESULT CALLBACK _w_widget_proc(HWND hWnd, UINT message, WPARAM wParam,
+LRESULT CALLBACK _w_widget_window_proc(HWND hWnd, UINT message, WPARAM wParam,
 		LPARAM lParam) {
 	w_widget *widget = (w_widget*) GetWindowLongPtrW(hWnd,
 	GWLP_USERDATA);
 	_w_event_platform e;
-	if (widget == 0) {
+	/*if (widget == 0) {
 		if (message == WM_CREATE) {
 			CREATESTRUCTW *c = (CREATESTRUCTW*) lParam;
 			if (c != 0 && c->lpCreateParams != 0) {
@@ -22,7 +22,7 @@ LRESULT CALLBACK _w_widget_proc(HWND hWnd, UINT message, WPARAM wParam,
 				}
 			}
 		}
-	}
+	}*/
 	if (widget != 0) {
 		e.event.type = W_EVENT_PLATFORM;
 		e.event.widget = widget;
@@ -67,9 +67,9 @@ w_widget_post_event_proc _w_widget_set_post_event(w_widget *widget,
 	((struct _w_widget*) widget)->post_event = post_event;
 	return last;
 }
-int _w_widget_send_event(struct w_widget *widget, struct w_event *event) {
-	if (((struct _w_widget*) widget)->post_event != 0) {
-		return ((struct _w_widget*) widget)->post_event(widget, event);
+int _w_widget_send_event(w_widget *widget,w_event *event) {
+	if (widget->post_event != 0) {
+		return widget->post_event(widget, event);
 	} else {
 		return w_widget_default_post_event(widget, event);
 	}
@@ -906,7 +906,7 @@ int _WIDGET_WM_KEYUP(w_widget *widget, struct _w_event_platform *e,
 int _WIDGET_WM_KILLFOCUS(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	win_toolkit->scrollRemainder = win_toolkit->scrollHRemainder = 0;
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	w_event event;
 	memset(&event, 0, sizeof(event));
 	event.type = W_EVENT_FOCUSOUT;
@@ -929,7 +929,7 @@ int _WIDGET_WM_KILLFOCUS(w_widget *widget, struct _w_event_platform *e,
 
 int _WIDGET_WM_SETFOCUS(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	w_event event;
 	memset(&event, 0, sizeof(event));
 	event.type = W_EVENT_FOCUSIN;
@@ -965,7 +965,7 @@ int _WIDGET_WM_SYSCHAR(w_widget *widget, struct _w_event_platform *e,
 	/* Call the window proc to determine whether it is a system key or mnemonic */
 	wresult oldKeyHit = win_toolkit->mnemonicKeyHit;
 	win_toolkit->mnemonicKeyHit = W_TRUE;
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	wresult consumed = W_FALSE;
 	if (!win_toolkit->mnemonicKeyHit) {
 		memset(&event, 0, sizeof(event));
@@ -1112,7 +1112,8 @@ int _WIDGET_WM_MOUSEMOVE(w_widget *widget, struct _w_event_platform *e,
 	int pos = GetMessagePos();
 	if (pos != win_toolkit->lastMouse || win_toolkit->captureChanged) {
 #if !IsWinCE
-		wresult trackMouse = (_W_WIDGET(widget)->state & STATE_TRACK_MOUSE) != 0;
+		wresult trackMouse = (_W_WIDGET(widget)->state & STATE_TRACK_MOUSE)
+				!= 0;
 		if (trackMouse) {
 			TRACKMOUSEEVENT lpEventTrack;
 			lpEventTrack.cbSize = sizeof(lpEventTrack);
@@ -1217,7 +1218,7 @@ int _WIDGET_WM_LBUTTONDBLCLK(w_widget *widget, struct _w_event_platform *e,
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
 		struct _w_widget_reserved *reserved = _w_widget_get_reserved(widget);
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1316,7 +1317,7 @@ int _WIDGET_WM_LBUTTONDOWN(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	dispatch = _w_widget_send_event(widget, (w_event*) &event);
 	if (!dispatch && !consume) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1404,7 +1405,7 @@ int _WIDGET_WM_LBUTTONUP(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1466,7 +1467,7 @@ int _WIDGET_WM_MBUTTONDBLCLK(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1494,7 +1495,7 @@ int _WIDGET_WM_MBUTTONDOWN(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1521,7 +1522,7 @@ int _WIDGET_WM_MBUTTONUP(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1696,7 +1697,7 @@ int _WIDGET_WM_RBUTTONDBLCLK(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1724,7 +1725,7 @@ int _WIDGET_WM_RBUTTONDOWN(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1751,7 +1752,7 @@ int _WIDGET_WM_RBUTTONUP(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		/* Call the DefWindowProc() to support WM_CONTEXTMENU */
 		DefWindowProcW(e->hwnd, WM_RBUTTONUP, e->wparam, e->lparam);
@@ -1816,7 +1817,7 @@ int _WIDGET_WM_XBUTTONDBLCLK(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1846,7 +1847,7 @@ int _WIDGET_WM_XBUTTONDOWN(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1874,7 +1875,7 @@ int _WIDGET_WM_XBUTTONUP(w_widget *widget, struct _w_event_platform *e,
 	_w_set_input_state((w_event*) &event);
 	int ret = _w_widget_send_event(widget, (w_event*) &event);
 	if (!ret) {
-		reserved->def_proc(widget, e, reserved);
+		reserved->call_window_proc(widget, e, reserved);
 	} else {
 		e->result = 0;
 	}
@@ -1932,7 +1933,7 @@ int _WIDGET_WM_PAINT(w_widget *widget, struct _w_event_platform *e,
 #else
 	HRGN rgn = CreateRectRgn(0, 0, 0, 0);
 	GetUpdateRgn(e->hwnd, rgn, FALSE);
-	reserved->def_proc(widget, (_w_event_platform*) e, reserved);
+	reserved->call_window_proc(widget, (_w_event_platform*) e, reserved);
 	w_graphics gc;
 	_w_graphics_init(&gc, GetDC(e->hwnd));
 	HideCaret(e->hwnd);
@@ -1965,9 +1966,9 @@ int _WIDGET_WM_PAINT(w_widget *widget, struct _w_event_platform *e,
 int _w_widget_post_event(w_widget *widget, struct w_event *ee) {
 	switch (ee->type) {
 	case W_EVENT_PLATFORM: {
-		struct _w_widget_reserved *reserved = _w_widget_get_reserved(widget);
-		struct _w_event_platform *e = (struct _w_event_platform*) ee;
-		reserved->def_proc(widget, (_w_event_platform*) ee, reserved);
+		_w_widget_reserved *reserved = _w_widget_get_reserved(widget);
+		_w_event_platform *e = (struct _w_event_platform*) ee;
+		reserved->call_window_proc(widget, (_w_event_platform*) ee, reserved);
 		return W_TRUE;
 	}
 		break;
@@ -1984,9 +1985,9 @@ void _w_widget_class_init(struct _w_widget_class *clazz) {
 	/*
 	 * reserved
 	 */
-	struct _w_widget_reserved *reserved = _W_WIDGET_RESERVED(
+	_w_widget_reserved *reserved = _W_WIDGET_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
-	reserved->def_proc = _w_widget_def_proc;
+	reserved->call_window_proc = _w_widget_def_proc;
 }
 #endif
 

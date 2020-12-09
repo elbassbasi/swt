@@ -50,18 +50,18 @@ int _w_button_get_alignment(w_button *button) {
 		return W_RIGHT;
 	return W_LEFT;
 }
-wbool _w_button_get_grayed(w_button *button) {
+wresult _w_button_get_grayed(w_button *button) {
 	return _W_WIDGET(button)->state & STATE_BUTTON_GRAYED;
 }
-wbool _w_button_get_image(w_button *button, w_image *image) {
+wresult _w_button_get_image(w_button *button, w_image *image) {
 }
-wbool _w_button_get_selection(w_button *button) {}
+wresult _w_button_get_selection(w_button *button) {}
 wresult _w_button_get_text(w_button *button, w_alloc alloc,void* user_data) {
 }
 wresult _w_button_set_alignment(w_button *button, int alignment) {
 	return W_TRUE;
 }
-wresult _w_button_set_grayed(w_button *button, wbool grayed) {
+wresult _w_button_set_grayed(w_button *button, int grayed) {
 	if ((_W_WIDGET(button)->style & W_CHECK) == 0)
 		return W_FALSE;
 	return W_TRUE;
@@ -71,7 +71,7 @@ wresult _w_button_set_image(w_button *button, w_image *image) {
 		return W_FALSE;
 	return W_TRUE;
 }
-wresult _w_button_set_selection(w_button *button, wbool selected) {
+wresult _w_button_set_selection(w_button *button, int selected) {
 	if ((_W_WIDGET(button)->style & (W_CHECK | W_RADIO | W_TOGGLE)) == 0)
 		return W_FALSE;
 	return W_TRUE;

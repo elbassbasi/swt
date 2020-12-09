@@ -12,6 +12,8 @@
 #include "widget.h"
 typedef struct _w_menu {
 	struct _w_widget widget;
+	struct _w_menu* next;
+	struct _w_menu* prev;
 	w_control* parent;
 	HMENU handle;
 	int x;

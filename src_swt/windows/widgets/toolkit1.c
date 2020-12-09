@@ -10,8 +10,8 @@
 extern "C" {
 #endif
 _w_toolkit *win_toolkit = 0;
-const char *WindowName = "SWT_Window"; //$NON-NLS-1$
-const char *WindowShadowName = "SWT_WindowShadow"; //$NON-NLS-1$
+const char *WindowClass = "SWT_Window"; //$NON-NLS-1$
+const char *WindowShadowClass = "SWT_WindowShadow"; //$NON-NLS-1$
 const char *WindowOwnDCName = "SWT_WindowOwnDC"; //$NON-NLS-1$
 typedef struct _DLLVERSIONINFO {
 	DWORD cbSize;
@@ -77,6 +77,10 @@ void _w_toolkit_init_dll(_w_toolkit *toolkit) {
 				info.dwMinorVersion);
 	}
 	toolkit->comctrl32_version = _w_toolkit_get_dll_version("comctl32.dll");
+	/* Get the DBCS flag */
+	int dbcsEnabled = GetSystemMetrics (SM_DBCSENABLED) != 0;
+	int immEnabled = GetSystemMetrics (SM_IMMENABLED) != 0;
+	win_toolkit->IsDBLocale = dbcsEnabled || immEnabled;
 
 }
 void* _w_toolkit_malloc(size_t size) {
@@ -278,7 +282,7 @@ void _w_toolkit_registre_class(_w_toolkit *toolkit) {
 	WNDCLASSEXW wincl;
 	ATOM atom;
 	wincl.hInstance = hinst;
-	wincl.lpfnWndProc = _w_widget_proc;
+	wincl.lpfnWndProc = _w_widget_window_proc;
 	wincl.style = CS_DBLCLKS;
 	wincl.cbSize = sizeof(WNDCLASSEXW);
 	wincl.hIcon = LoadIcon(NULL, IDI_APPLICATION);
@@ -288,21 +292,21 @@ void _w_toolkit_registre_class(_w_toolkit *toolkit) {
 	wincl.cbClsExtra = 0;
 	wincl.cbWndExtra = 0;
 	wincl.hbrBackground = (HBRUSH) (COLOR_3DFACE + 1);
-	unicode_set(&c, WindowName, -1);
+	unicode_set(&c, WindowClass, -1);
 	wincl.lpszClassName = c.str;
 	atom = RegisterClassExW(&wincl);
 	unicode_free(&c);
 	if (atom == 0) {
-		fprintf(stderr, "Error registre Atom %s", WindowName);
+		fprintf(stderr, "Error registre Atom %s", WindowClass);
 		exit(0);
 		return;
 	}
-	unicode_set(&c, WindowShadowName, -1);
+	unicode_set(&c, WindowShadowClass, -1);
 	wincl.lpszClassName = c.str;
 	atom = RegisterClassExW(&wincl);
 	unicode_free(&c);
 	if (atom == 0) {
-		fprintf(stderr, "Error registre Atom %s", WindowShadowName);
+		fprintf(stderr, "Error registre Atom %s", WindowShadowClass);
 		exit(0);
 		return;
 	}

@@ -24,7 +24,7 @@ void w_graphics_init(w_graphics *gc) {
 }
 void w_graphics_dispose(w_graphics *gc) {
 }
-wbool w_graphics_is_ok(w_graphics *gc) {
+wresult w_graphics_is_ok(w_graphics *gc) {
 }
 wresult _w_graphics_check(w_graphics *gc, int mask) {
 }
@@ -32,8 +32,8 @@ wresult _w_graphics_check(w_graphics *gc, int mask) {
 wresult w_graphics_copy_area_to_image(w_graphics *gc, w_surface *bitmap, int x,
 		int y) {
 }
-wresult w_graphics_copy_area(w_graphics *gc, int srcX, int srcY, int width,
-		int height, int destX, int destY, wbool paint) {
+wresult w_graphics_copy_area(w_graphics *gc, int srcX, int srcY,
+int width, int height, int destX, int destY, wresult paint){
 
 }
 wresult w_graphics_draw_arc(w_graphics *gc, w_rect *rect, int startAngle,
@@ -103,7 +103,7 @@ wresult w_graphics_fill_arc(w_graphics *gc, w_rect *rect, int startAngle,
 	int x = rect->x, y = rect->y, width = rect->width, height = rect->height;
 }
 wresult w_graphics_fill_gradientrectangle(w_graphics *gc, w_rect *rect,
-		wbool vertical) {
+		int vertical) {
 
 }
 wresult w_graphics_fill_oval(w_graphics *gc, w_rect *rect) {
@@ -137,7 +137,7 @@ int w_graphics_get_advance_width(w_graphics *gc, int ch) {
 	if (result < 0)
 		return 0;
 }
-wbool w_graphics_get_advanced(w_graphics *gc) {
+wresult w_graphics_get_advanced(w_graphics *gc) {
 	wresult result = _w_graphics_check(gc, 0);
 	if (result < 0)
 		return W_FALSE;
@@ -224,11 +224,11 @@ int w_graphics_get_text_antialias(w_graphics *gc) {
 wresult w_graphics_get_transform(w_graphics *gc,
 w_transform *Transform) {
 }
-wbool w_graphics_get_XOR_mode(w_graphics *gc) {
+wresult w_graphics_get_XOR_mode(w_graphics *gc) {
 }
-wbool w_graphics_is_clipped(w_graphics *gc) {
+wresult w_graphics_is_clipped(w_graphics *gc) {
 }
-wresult w_graphics_set_advanced(w_graphics *gc, wbool advanced) {
+wresult w_graphics_set_advanced(w_graphics *gc, int advanced) {
 }
 wresult w_graphics_set_antialias(w_graphics *gc, int antialias) {
 }
@@ -286,7 +286,7 @@ wresult w_graphics_set_line_style(w_graphics *gc, int lineStyle) {
 wresult w_graphics_set_line_width(w_graphics *gc, float lineWidth) {
 	return W_TRUE;
 }
-wresult w_graphics_set_XOR_mode(w_graphics *gc, wbool _xor) {
+wresult w_graphics_set_XOR_mode(w_graphics *gc, int _xor) {
 }
 wresult w_graphics_set_text_antialias(w_graphics *gc, int antialias) {
 }
