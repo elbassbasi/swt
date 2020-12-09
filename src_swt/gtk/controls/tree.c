@@ -258,8 +258,8 @@ void _w_treecolumn_renderer_render(w_widget *widget, GtkCellRenderer *_cell,
 				event.value = &value;
 				int ret = _w_widget_send_event(widget, (w_event*) &event);
 				if (ret) {
-					text = w_value_string_copy_is_needed((w_value*) &value,
-							mem_tmp, gtk_toolkit->mem_tmp_total_size);
+					text = w_value_get_string((w_value*) &value,
+							mem_tmp, gtk_toolkit->mem_tmp_total_size,0);
 				}
 				_w_toolkit_free(W_TOOLKIT(gtk_toolkit), mem_tmp);
 			}

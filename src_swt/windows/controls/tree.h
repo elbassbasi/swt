@@ -95,7 +95,7 @@ int _w_tree_get_header_width(w_tree *tree);
 void _w_tree_set_scroll_width_0(w_tree *tree, int width);
 void _w_tree_set_scroll_width(w_tree *tree);
 void _w_tree_update_scrollbar(w_tree *tree);
-void _w_tree_def_proc(w_widget *widget, _w_event_platform *e,
+void _w_tree_call_window_proc(w_widget *widget, _w_event_platform *e,
 		struct _w_widget_reserved *reserved);
 void _w_treeitem_get_bounds_0(w_treeitem *item, RECT *rect, HDC hDC, int index,
 		int flags);
@@ -210,7 +210,8 @@ wresult _w_tree_show_column(w_tree *tree, w_treecolumn *column);
 wresult _w_tree_show_item(w_tree *tree, w_treeitem *item);
 wresult _w_tree_show_selection(w_tree *tree);
 wresult _w_tree_sort(w_tree *tree);
-wresult _w_tree_set_bounds(w_control *control, w_rect *rect, int flags);
+wresult _w_tree_set_bounds(w_control *control, w_point *location,
+		w_size *size);
 wresult _w_tree_create(w_widget *widget, w_widget *parent, int style,
 		w_widget_post_event_proc post_event);
 void _w_tree_dispose(w_widget *resource);

@@ -12,7 +12,7 @@ endif()
 
 add_subdirectory(src_swt)
 add_subdirectory(src_cswt)
-add_subdirectory(src_swtp)
+#add_subdirectory(src_swtp)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 add_subdirectory(tests)
 endif()

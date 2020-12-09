@@ -14,7 +14,7 @@ wresult wc_button_create(w_widget *widget, w_widget *parent, int style,
 	return result;
 }
 void wc_button_draw(w_widget *widget, w_graphics *gc) {
-	struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
 	w_rect r;
 	w_size sz;
 	w_control_get_bounds(W_CONTROL(widget), &r.pt,&r.sz);
@@ -35,7 +35,7 @@ int wc_button_paint(w_widget *widget, w_event_paint *e) {
 	return W_TRUE;
 }
 int wc_button_mousedown(w_widget *widget, w_event_mouse *e) {
-	struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
 	priv->state |= W_PRESSED;
 	w_graphics gc;
 	w_graphics_init(&gc);
@@ -45,7 +45,7 @@ int wc_button_mousedown(w_widget *widget, w_event_mouse *e) {
 	return W_TRUE;
 }
 int wc_button_mouseup(w_widget *widget, w_event_mouse *e) {
-	struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
 	priv->state &= ~W_PRESSED;
 	w_graphics gc;
 	w_graphics_init(&gc);
@@ -60,7 +60,7 @@ int wc_button_compute_size(w_widget *widget, w_event_compute_size *e) {
         e->size->height = e->hHint;
         return W_TRUE;
     }
-    struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
     w_graphics gc;
     w_themedata data;
     w_rect bounds,result;
@@ -79,7 +79,7 @@ int wc_button_compute_size(w_widget *widget, w_event_compute_size *e) {
     else e->size->height = e->hHint;
     return W_TRUE;
 }
-int wc_button_post_event(w_widget *widget, w_event *e) {
+wresult wc_button_post_event(w_widget *widget, w_event *e) {
 	switch (e->type) {
 	case W_EVENT_PAINT:
 		return wc_button_paint(widget, (w_event_paint*) e);
@@ -99,13 +99,13 @@ int wc_button_post_event(w_widget *widget, w_event *e) {
 int wc_button_get_alignment(w_button *button) {
 }
 wresult wc_button_get_grayed(w_button *button) {
-    struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
     return priv->state & W_GRAYED != 0;
 }
 wresult wc_button_get_image(w_button *button, w_image *image) {
 }
 wresult wc_button_get_selection(w_button *button) {
-    struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
     return priv->state & W_SELECTED != 0;
 }
 wresult wc_button_get_text(w_button *button, w_alloc *text) {
@@ -114,7 +114,7 @@ wresult wc_button_get_text(w_button *button, w_alloc *text) {
 wresult wc_button_set_alignment(w_button *button, int alignment) {
 }
 wresult wc_button_set_grayed(w_button *button, int grayed) {
-    struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
     if(grayed){
         priv->state |= W_GRAYED;
     }else{
@@ -125,7 +125,7 @@ wresult wc_button_set_grayed(w_button *button, int grayed) {
 wresult wc_button_set_image(w_button *button, w_image *image) {
 }
 wresult wc_button_set_selection(w_button *button, int selected) {
-    struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
     if(selected){
         priv->state |= W_SELECTED;
     }else{
@@ -134,7 +134,7 @@ wresult wc_button_set_selection(w_button *button, int selected) {
     return W_TRUE;
 }
 wresult wc_button_set_text(w_button *button, const char *string) {
-	struct wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
 	if (priv->text != 0) {
 		free(priv->text);
 	}

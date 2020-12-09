@@ -20,7 +20,8 @@ struct _w_canvas_reserved {
 };
 #define _W_CANVAS(x) ((_w_canvas*)x)
 #define _W_CANVAS_RESERVED(x) ((struct _w_canvas_reserved*)x)
-
+const char* _w_canvas_window_class(w_control *control,
+		_w_control_reserved *reserved);
 w_caret* _w_canvas_get_caret(w_canvas *canvas);
 wresult _w_canvas_set_caret(w_canvas *canvas, w_caret *caret);
 int _CANVAS_WM_CHAR(w_widget *widget, struct _w_event_platform *e,

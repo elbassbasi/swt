@@ -20,7 +20,7 @@ wresult w_clipboard_clear_contents(w_clipboard *clipboard) {
 wresult w_clipboard_close(w_clipboard *clipboard) {
     return W_TRUE;
 }
-wbool w_clipboard_is_ok(w_clipboard *clipboard) {
+wresult w_clipboard_is_ok(w_clipboard *clipboard) {
     return W_TRUE;
 }
 wresult w_clipboard_get_available_types(w_clipboard *clipboard,w_iterator* types){

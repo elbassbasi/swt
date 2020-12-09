@@ -17,8 +17,8 @@
 #include "glcanvas.h"
 #include "ccanvas.h"
 #include "../controls/controls.h"
-extern const char *WindowName; //$NON-NLS-1$
-extern const char *WindowShadowName; //$NON-NLS-1$
+extern const char *WindowClass; //$NON-NLS-1$
+extern const char *WindowShadowClass; //$NON-NLS-1$
 extern const char *WindowOwnDCName; //$NON-NLS-1$
 extern struct _w_theme_class win32_theme;
 
@@ -27,6 +27,7 @@ extern struct _w_theme_class win32_theme;
 #define _W_CLASS_DECL_ITEM(x) _W_CLASS_DECL(x);\
 		struct _w_##x##item_class class_##x##item
 #define BRUSHES_SIZE 32
+#define ID_START 108
 typedef struct _w_toolkit {
 	w_toolkit toolkit;
 	int win32_version;
@@ -51,6 +52,7 @@ typedef struct _w_toolkit {
 	int scrollRemainder;
 	int scrollHRemainder;
 	HWND lastClickHwnd;
+	unsigned init_startup;
 	unsigned activePending :1;
 	unsigned ignoreActivate :1;
 	unsigned ignoreFocus :1;
@@ -61,10 +63,12 @@ typedef struct _w_toolkit {
 	unsigned lastNull :1;
 	unsigned lastDead :1;
 	unsigned mnemonicKeyHit :1;
+	unsigned IsDBLocale:1;
+	unsigned TrimEnabled : 1;
 	w_theme systemtheme;
 	HTHEME themes[_W_THEME_CLASS_LAST];
 	HBRUSH brushes[BRUSHES_SIZE];
-	unsigned char wm_msg[WM_USER + 0x10];
+	wuchar wm_msg[WM_USER + 0x10];
 	struct _w_font systemfont;
 	struct _w_cursor cursors[W_CURSOR_HAND + 1];
 	struct _w_widget_class *classes[_W_CLASS_LAST];

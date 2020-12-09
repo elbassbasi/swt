@@ -470,7 +470,7 @@ wresult _w_toolbar_create(w_widget *widget, w_widget *parent, int style,
 
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_toolbar_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), W_COMPOSITE(parent),
+	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
 	TOOLBARCLASSNAMEA, dwExStyle, dwStyle);
 	if (result > 0) {
 		_W_WIDGET(widget)->state &= ~STATE_CANVAS;

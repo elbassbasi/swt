@@ -17,7 +17,10 @@
 #define STATE_IGNORE_WM_CHANGEUISTATE (1 << (STATE_WIDGET_END + 3))
 #define STATE_SET_FONT (1 << (STATE_WIDGET_END + 4))
 #define STATE_THEME_BACKGROUND (1 << (STATE_WIDGET_END + 5))
-#define STATE_CONTROL_END (STATE_WIDGET_END + 5)
+#define STATE_PARENT_BACKGROUND (1 << (STATE_WIDGET_END + 6))
+#define STATE_DISABLED (1 << (STATE_WIDGET_END + 7))
+#define STATE_HIDDEN (1 << (STATE_WIDGET_END + 8))
+#define STATE_CONTROL_END (STATE_WIDGET_END + 8)
 
 typedef struct _w_control {
 	struct _w_widget widget;
@@ -27,16 +30,46 @@ typedef struct _w_control {
 	};
 	int background;
 	int foreground;
+	int drawCount;
 	w_cursor *cursor;
 	w_menu *menu;
-	w_composite* parent;
+	w_composite *parent;
+	HBITMAP backgroundImage;
 	//HBRUSH hBrush;
 } _w_control;
-typedef struct _w_control_reserved {
-	struct _w_widget_reserved widget;
-	WNDPROC default_proc;
+typedef struct _w_control_reserved _w_control_reserved;
+struct _w_control_reserved {
+	_w_widget_reserved widget;
+	WNDPROC _window_proc;
+	WNDPROC (*get_window_proc)(w_control *control,_w_control_reserved *reserved);
 	HWND (*topHandle)(w_control *control);
 	HWND (*borderHandle)(w_control *control);
+	wresult (*create_widget)(w_control *control, _w_control_reserved *reserved);
+	wuint64 (*check_style)(w_widget *widget, wuint64 style);
+	wresult (*check_orientation)(w_control *control, w_composite *parent,
+			_w_control_reserved *reserved);
+	wresult (*create_handle)(w_control *control, _w_control_reserved *reserved);
+	wresult (*subclass)(w_control *control, _w_control_reserved *reserved);
+	wresult (*unsubclass)(w_control *control, _w_control_reserved *reserved);
+	wresult (*check_background)(w_control *control,
+			_w_control_reserved *reserved);
+	wresult (*check_buffered)(w_control *control,
+			_w_control_reserved *reserved);
+	wresult (*check_composited)(w_control *control,
+			_w_control_reserved *reserved);
+	wresult (*set_default_font)(w_control *control,
+			_w_control_reserved *reserved);
+	wresult (*check_mirrored)(w_control *control,
+			_w_control_reserved *reserved);
+	wresult (*check_border)(w_control *control, _w_control_reserved *reserved);
+	wresult (*check_gesture)(w_control *control, _w_control_reserved *reserved);
+	wresult (*set_background)(w_control *control,
+			_w_control_reserved *reserved);
+	HWND (*widget_parent)(w_control *control, _w_control_reserved *reserved);
+	DWORD (*widget_style)(w_control *control, _w_control_reserved *reserved);
+	DWORD (*widget_extstyle)(w_control *control, _w_control_reserved *reserved);
+	const char* (*window_class)(w_control *control,
+			_w_control_reserved *reserved);
 	int (*compute_size)(w_widget *widget, w_event_compute_size *e,
 			_w_widget_reserved *reserved);
 	int (*get_client_area)(w_widget *widget, w_event_client_area *e,
@@ -44,23 +77,40 @@ typedef struct _w_control_reserved {
 	int (*compute_trim)(w_widget *widget, w_event_compute_trim *e,
 			_w_widget_reserved *reserved);
 	dispatch_message messages[_WM_LAST];
-}_w_control_reserved;
+};
 #define _W_CONTROL(x) ((_w_control*)x)
 #define _W_CONTROL_RESERVED(x) ((_w_control_reserved*)x)
+#define _W_CONTROL_GET_RESERVED(x) ((_w_control_reserved*)_w_widget_get_reserved(W_WIDGET(x)))
 //
 /*
  * internal function
  */
 void _w_control_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle);
-wresult _w_control_create(w_control *control, w_composite *parent,
+wresult _w_control_create_0(w_control *control, w_composite *parent,
 		const char *clazz, DWORD dwExStyle, DWORD dwStyle);
 void _w_control_def_proc(w_widget *widget, _w_event_platform *e,
 		struct _w_widget_reserved *reserved);
 HWND _w_control_h(w_control *control);
+DWORD _w_control_widget_extstyle(w_control *control,
+		_w_control_reserved *reserved);
+const char* _w_control_window_class(w_control *control,
+		_w_control_reserved *reserved);
+DWORD _w_control_widget_style(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_create_handle(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_subclass(w_control *control, _w_control_reserved *reserved);
+wresult _w_control_unsubclass(w_control *control,
+		_w_control_reserved *reserved);
+wresult _w_control_create(w_widget *widget, w_widget *parent, wuint64 style,
+		w_widget_post_event_proc post_event);
+//#define _w_control_get_drawing(x) (((_w_control*)x)->drawCount <= 0)
 /*
  *  function
  */
+HWND _CreateWindow(DWORD dwExStyle, const char *lpClassName, DWORD dwStyle,
+		HWND hWndParent, LPVOID lpParam);
 wresult _w_control_get_graphics(w_control *control, w_graphics *gc);
 int _w_control_get_orientation(w_control *control);
 wresult _w_control_set_orientation(w_control *control, int orientation);
@@ -88,7 +138,7 @@ wresult _w_control_force_focus(w_control *control);
 wresult _w_control_set_focus(w_control *control);
 wresult _w_control_is_focus_control(w_control *control);
 int _w_control_get_border_width(w_control *control);
-wresult _w_control_get_drawing (w_control *control);
+wresult _w_control_get_drawing(w_control *control);
 w_cursor* _w_control_get_cursor(w_control *control);
 wresult _w_control_set_cursor(w_control *control, w_cursor *cursor);
 wresult _w_control_get_enabled(w_control *control);
@@ -120,8 +170,7 @@ wresult _w_control_is_visible(w_control *control);
 wresult _w_control_redraw(w_control *control, w_rect *rect, int all);
 wresult _w_control_set_redraw(w_control *control, int redraw);
 wresult _w_control_set_capture(w_control *control, int capture);
-wresult _w_control_traverse(w_control *control, int traversal,
-		w_event *event);
+wresult _w_control_traverse(w_control *control, int traversal, w_event *event);
 wresult _w_control_update(w_control *control);
 wresult _w_control_set_timer(w_control *control, wint64 ms, wushort id);
 wresult _w_control_kill_timer(w_control *control, unsigned short id);
@@ -131,10 +180,12 @@ wresult _w_control_kill_timer(w_control *control, unsigned short id);
 HBRUSH _w_control_find_brush(w_control *control, ULONG_PTR value, int lbStyle);
 void _w_control_fill_background(w_control *control, HDC hDC, int pixel,
 		RECT *rect);
-void _w_control_draw_background_0 (w_control *control,HDC hDC, RECT* rect, int pixel, int tx, int ty);
-void _w_control_draw_background_1 (w_control *control,HDC hDC, RECT* rect);
-void _w_control_draw_background (w_control *control,HDC hDC);
-void _w_control_init_graphics(w_control *control,w_graphics* gc,HDC hdc,int style);
+void _w_control_draw_background_0(w_control *control, HDC hDC, RECT *rect,
+		int pixel, int tx, int ty);
+void _w_control_draw_background_1(w_control *control, HDC hDC, RECT *rect);
+void _w_control_draw_background(w_control *control, HDC hDC);
+void _w_control_init_graphics(w_control *control, w_graphics *gc, HDC hdc,
+		int style);
 /*
  *
  */
@@ -204,8 +255,8 @@ int _wm_control_Notify(w_widget *widget, struct _w_event_platform *e,
  */
 int _CONTROL_WM_NULL(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved);
-int _w_control_dispath_message(w_widget *widget, struct _w_event_platform *ee,
-		struct _w_widget_reserved *reserved);
+wresult _w_control_post_event_platform(w_widget *widget, _w_event_platform *ee,
+		_w_widget_reserved *reserved);
 int _w_control_compute_size(w_widget *widget, struct w_event_compute_size *e,
 		struct _w_widget_reserved *reserved);
 int _w_control_post_event(w_widget *widget, struct w_event *ee);

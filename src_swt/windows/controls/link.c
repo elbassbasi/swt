@@ -30,7 +30,7 @@ wresult _w_link_create(w_widget *widget, w_widget *parent, int style,
 
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_link_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), W_COMPOSITE(parent),
+	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
 			"SysLink", dwExStyle, dwStyle);
 	if (result > 0) {
 		w_font *systemfont = w_toolkit_get_system_font(

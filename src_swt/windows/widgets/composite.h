@@ -16,6 +16,7 @@ typedef struct _w_composite {
 	struct _w_scrollable scrollable;
 	w_layout *layout;
 	size_t children_count;
+	int layoutCount;
 } _w_composite;
 
 struct _w_composite_reserved {
@@ -35,11 +36,14 @@ int _w_composite_is_layout_deferred(w_composite *composite);
 void _w_composite_do_layout(w_composite *composite, int changed, int all);
 void _w_composite_set_layout(w_composite *composite, w_layout *layout);
 void _w_composite_set_layout_deferred(w_composite *composite, int defer);
+wresult _w_composite_create_handle (w_control *control, _w_control_reserved *reserved);
 /*
  * post event proc
  */
 void _w_composite_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle);
+DWORD _w_composite_widget_style(w_control *control,
+		_w_control_reserved *reserved);
 wresult _w_composite_create(w_widget *widget, w_widget *parent, int style,
 		w_widget_post_event_proc post_event);
 int _w_composite_compute_size(w_widget *widget, struct w_event_compute_size *e,

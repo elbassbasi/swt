@@ -98,7 +98,7 @@ wresult _w_treeitem_insert_item_0(w_treeitem *item, w_treeitem *subitem,
 		tvInsert.item.cchTextMax = str.length;
 	}
 	HTREEITEM hNewItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle,
 	TVM_INSERTITEMW, 0, (LPARAM) &tvInsert);
 	unicode_free(&str);
 	if (hNewItem == 0)
@@ -126,7 +126,7 @@ wresult _w_tree_create_parent(w_tree *tree) {
 		newStyle |= WS_DISABLED;
 	if ((oldStyle & WS_VISIBLE) != 0)
 		newStyle |= WS_VISIBLE;
-	unicode_set(&str, WindowName, -1);
+	unicode_set(&str, WindowClass, -1);
 	_W_TREE(tree)->hwndParent = CreateWindowExW(dwExStyle, str.str,
 	NULL, newStyle, rect.left, rect.top, rect.right - rect.left,
 			rect.bottom - rect.top, parent, 0, hinst,
@@ -319,10 +319,10 @@ void _w_tree_update_scrollbar(w_tree *tree) {
 		}
 	}
 }
-void _w_tree_def_proc(w_widget *widget, _w_event_platform *e,
+void _w_tree_call_window_proc(w_widget *widget, _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	if (_W_WIDGET(widget)->handle == e->hwnd) {
-		e->result = CallWindowProcW(_W_CONTROL_RESERVED(reserved)->default_proc,
+		e->result = CallWindowProcW(_W_CONTROL_RESERVED(reserved)->_window_proc,
 				e->hwnd, e->msg, e->wparam, e->lparam);
 		return;
 	}
@@ -608,12 +608,12 @@ wresult _w_treecolumn_pack(w_treecolumn *column) {
 	HDM_GETITEMRECT, _W_TREECOLUMN(column)->index, (LPARAM) &headerRect);
 	HDC hDC = GetDC(_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle);
 	HFONT oldFont = 0, newFont = (HFONT) SendMessageW(
-			_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle, WM_GETFONT, 0, 0);
+	_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle, WM_GETFONT, 0, 0);
 	if (newFont != 0)
 		oldFont = SelectObject(hDC, newFont);
 	tvItem.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_STATE;
 	tvItem.hItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle, TVM_GETNEXTITEM,
+	_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle, TVM_GETNEXTITEM,
 	TVGN_ROOT, 0);
 	while (tvItem.hItem != 0) {
 		SendMessageW(_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle,
@@ -637,7 +637,7 @@ wresult _w_treecolumn_pack(w_treecolumn *column) {
 		 columnWidth = Math.max (columnWidth, itemRight - headerRect.left);
 		 }*/
 		tvItem.hItem = (HTREEITEM) SendMessageW(
-				_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle,
+		_W_WIDGET(_W_TREECOLUMN(column)->tree)->handle,
 		TVM_GETNEXTITEM, TVGN_NEXTVISIBLE, (LPARAM) tvItem.hItem);
 	}
 	unicode_alloc_tmp(&str);
@@ -765,8 +765,7 @@ wresult _w_treecolumn_set_resizable(w_treecolumn *column, wresult resizable) {
 	}
 	return W_TRUE;
 }
-wresult _w_treecolumn_set_tooltip_text(w_treecolumn *column,
-		const char *text) {
+wresult _w_treecolumn_set_tooltip_text(w_treecolumn *column, const char *text) {
 	return W_FALSE;
 }
 wresult _w_treecolumn_set_width(w_treecolumn *column, int width) {
@@ -816,15 +815,12 @@ wresult _w_treecolumn_get_text(w_item *item, w_alloc *text) {
 	HDITEMW hdItem;
 	hdItem.mask = HDI_TEXT;
 	hdItem.pszText = win_toolkit->tmp;
-	hdItem.cchTextMax = win_toolkit->tmp_alloc
-			/ sizeof(WCHAR);
+	hdItem.cchTextMax = win_toolkit->tmp_alloc / sizeof(WCHAR);
 	if (SendMessageW(_W_TREE(_W_TREECOLUMN(item)->tree)->hwndHeader,
 	HDM_GETITEMW,
 	_W_TREECOLUMN(item)->index, (LPARAM) &hdItem)) {
 		wtext = hdItem.pszText;
-		if (hdItem.cchTextMax
-				> win_toolkit->tmp_alloc
-						/ sizeof(WCHAR)) {
+		if (hdItem.cchTextMax > win_toolkit->tmp_alloc / sizeof(WCHAR)) {
 			new_wtext = malloc(hdItem.cchTextMax * sizeof(WCHAR));
 			if (new_wtext == 0) {
 				return W_FALSE;
@@ -924,7 +920,7 @@ wresult _w_treeitem_get_expanded(w_treeitem *item) {
 }
 wresult _w_treeitem_get_first_child(w_treeitem *item, w_treeitem *child) {
 	HTREEITEM hFirstItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
 	TVGN_CHILD, (LPARAM) _W_TREEITEM(item)->htreeitem);
 	if (hFirstItem == 0) {
 		return W_FALSE;
@@ -950,13 +946,13 @@ wresult _w_treeitem_get_grayed(w_treeitem *item) {
 }
 wresult _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
 	HTREEITEM hFirstItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
 	TVGN_CHILD, (LPARAM) _W_TREEITEM(item)->htreeitem);
 	if (hFirstItem == 0) {
 		return W_FALSE;
 	}
 	HTREEITEM hItem = _tree_find_item(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, hFirstItem, index);
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, hFirstItem, index);
 	if (hItem == 0) {
 		return W_FALSE;
 	}
@@ -970,10 +966,10 @@ wresult _w_treeitem_get_item(w_treeitem *item, int index, w_treeitem *subitem) {
 }
 int _w_treeitem_get_item_count(w_treeitem *item) {
 	HTREEITEM hFirstItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
 	TVGN_CHILD, (LPARAM) _W_TREEITEM(item)->htreeitem);
 	return _tree_get_item_count(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, hFirstItem);
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, hFirstItem);
 }
 void _w_treeitem_get_items(w_treeitem *item, w_iterator *items) {
 }
@@ -987,7 +983,7 @@ w_tree* _w_treeitem_get_parent(w_treeitem *item) {
 }
 wresult _w_treeitem_get_parent_item(w_treeitem *item, w_treeitem *parent) {
 	HTREEITEM hItem = (HTREEITEM) SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETNEXTITEM,
 	TVGN_PARENT, (LPARAM) _W_TREEITEM(item)->htreeitem);
 	if (hItem == 0)
 		return W_FALSE;
@@ -1004,7 +1000,7 @@ wresult _w_treeitem_get_prev_sibling(w_treeitem *item, w_treeitem *prev) {
 wresult _w_treeitem_insert_item(w_treeitem *item, w_treeitem *subitem,
 		const char *text, int index) {
 	HTREEITEM i = _tree_find_previous(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle,
 	_W_TREEITEM(item)->htreeitem, index);
 	if (i == 0)
 		return W_ERROR_INVALID_RANGE;
@@ -1028,7 +1024,7 @@ wresult _w_treeitem_set_checked(w_treeitem *item, wresult checked) {
 	tvItem.stateMask = TVIS_STATEIMAGEMASK;
 	tvItem.hItem = _W_TREEITEM(item)->htreeitem;
 	SendMessageW(
-			_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETITEMW, 0,
+	_W_WIDGET(_W_TREEITEM(item)->tree)->handle, TVM_GETITEMW, 0,
 			(LPARAM) &tvItem);
 	int state = tvItem.state >> 12;
 	if (checked) {
@@ -1370,8 +1366,9 @@ int _w_tree_get_sort_direction(w_tree *tree) {
 	return _W_TREE(tree)->sortDirection;
 }
 wresult _w_tree_get_top_item(w_tree *tree, w_treeitem *topitem) {
-	HTREEITEM hItem =(HTREEITEM) SendMessageW(_W_WIDGET(tree)->handle, TVM_GETNEXTITEM,
-	TVGN_FIRSTVISIBLE, 0);
+	HTREEITEM hItem = (HTREEITEM) SendMessageW(_W_WIDGET(tree)->handle,
+			TVM_GETNEXTITEM,
+			TVGN_FIRSTVISIBLE, 0);
 	if (hItem != 0) {
 		_W_TREEITEM(topitem)->tree = tree;
 		_W_TREEITEM(topitem)->htreeitem = hItem;
@@ -1684,8 +1681,9 @@ wresult _w_tree_sort(w_tree *tree) {
 /*
  * overrided
  */
-wresult _w_tree_set_bounds(w_control *control, w_rect *rect, int flags) {
-	wresult result = _w_control_set_bounds(control, rect, flags);
+wresult _w_tree_set_bounds(w_control *control, w_point *location,
+		w_size *size) {
+	wresult result = _w_control_set_bounds(control, location, size);
 	_w_tree_set_scroll_width(W_TREE(control));
 	return result;
 }
@@ -1700,7 +1698,7 @@ wresult _w_tree_create(w_widget *widget, w_widget *parent, int style,
 	wresult result;
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_tree_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), W_COMPOSITE(parent),
+	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
 	WC_TREEVIEWA, dwExStyle, dwStyle);
 	if (result > 0) {
 		_W_WIDGET(widget)->style = style;
@@ -1719,8 +1717,8 @@ wresult _w_tree_create(w_widget *widget, w_widget *parent, int style,
 				 * This code is intentionally commented.
 				 */
 				//			if ((style & SWT.FULL_SELECTION) == 0) bits |= OS.TVS_EX_AUTOHSCROLL;
-				SendMessageW(_W_WIDGET(widget)->handle, TVM_SETEXTENDEDSTYLE,
-						0, bits);
+				SendMessageW(_W_WIDGET(widget)->handle, TVM_SETEXTENDEDSTYLE, 0,
+						bits);
 				/*
 				 * Bug in Windows.  When the tree is using the explorer
 				 * theme, it does not use COLOR_WINDOW_TEXT for the
@@ -1845,7 +1843,7 @@ HWND _w_tree_scrolled_handle(w_widget *widget) {
 		return _W_WIDGET(widget)->handle;
 	return /*columnCount == 0 &&*/
 	_W_TREE(widget)->scrollWidth == 0 ?
-			_W_WIDGET(widget)->handle :
+	_W_WIDGET(widget)->handle :
 										_W_TREE(widget)->hwndParent;
 }
 
@@ -1970,7 +1968,8 @@ void _w_tree_class_init(struct _w_tree_class *clazz) {
 	struct _w_tree_reserved *reserved = _W_TREE_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
 	_W_CONTROL_RESERVED(reserved)->topHandle = _w_tree_top_handle;
-	_W_CONTROL_RESERVED(reserved)->widget.def_proc = _w_tree_def_proc;
+	_W_CONTROL_RESERVED(reserved)->widget.call_window_proc =
+			_w_tree_call_window_proc;
 //messages
 	struct _w_control_reserved *msg = _W_CONTROL_RESERVED(reserved);
 	msg->messages[_WM_CHAR] = _TREE_WM_CHAR;

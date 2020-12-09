@@ -10,7 +10,7 @@ void w_imagelist_init(w_imagelist *imagelist) {
 }
 void w_imagelist_dispose(w_imagelist *imagelist) {
 }
-wbool w_imagelist_is_ok(w_imagelist *imagelist) {
+wresult w_imagelist_is_ok(w_imagelist *imagelist) {
 }
 wresult w_imagelist_create(w_imagelist *imagelist, w_size *size,
 		int initialCount) {

@@ -12,6 +12,9 @@
 
 typedef struct _w_tooltip {
 	struct _w_widget widget;
+	struct _w_tooltip* next;
+	struct _w_tooltip* prev;
+	int id;
 }_w_tooltip;
 
 struct _w_tooltip_reserved {

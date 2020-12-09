@@ -233,7 +233,7 @@ size_t _w_toolkit_get_cursor_sizes(w_toolkit *toolkit, w_size *sizes,
 int _w_toolkit_get_dismissal_alignment(w_toolkit *toolkit);
 int _w_toolkit_get_double_click_time(w_toolkit *toolkit);
 w_control* _w_toolkit_get_focus_control(w_toolkit *toolkit);
-wbool _w_toolkit_get_high_contrast(w_toolkit *toolkit);
+wresult _w_toolkit_get_high_contrast(w_toolkit *toolkit);
 int _w_toolkit_get_icon_depth(w_toolkit *toolkit);
 size_t _w_toolkit_get_icon_sizes(w_toolkit *toolkit, w_size *sizes,
         size_t length);
@@ -248,17 +248,17 @@ struct w_taskbar* _w_toolkit_get_system_taskbar(w_toolkit *toolkit);
 struct w_tray* _w_toolkit_get_system_tray(w_toolkit *toolkit);
 w_thread* _w_toolkit_get_thread(w_toolkit *toolkit);
 wuint64 _w_toolkit_get_thread_id(w_toolkit *toolkit);
-wbool _w_toolkit_get_touch_enabled(w_toolkit *toolkit);
+wresult _w_toolkit_get_touch_enabled(w_toolkit *toolkit);
 wresult _w_toolkit_map_0(w_toolkit *toolkit, w_control *from, w_control *to,
         w_point *result, w_point *point);
 wresult _w_toolkit_map_1(w_toolkit *toolkit, w_control *from, w_control *to,
         w_rect *result, w_rect *rectangle);
-wbool _w_toolkit_post(w_toolkit *toolkit, w_event *event);
-wbool _w_toolkit_post_quit(w_toolkit *toolkit, int quit);
-wbool _w_toolkit_read_and_dispatch(w_toolkit *toolkit);
+wresult _w_toolkit_post(w_toolkit *toolkit, w_event *event);
+wresult _w_toolkit_post_quit(w_toolkit *toolkit, int quit);
+wresult _w_toolkit_read_and_dispatch(w_toolkit *toolkit);
 wresult _w_toolkit_set_cursor_location(w_toolkit *toolkit, w_point *point);
 int _w_toolkit_run(w_toolkit *toolkit);
-wbool _w_toolkit_sleep(w_toolkit *toolkit);
+wresult _w_toolkit_sleep(w_toolkit *toolkit);
 wresult _w_toolkit_sync_exec(w_toolkit *toolkit, w_thread_start function,
         void *args);
 wresult _w_toolkit_timer_exec(w_toolkit *toolkit, wuint milliseconds,
