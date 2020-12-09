@@ -80,7 +80,7 @@ w_transfer_type* w_transfer_file_get_types(w_transfer *transfer,
 	return w_transfer_file_types;
 }
 size_t w_transfer_file_get_data(w_transfer *transfer,
-		w_transfer_data *transferData, w_alloc *alloc) {
+w_transfer_data *transferData, w_alloc alloc,void* user_data) {
 }
 wresult w_transfer_file_set_data(w_transfer *transfer,
 		w_transfer_data *transferData, const void *data, size_t size) {

@@ -209,7 +209,7 @@ wresult _w_tabfolder_create(w_widget *widget, w_widget *parent, int style,
 
 	DWORD dwExStyle = 0, dwStyle = 0;
 	_w_tabfolder_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), W_COMPOSITE(parent),
+	result = _w_control_create_0(W_CONTROL(widget), W_COMPOSITE(parent),
 	WC_TABCONTROLA, dwExStyle, dwStyle);
 	if (result > 0) {
 		w_font *systemfont = w_toolkit_get_system_font(
@@ -304,7 +304,7 @@ int _TABFOLDER_WM_SIZE(w_widget *widget, struct _w_event_platform *e,
 }
 int _TABFOLDER_WM_DRAWCHILD(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
-	reserved->def_proc(widget, e, reserved);
+	reserved->window_proc(widget, e, reserved);
 	if (_W_WIDGET(widget)->style & W_CLOSE) {
 		int tmp_count = win_toolkit->tmp_alloc / sizeof(WCHAR);
 		DRAWITEMSTRUCT *lpDIS = (DRAWITEMSTRUCT*) e->lparam;

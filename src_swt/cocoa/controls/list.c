@@ -45,7 +45,7 @@ int _w_list_get_top_index(w_list *list) {
 }
 int _w_list_index_of(w_list *list, const char *string, int start) {
 }
-wbool _w_list_is_selected(w_list *list, int index) {
+wresult _w_list_is_selected(w_list *list, int index) {
 }
 wresult _w_list_remove_indices(w_list *list, int *indices, size_t length) {
 }

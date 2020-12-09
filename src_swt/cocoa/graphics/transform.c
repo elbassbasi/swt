@@ -19,9 +19,9 @@ wresult w_transform_identity(w_transform *transform) {
 }
 wresult w_transform_invert(w_transform *transform) {
 }
-wbool w_transform_isok(w_transform *transform) {
+wresult w_transform_isok(w_transform *transform) {
 }
-wbool w_transform_is_identity(w_transform *transform) {
+wresult w_transform_is_identity(w_transform *transform) {
 }
 wresult w_transform_multiply(w_transform *transform,
 		w_transformmatrix *matrix) {

@@ -12,6 +12,11 @@ w_caret* _w_canvas_get_caret(w_canvas *canvas) {
 wresult _w_canvas_set_caret(w_canvas *canvas, w_caret *caret) {
 
 }
+const char* _w_canvas_window_class(w_control *control,
+		_w_control_reserved *reserved){
+	//if (display.useOwnDC) return display.windowOwnDCClass;
+	return _w_scrollable_window_class(control, reserved);
+}
 int _CANVAS_WM_CHAR(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
 	int result = _WIDGET_WM_CHAR(widget, e, reserved);
@@ -174,6 +179,7 @@ void _w_canvas_class_init(struct _w_canvas_class *clazz) {
 	 */
 	struct _w_canvas_reserved *reserved = _W_CANVAS_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
+	_W_CONTROL_RESERVED(reserved)->window_class = _w_canvas_window_class;
 	//messages
 	struct _w_control_reserved *msg = _W_CONTROL_RESERVED(reserved);
 	msg->messages[_WM_CHAR] = _CANVAS_WM_CHAR;

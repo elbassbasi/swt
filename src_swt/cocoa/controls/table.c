@@ -32,9 +32,9 @@ int _w_tablecolumn_get_alignment(w_tablecolumn *column) {
 }
 int _w_tablecolumn_get_image(w_tablecolumn *column) {
 }
-wbool _w_tablecolumn_get_moveable(w_tablecolumn *column) {
+wresult _w_tablecolumn_get_moveable(w_tablecolumn *column) {
 }
-wbool _w_tablecolumn_get_resizable(w_tablecolumn *column) {
+wresult _w_tablecolumn_get_resizable(w_tablecolumn *column) {
 }
 wresult _w_tablecolumn_get_tooltip_text(w_tablecolumn *column,
 		w_alloc alloc,void* user_data) {
@@ -47,9 +47,9 @@ wresult _w_tablecolumn_set_alignment(w_tablecolumn *column, int alignment) {
 }
 wresult _w_tablecolumn_set_image(w_tablecolumn *column, int image) {
 }
-wresult _w_tablecolumn_set_moveable(w_tablecolumn *column, wbool moveable) {
+wresult _w_tablecolumn_set_moveable(w_tablecolumn *column, int moveable) {
 }
-wresult _w_tablecolumn_set_resizable(w_tablecolumn *column, wbool resizable) {
+wresult _w_tablecolumn_set_resizable(w_tablecolumn *column, int resizable) {
 }
 wresult _w_tablecolumn_set_tooltip_text(w_tablecolumn *column,
 		const char *string) {
@@ -64,11 +64,11 @@ wresult _w_tableitem_get_bounds(w_tableitem *item, w_rect *bounds) {
 wresult _w_tableitem_get_bounds_index(w_tableitem *item, int index,
 		w_rect *bounds) {
 }
-wbool _w_tableitem_get_checked(w_tableitem *item) {
+wresult _w_tableitem_get_checked(w_tableitem *item) {
 }
 int _w_tableitem_get_image(w_tableitem *item) {
 }
-wresult _w_tableitem_set_checked(w_tableitem *item, wbool checked) {
+wresult _w_tableitem_set_checked(w_tableitem *item, int checked) {
 }
 wresult _w_tableitem_set_image(w_tableitem *item, int image) {
 }
@@ -105,11 +105,11 @@ int _w_table_get_gridline_width(w_table *table) {
 }
 int _w_table_get_header_height(w_table *table) {
 }
-wbool _w_table_get_header_visible(w_table *table) {
+wresult _w_table_get_header_visible(w_table *table) {
 }
-wbool _w_table_get_item(w_table *table, int index, w_tabitem *item) {
+wresult _w_table_get_item(w_table *table, int index, w_tabitem *item) {
 }
-wbool _w_table_get_item_from_point(w_table *table, w_point *point,
+wresult _w_table_get_item_from_point(w_table *table, w_point *point,
 		w_tabitem *item) {
 }
 int _w_table_get_item_count(w_table *table) {
@@ -118,7 +118,7 @@ int _w_table_get_item_height(w_table *table) {
 }
 void _w_table_get_items(w_table *table, w_iterator *items) {
 }
-wbool _w_table_get_lines_visible(w_table *table) {
+wresult _w_table_get_lines_visible(w_table *table) {
 }
 void _w_table_get_selection(w_table *table, w_iterator *items) {
 }
@@ -129,13 +129,13 @@ int _w_table_get_selection_index(w_table *table) {
 size_t _w_table_get_selection_indices(w_table *table, int *indeics,
 		size_t length) {
 }
-wbool _w_table_get_sort_column(w_table *table, w_tablecolumn *column) {
+wresult _w_table_get_sort_column(w_table *table, w_tablecolumn *column) {
 }
 int _w_table_get_sort_direction(w_table *table) {
 }
 int _w_table_get_top_index(w_table *table) {
 }
-wbool _w_table_is_selected(w_table *table, int index) {
+wresult _w_table_is_selected(w_table *table, int index) {
 }
 wresult _w_table_insert_column(w_table *table, w_tablecolumn *column,
 		const char *string, int index) {
@@ -161,9 +161,9 @@ wresult _w_table_select_all(w_table *table) {
 }
 wresult _w_table_set_column_order(w_table *table, int *order, size_t length) {
 }
-wresult _w_table_set_header_visible(w_table *table, wbool show) {
+wresult _w_table_set_header_visible(w_table *table, int show) {
 }
-wresult _w_table_set_lines_visible(w_table *table, wbool show) {
+wresult _w_table_set_lines_visible(w_table *table, int show) {
 }
 wresult _w_table_set_selection_indices(w_table *table, int *indices,
 		size_t length) {

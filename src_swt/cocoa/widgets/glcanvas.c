@@ -19,7 +19,7 @@ wresult _w_glcanvas_init_gldata(w_glcanvas *glcanvas, w_gldata *data) {
 wresult _w_glcanvas_get_gldata(w_glcanvas *glcanvas, w_gldata *data) {
 	return W_TRUE;
 }
-wbool _w_glcanvas_is_current(w_glcanvas *glcanvas) {
+wresult _w_glcanvas_is_current(w_glcanvas *glcanvas) {
 }
 wresult _w_glcanvas_set_current(w_glcanvas *glcanvas) {
 	return W_TRUE;

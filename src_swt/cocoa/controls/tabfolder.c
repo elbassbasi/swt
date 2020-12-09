@@ -14,7 +14,7 @@ void* _w_tabitem_get_data(w_item *item);
 wresult _w_tabfolder_get_selection(w_tabfolder *tabfolder, w_tabitem *item);
 void _w_tabitem_copy(w_widgetdata *from, w_widgetdata *to) {
 }
-wbool _w_tabitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
+wresult _w_tabitem_equals(w_widgetdata *obj1, w_widgetdata *obj2) {
 }
 w_widget* _w_tabitem_get_parent_widget(w_item *item) {
 }

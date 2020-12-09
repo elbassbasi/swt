@@ -151,7 +151,7 @@ wresult _w_control_get_region(w_control *control, w_region *region){}
 wresult _w_control_set_region(w_control *control, w_region *region){}
 wresult _w_control_move_above(w_control *control, w_control *_control){}
 wresult _w_control_move_below(w_control *control, w_control *_control){}
-wresult _w_control_pack(w_control *control, wbool changed){}
+wresult _w_control_pack(w_control *control, int changed){}
 wresult _w_control_to_control(w_control *control, w_point *result, w_point *point){}
 wresult _w_control_to_display(w_control *control, w_point *result, w_point *point){}
 wresult _w_control_drag_detect(w_control *control, w_event_mouse *event){}
@@ -195,7 +195,7 @@ wresult _w_control_set_touch_enabled(w_control *control, int enabled){}
 wresult _w_control_get_visible(w_control *control){
     return (_W_WIDGET(control)->state & STATE_HIDDEN) == 0;
 }
-wresult _w_control_set_visible(w_control *control, wbool visible){}
+wresult _w_control_set_visible(w_control *control, int visible){}
 wresult _w_control_is_visible(w_control *control){}
 wresult _w_control_redraw(w_control *control, w_rect *rect, int all){}
 wresult _w_control_set_redraw(w_control *control, int redraw){}
@@ -204,7 +204,7 @@ wresult _w_control_traverse(w_control *control, int traversal, w_event_key *even
 wresult _w_control_update(w_control *control){}
 wresult _w_control_set_timer(w_control *control, wint64 ms, wushort id){}
 wresult _w_control_kill_timer(w_control *control, wushort id){}
-wresult _w_control_set_tab(w_control *control, wbool tab){}
+wresult _w_control_set_tab(w_control *control, int tab){}
 wresult _w_control_get_tab(w_control *control){}
 wresult _w_control_create_dragsource_effect(w_control *control,
         w_dragsource_effect *effect){}

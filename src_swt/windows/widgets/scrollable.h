@@ -63,6 +63,12 @@ void _w_scrollbar_get_thumb_track_bounds(w_scrollbar *scrollbar, w_rect *rect);
 /*
  * public function for scrollable
  */
+DWORD _w_scrollable_widget_extstyle(w_control *control,
+		_w_control_reserved *reserved);
+const char* _w_scrollable_window_class(w_control *control,
+		_w_control_reserved *reserved);
+DWORD _w_scrollable_widget_style (w_control *control,
+		_w_control_reserved *reserved);
 void _w_scrollable_get_horizontal_bar(w_scrollable *scrollable,
 		w_scrollbar *scrollbar);
 int _w_scrollable_get_scrollbars_mode(w_scrollable *scrollable);

@@ -92,12 +92,12 @@ int _w_coolbar_get_item_count(w_coolbar *coolbar) {
 void _w_coolbar_get_items(w_coolbar *coolbar, w_iterator *items) {
 
 }
-wbool _w_coolbar_get_locked(w_coolbar *coolbar) {
+wresult _w_coolbar_get_locked(w_coolbar *coolbar) {
 }
 wresult _w_coolbar_insert_item(w_coolbar *coolbar, w_coolitem *item, int style,
 		int index) {
 }
-wresult _w_coolbar_set_locked(w_coolbar *coolbar, wbool locked) {
+wresult _w_coolbar_set_locked(w_coolbar *coolbar, int locked) {
 }
 int _w_coolbar_compute_size(w_widget *widget, struct w_event_compute_size *e,
 		struct _w_widget_reserved *reserved) {

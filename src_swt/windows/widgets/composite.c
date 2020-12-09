@@ -18,6 +18,24 @@ struct _w_composite_iterator {
 	wresult init;
 	int count;
 };
+wresult _w_composite_create_handle(w_control *control,
+		_w_control_reserved *reserved) {
+	wresult result = _w_control_create_handle(control, reserved);
+	if (result > 0) {
+		_W_WIDGET(control)->state |= STATE_CANVAS;
+		wuint64 style = _W_WIDGET(control)->style;
+		/*if ((style & (W_HSCROLL | W_VSCROLL)) == 0 || findThemeControl () == parent) {
+		 state |= THEME_BACKGROUND;
+		 }*/
+		if ((style & W_TRANSPARENT) != 0) {
+			DWORD bits = GetWindowLongW(_W_WIDGET(control)->handle,
+					GWL_EXSTYLE);
+			bits |= WS_EX_TRANSPARENT;
+			SetWindowLongW(_W_WIDGET(control)->handle, GWL_EXSTYLE, bits);
+		}
+	}
+	return result;
+}
 wresult _w_composite_iterator_next(w_iterator *it, void *obj) {
 	if (((struct _w_composite_iterator*) it)->init == W_TRUE) {
 		((struct _w_composite_iterator*) it)->hwndChild =
@@ -70,7 +88,7 @@ size_t _w_composite_iterator_get_count(w_iterator *it) {
 	return ((struct _w_composite_iterator*) it)->count;
 }
 _w_iterator_class _w_composite_iterator_class = { //
-				_w_composite_iterator_close, //
+		_w_composite_iterator_close, //
 				_w_composite_iterator_next, //
 				_w_composite_iterator_reset, //
 				_w_composite_iterator_remove, //
@@ -80,6 +98,10 @@ void _w_composite_style(w_widget *widget, w_widget *parent, int style,
 		DWORD *dwExStyle, DWORD *dwStyle) {
 	_w_scrollable_style(widget, parent, style, dwExStyle, dwStyle);
 	*dwStyle |= WS_CLIPCHILDREN;
+}
+DWORD _w_composite_widget_style(w_control *control,
+		_w_control_reserved *reserved) {
+	return _w_scrollable_widget_style(control, reserved) | WS_CLIPCHILDREN;
 }
 void _w_composite_minimum_size(w_composite *composite, w_size *result,
 		int wHint, int hHint, wresult changed) {
@@ -92,7 +114,7 @@ void _w_composite_minimum_size(w_composite *composite, w_size *result,
 	w_control *child = 0;
 	while (w_iterator_next(&children, (void*) &child)) {
 		if (child != 0) {
-			w_control_get_bounds(child, &rect.pt,&rect.sz);
+			w_control_get_bounds(child, &rect.pt, &rect.sz);
 			width = w_max(width, rect.x - clientArea.x + rect.width);
 			height = w_max(height, rect.y - clientArea.y + rect.height);
 		}
@@ -110,7 +132,7 @@ void _w_composite_get_children(w_composite *composite, w_iterator *it) {
 	((struct _w_composite_iterator*) it)->hwndChild = 0;
 	((struct _w_composite_iterator*) it)->count = -1;
 }
-wresult _w_composite_get_layout(w_composite *composite,w_layout** layout) {
+wresult _w_composite_get_layout(w_composite *composite, w_layout **layout) {
 	*layout = _W_COMPOSITE(composite)->layout;
 	return W_TRUE;
 }
@@ -136,29 +158,6 @@ void _w_composite_set_layout_deferred(w_composite *composite, int defer) {
 /*
  * post event proc
  */
-wresult _w_composite_create(w_widget *widget, w_widget *parent, int style,
-		w_widget_post_event_proc post_event) {
-	if (parent == 0) {
-		return W_ERROR_NULL_ARGUMENT;
-	}
-	wresult result;
-
-	DWORD dwExStyle = 0, dwStyle = 0;
-	_w_composite_style(widget, parent, style, &dwExStyle, &dwStyle);
-	result = _w_control_create(W_CONTROL(widget), (w_composite*) parent,
-			WindowName, dwExStyle, dwStyle);
-	if (result > 0) {
-		w_font *systemfont = w_toolkit_get_system_font(
-				(w_toolkit*) win_toolkit);
-		SendMessageW(_W_WIDGET(widget)->handle, WM_SETFONT,
-				(WPARAM) _W_FONT(systemfont)->handle, 0);
-		_W_WIDGET(widget)->style = style;
-		_W_WIDGET(widget)->post_event = post_event;
-		_W_WIDGET(widget)->state |= STATE_CANVAS;
-		ShowWindow(_W_WIDGET(widget)->handle, SW_NORMAL);
-	}
-	return result;
-}
 int _COMPOSITE_WM_ERASEBKGND(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved) {
 	int result = _CONTROL_WM_ERASEBKGND(widget, e, reserved);
@@ -194,7 +193,7 @@ int _COMPOSITE_WM_GETDLGCODE(w_widget *widget, _w_event_platform *e,
 
 int _COMPOSITE_WM_GETFONT(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved) {
-	reserved->def_proc(widget, e, reserved);
+	reserved->call_window_proc(widget, e, reserved);
 	if (e->result != 0) {
 		return TRUE;
 	}
@@ -347,7 +346,7 @@ int _COMPOSITE_WM_PAINT(w_widget *widget, _w_event_platform *e,
 						HRGN newSysRgn = ExtCreateRegion(_rgnXForm, nBytes,
 								lpRgnData);
 						DeleteObject(sysRgn);
-						_w_toolkit_free(lpRgnData,nBytes);
+						_w_toolkit_free(lpRgnData, nBytes);
 						sysRgn = newSysRgn;
 					}
 				}
@@ -428,7 +427,7 @@ int _COMPOSITE_WM_PAINT(w_widget *widget, _w_event_platform *e,
 						event.gc = W_GRAPHICS(&gc);
 						_w_widget_send_event(widget, (w_event*) &event);
 					}
-					_w_toolkit_free(lpRgnData,nBytes);
+					_w_toolkit_free(lpRgnData, nBytes);
 				}
 			} else {
 				if ((_W_WIDGET(widget)->style
@@ -802,13 +801,13 @@ int _w_composite_compute_size(w_widget *widget, struct w_event_compute_size *e,
 	//display.runSkin ();
 	w_size size;
 	w_layout *layout;
-	w_composite_get_layout(W_COMPOSITE(widget),&layout);
+	w_composite_get_layout(W_COMPOSITE(widget), &layout);
 	if (layout != 0) {
 		if (e->wHint == W_DEFAULT || e->hHint == W_DEFAULT) {
 			//changed |= (state & LAYOUT_CHANGED) != 0;
 			//state &= ~LAYOUT_CHANGED;
 			w_layout_compute_size(layout, W_COMPOSITE(widget), &size, e->wHint,
-					e->hHint,W_TRUE);
+					e->hHint, W_TRUE);
 		} else {
 			size.width = e->wHint;
 			size.height = e->hHint;
@@ -856,7 +855,6 @@ void _w_composite_class_init(struct _w_composite_class *clazz) {
 	clazz->do_layout = _w_composite_do_layout;
 	clazz->set_layout = _w_composite_set_layout;
 	clazz->set_layout_deferred = _w_composite_set_layout_deferred;
-	W_WIDGET_CLASS(clazz)->create = _w_composite_create;
 
 	_w_toolkit_registre_class(win_toolkit);
 	/*
@@ -865,6 +863,8 @@ void _w_composite_class_init(struct _w_composite_class *clazz) {
 	struct _w_scrollable_reserved *reserved = _W_SCROLLABLE_RESERVED(
 			W_WIDGET_CLASS(clazz)->reserved[0]);
 	_W_CONTROL_RESERVED(reserved)->compute_size = _w_composite_compute_size;
+	_W_CONTROL_RESERVED(reserved)->create_handle = _w_composite_create_handle;
+	_W_CONTROL_RESERVED(reserved)->widget_style = _w_composite_widget_style;
 //messages
 	struct _w_control_reserved *msg = _W_CONTROL_RESERVED(reserved);
 	msg->messages[_WM_ERASEBKGND] = _COMPOSITE_WM_ERASEBKGND;

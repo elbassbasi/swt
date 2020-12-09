@@ -18,17 +18,17 @@ wresult _w_text_cut(w_text *text) {
 }
 int _w_text_get_caret_line_number(w_text *text) {
 }
-wbool _w_text_get_caret_location(w_text *text, w_point *location) {
+wresult _w_text_get_caret_location(w_text *text, w_point *location) {
 }
 int _w_text_get_caret_position(w_text *text) {
 }
 int _w_text_get_char_count(w_text *text) {
 }
-wbool _w_text_get_doubleclick_enabled(w_text *text) {
+wresult _w_text_get_doubleclick_enabled(w_text *text) {
 }
 char _w_text_get_echo_char(w_text *text) {
 }
-wbool _w_text_get_editable(w_text *text) {
+wresult _w_text_get_editable(w_text *text) {
 }
 int _w_text_get_line_count(w_text *text) {
 }
@@ -40,7 +40,7 @@ w_string_ref* _w_text_get_message(w_text *text) {
 }
 int _w_text_get_position(w_text *text, w_point *point) {
 }
-wbool _w_text_get_selection(w_text *text, w_range *range) {
+wresult _w_text_get_selection(w_text *text, w_range *range) {
 }
 int _w_text_get_selection_count(w_text *text) {
 }
@@ -64,11 +64,11 @@ wresult _w_text_paste(w_text *text) {
 }
 wresult _w_text_select_all(w_text *text) {
 }
-wresult _w_text_set_doubleclick_enabled(w_text *text, wbool doubleClick) {
+wresult _w_text_set_doubleclick_enabled(w_text *text, int doubleClick) {
 }
 wresult _w_text_set_echochar(w_text *text, char echo) {
 }
-wresult _w_text_set_editable(w_text *text, wbool editable) {
+wresult _w_text_set_editable(w_text *text, int editable) {
 }
 wresult _w_text_set_message(w_text *text, const char *message) {
 }

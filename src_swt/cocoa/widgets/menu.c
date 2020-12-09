@@ -21,7 +21,7 @@ wresult _w_menuitem_iterator_close(w_iterator *it) {
 int _w_menuitem_iterator_reset(w_iterator *it) {
 	return W_TRUE;
 }
-wbool _w_menuitem_iterator_next(w_iterator *it, void *obj) {
+wresult _w_menuitem_iterator_next(w_iterator *it, void *obj) {
 }
 size_t _w_menuitem_iterator_get_count(w_iterator *it) {
 }
@@ -47,7 +47,7 @@ int _w_menuitem_get_accelerator(w_menuitem *item) {
 }
 void* _w_menuitem_get_data(w_item *item) {
 }
-wbool _w_menuitem_get_enabled(w_menuitem *item) {
+wresult _w_menuitem_get_enabled(w_menuitem *item) {
 }
 wresult _w_menuitem_get_item(w_menuitem *item, unsigned int index,
 		w_menuitem *sub_item) {
@@ -62,15 +62,15 @@ wresult _w_menuitem_get_image(w_menuitem *item, w_image *image) {
 }
 w_widget* _w_menuitem_get_menu(w_item *item) {
 }
-wbool _w_menuitem_get_parent(w_menuitem *item, w_menuitem *parent) {
+wresult _w_menuitem_get_parent(w_menuitem *item, w_menuitem *parent) {
 }
-wbool _w_menuitem_get_selection(w_menuitem *item) {
+wresult _w_menuitem_get_selection(w_menuitem *item) {
 }
 int _w_menuitem_get_style(w_menuitem *item) {
 }
 w_string_ref* _w_menuitem_get_text(w_item *item) {
 }
-wbool _w_menuitem_is_enabled(w_menuitem *item) {
+wresult _w_menuitem_is_enabled(w_menuitem *item) {
 }
 wresult _w_menuitem_remove(w_menuitem *item) {
 }
@@ -82,7 +82,7 @@ wresult _w_menuitem_set_accelerator(w_menuitem *item, int accelerator) {
 wresult _w_menuitem_set_data(w_item *item, void *data) {
 	return W_TRUE;
 }
-wresult _w_menuitem_set_enabled(w_menuitem *item, wbool enabled) {
+wresult _w_menuitem_set_enabled(w_menuitem *item, int enabled) {
 	return W_TRUE;
 }
 wresult _w_menuitem_set_id(w_menuitem *item, unsigned short id) {
@@ -90,7 +90,7 @@ wresult _w_menuitem_set_id(w_menuitem *item, unsigned short id) {
 }
 wresult _w_menuitem_set_image(w_menuitem *item, w_image *image) {
 }
-wresult _w_menuitem_set_selection(w_menuitem *item, wbool selected) {
+wresult _w_menuitem_set_selection(w_menuitem *item, int selected) {
 
 	return W_FALSE;
 }
@@ -117,15 +117,15 @@ int _w_menu_get_orientation(w_menu *menu) {
 w_control* _w_menu_get_parent(w_menu *menu) {
 	return _W_MENU(menu)->parent;
 }
-wbool _w_menu_get_visible(w_menu *menu) {
+wresult _w_menu_get_visible(w_menu *menu) {
 }
-wbool _w_menu_is_visible(w_menu *menu) {
+wresult _w_menu_is_visible(w_menu *menu) {
 }
 void _w_menu_set_location(w_menu *menu, w_point *location) {
 }
 void _w_menu_set_orientation(w_menu *menu, int orientation) {
 }
-wresult _w_menu_set_visible(w_menu *menu, wbool visible) {
+wresult _w_menu_set_visible(w_menu *menu, int visible) {
 	return W_TRUE;
 }
 /*
