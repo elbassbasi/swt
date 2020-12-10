@@ -7,8 +7,9 @@
 #if defined( __WIN32__) || defined(__WIN64__)
 #include "shell.h"
 #include "toolkit.h"
-wresult _w_shell_create_embedded(w_widget *widget, w_widget *parent, int style,
-		w_widget_post_event_proc post_event, void *handle, int embedded) {
+wresult _w_shell_create_embedded(w_widget *widget, w_widget *parent,
+		wuint64 style, w_widget_post_event_proc post_event, void *handle,
+		int embedded) {
 	if (parent != 0) {
 		if (!w_widget_is_ok(parent))
 			return W_ERROR_INVALID_ARGUMENT;
@@ -134,6 +135,9 @@ int _w_shell_create_accelerators(w_shell *shell) {
 	if (nAccel != 0)
 		_W_SHELL(shell)->hAccel = CreateAcceleratorTableW(_acc, nAccel);
 	return W_TRUE;
+}
+void _w_shell_destroy_accelerators(w_shell *shell) {
+
 }
 wresult _w_shell_balloontip_handle(w_shell *shell,
 		_w_shell_reserved *reserved) {
@@ -827,14 +831,15 @@ wresult _w_shell_open(w_shell *shell) {
 	return result;
 }
 //@Override
-wresult print(w_graphics *gc) {
+wresult _w_shell_print(w_control *control, w_graphics *gc) {
 	/*checkWidget ();
 	 if (gc == null) error (W_ERROR_NULL_ARGUMENT);
 	 if (gc.isDisposed ()) error (W_ERROR_INVALID_ARGUMENT);
 	 return false;*/
 }
 
-void releaseBrushes() {
+wresult _w_shell_release_brushes(w_control *control,
+		_w_control_reserved *reserved) {
 	/*if (brushes != null) {
 	 for (int i=0; i<brushes.length; i++) {
 	 if (brushes [i] != 0) OS.DeleteObject (brushes [i]);
@@ -843,32 +848,17 @@ void releaseBrushes() {
 	 brushes = null;*/
 }
 //@Override
-void removeMenu(w_menu *menu) {
+void _w_shell_remove_menu(w_control *control, w_menu *menu,
+		_w_control_reserved *reserved) {
 	/*super.removeMenu (menu);
 	 if (menu == activeMenu) activeMenu = null;*/
 }
 //@Override
-void requestLayout() {
+wresult _w_shell_request_layout(w_control *control) {
 //layout (null, W_DEFER);
 }
 
-//@Override
-void reskinChildren(int flags) {
-	/*Shell [] shells = getShells ();
-	 for (int i=0; i<shells.length; i++) {
-	 Shell shell = shells [i];
-	 if (shell != null) shell.reskin (flags);
-	 }
-	 if (toolTips != null) {
-	 for (int i=0; i<toolTips.length; i++) {
-	 ToolTip toolTip = toolTips [i];
-	 if (toolTip != null) toolTip.reskin (flags);
-	 }
-	 }
-	 super.reskinChildren (flags);*/
-}
-
-LRESULT selectPalette(long hPalette) {
+LRESULT _w_shell_select_palette(w_control *control, HPALETTE hPalette) {
 	/*long hDC = OS.GetDC (handle);
 	 long hOld = OS.SelectPalette (hDC, hPalette, false);
 	 int result = OS.RealizePalette (hDC);
@@ -882,8 +872,8 @@ LRESULT selectPalette(long hPalette) {
 	 return (result > 0) ? LRESULT.ONE : LRESULT.ZERO;*/
 }
 //@Override
-wresult sendKeyEvent(int type, int msg, long /*int*/wParam, long /*int*/lParam,
-		w_event *event) {
+wresult _w_shell_send_keyevent(w_control *control, int type,
+		_w_event_platform *e, w_event *event) {
 	/*if (!isEnabled () || !isActive ()) return false;
 	 return super.sendKeyEvent (type, msg, wParam, lParam, event);*/
 }
@@ -892,11 +882,8 @@ void _w_shell_set_active(w_shell *shell) {
 	 bringToTop ();*/
 // widget could be disposed at this point
 }
-void setActiveControl_0(w_control *control) {
-//setActiveControl (control, W_None);
-}
 
-void setActiveControl(w_control *control, int type) {
+void _w_shell_set_active_control(w_shell *shell, w_control *control, int type) {
 	/*if (control != null && control.isDisposed ()) control = null;
 	 if (lastActive != null && lastActive.isDisposed ()) lastActive = null;
 	 if (lastActive == control) return;*/
@@ -955,8 +942,8 @@ void _w_shell_set_alpha(w_shell *shell, int alpha) {
 #endif
 }
 //@Override
-void setBoundsInPixels(int x, int y, int width, int height, int flags,
-		boolean defer) {
+wresult _w_shell_set_bounds(w_control *control, w_point *location, w_size *size,
+		int flags, int defer) {
 //if (fullScreen) setFullScreen (false);
 	/*
 	 * Bug in Windows.  When a window has alpha and
@@ -974,7 +961,7 @@ void setBoundsInPixels(int x, int y, int width, int height, int flags,
 }
 
 //@Override
-void setEnabled(int enabled) {
+wresult _w_shell_set_enabled(w_control *control, int enabled) {
 	/*if (((state & DISABLED) == 0) == enabled) return;
 	 super.setEnabled (enabled);
 	 if (enabled && handle == OS.GetActiveWindow ()) {
@@ -1074,10 +1061,10 @@ void _w_shell_set_minimum_size(w_shell *shell, w_size *size) {
 	 if (minHeight <= heightLimit) minHeight = W_DEFAULT;
 	 if (newWidth != size.x || newHeight != size.y) setSizeInPixels (newWidth, newHeight);*/
 }
-void _w_shell_set_modified(w_shell *shell, int modified) {
+wresult _w_shell_set_modified(w_shell *shell, int modified) {
 //this.modified = modified;
 }
-void setItemEnabled(int cmd, boolean enabled) {
+void _w_shell_setItemEnabled(int cmd, boolean enabled) {
 	/*long hMenu = OS.GetSystemMenu (handle, false);
 	 if (hMenu == 0) return;
 	 int flags = OS.MF_ENABLED;
@@ -1086,11 +1073,11 @@ void setItemEnabled(int cmd, boolean enabled) {
 }
 
 //@Override
-void setParent() {
+void _w_shell_set_parent() {
 	/* Do nothing.  Not necessary for Shells */
 }
 //@Override
-void setRegion(w_region *region) {
+void _w_shell_set_region(w_region *region) {
 	/*if ((style & W_NO_TRIM) == 0) return;
 	 if (region != null) {
 	 Rectangle bounds = region.getBounds ();
@@ -1099,7 +1086,7 @@ void setRegion(w_region *region) {
 	 super.setRegion (region);*/
 }
 
-void setToolTipText_2(long /*int*/hwnd, const char *text) {
+void _w_shell_setToolTipText_2(long /*int*/hwnd, const char *text) {
 	/*if (OS.IsWinCE) return;
 	 TOOLINFO lpti = new TOOLINFO ();
 	 lpti.cbSize = TOOLINFO.sizeof;
@@ -1119,7 +1106,7 @@ void setToolTipText_2(long /*int*/hwnd, const char *text) {
 	 }*/
 }
 
-void setToolTipText_1(NMTTDISPINFO lpnmtdi, void *buffer) {
+void _w_shell_setToolTipText_1(NMTTDISPINFO lpnmtdi, void *buffer) {
 	/*
 	 * Ensure that the current position of the mouse
 	 * is inside the client area of the shell.  This
@@ -1135,7 +1122,7 @@ void setToolTipText_1(NMTTDISPINFO lpnmtdi, void *buffer) {
 	 lpnmtdi.lpszText = lpstrTip;*/
 }
 
-void setToolTipText_0(NMTTDISPINFO lpnmtdi, char *buffer) {
+void _w_shell_setToolTipText_0(NMTTDISPINFO lpnmtdi, char *buffer) {
 	/*
 	 * Ensure that the current position of the mouse
 	 * is inside the client area of the shell.  This
@@ -1151,7 +1138,8 @@ void setToolTipText_0(NMTTDISPINFO lpnmtdi, char *buffer) {
 	 lpnmtdi.lpszText = lpstrTip;*/
 }
 
-void setToolTipTitle(long /*int*/hwndToolTip, const char *text, int icon) {
+void _w_shell_setToolTipTitle(long /*int*/hwndToolTip, const char *text,
+		int icon) {
 	/*
 	 * Bug in Windows.  For some reason, when TTM_SETTITLE
 	 * is used to set the title of a tool tip, Windows leaks
@@ -1419,20 +1407,22 @@ wresult _w_shell_subclass(w_control *control, _w_control_reserved *reserved) {
 	return result;
 }
 
-long toolTipHandle() {
+HWND _w_shell_tooltip_handle(w_shell *shell) {
 	/*if (toolTipHandle == 0) createToolTipHandle ();
 	 return toolTipHandle;*/
 }
 
 //@Override
-boolean translateAccelerator(MSG msg) {
+wresult _w_shell_translateAccelerator(w_control *control, MSG *msg,
+		_w_control_reserved *reserved) {
 	/*if (!isEnabled () || !isActive ()) return false;
 	 if (menuBar != null && !menuBar.isEnabled ()) return false;
 	 return translateMDIAccelerator (msg) || translateMenuAccelerator (msg);*/
 }
 
 //@Override
-boolean traverseEscape() {
+wresult _w_shell_traverseEscape(w_control *control,
+		_w_control_reserved *reserved) {
 	/*if (parent == null) return false;
 	 if (!isVisible () || !isEnabled ()) return false;
 	 close ();
@@ -1440,8 +1430,7 @@ boolean traverseEscape() {
 }
 
 //@Override
-wresult _w_shell_unsubclass(w_control *control,
-		_w_control_reserved *reserved) {
+wresult _w_shell_unsubclass(w_control *control, _w_control_reserved *reserved) {
 	wresult result = _w_control_unsubclass(control, reserved);
 	/* if (ToolTipProc != 0) {
 	 if (toolTipHandle != 0) {
@@ -1457,7 +1446,7 @@ wresult _w_shell_unsubclass(w_control *control,
 	return result;
 }
 
-void updateModal() {
+void _w_shell_update_modal(w_shell *shell) {
 	/*if (Display.TrimEnabled) {
 	 setItemEnabled (OS.SC_CLOSE, isActive ());
 	 } else {
@@ -1554,7 +1543,8 @@ const char* _w_shell_window_class(w_control *control,
 }
 
 //@Override
-long __windowProc() {
+WNDPROC _w_shell_get_window_proc(w_control *control,
+		_w_control_reserved *reserved) {
 	/*if (windowProc != 0) return windowProc;
 	 if (OS.IsSP) return DialogProc;
 	 if ((style & W_TOOL) != 0) {
@@ -1565,8 +1555,8 @@ long __windowProc() {
 }
 
 //@Override
-long /*int*/___windowProc(long /*int*/hwnd, int msg, long /*int*/wParam,
-		long /*int*/lParam) {
+wresult _w_shell_window_proc(w_widget *widget, _w_event_platform *e,
+		_w_widget_reserved *reserved) {
 	/*if (handle == 0) return 0;
 	 if((style & W_NO_MOVE) != 0 && msg == OS.WM_NCLBUTTONDOWN && wParam == OS.HTCAPTION) return 0;
 	 if (hwnd == toolTipHandle || hwnd == balloonTipHandle || hwnd == menuItemToolTipHandle) {
@@ -1682,18 +1672,26 @@ DWORD _w_shell_widget_style(w_control *control, _w_control_reserved *reserved) {
 	 */
 	return bits | WS_OVERLAPPED | WS_CAPTION;
 }
-
-/*
- * public function
- */
 wresult _w_shell_get_default_button(w_shell *shell, w_button **button) {
+	if (_W_SHELL(shell)->defaultButton != 0
+			&& w_widget_is_ok(W_WIDGET(_W_SHELL(shell)->defaultButton)) <= 0) {
+		*button = 0;
+	} else {
+		*button = _W_SHELL(shell)->defaultButton;
+	}
+	return W_TRUE;
 }
-w_image* _w_shell_get_image(w_shell *shell) {
+wresult _w_shell_get_images(w_shell *shell, w_image *images, size_t length) {
 }
 
-w_menu* _w_shell_get_menu_bar(w_shell *shell) {
+wresult _w_shell_get_menu_bar(w_shell *shell, w_menu **menu) {
+	*menu = _W_SHELL(shell)->menubar;
+	return W_TRUE;
 }
-int _w_shell_get_minimized(w_shell *shell) {
+wresult _w_shell_get_minimized(w_shell *shell) {
+	if (IsWindowVisible(_W_WIDGET(shell)->handle))
+		return IsIconic(_W_WIDGET(shell)->handle);
+	return _W_SHELL(shell)->swFlags == SW_SHOWMINNOACTIVE;
 }
 wresult _w_shell_get_text(w_shell *shell, w_alloc alloc, void *user_data,
 		int enc) {
@@ -1708,30 +1706,137 @@ wresult _w_shell_get_text(w_shell *shell, w_alloc alloc, void *user_data,
 	} else
 		return W_ERROR_NO_MEMORY;
 }
-wresult _w_shell_set_default_button(w_shell *shell, struct w_button *button) {
+wresult _w_shell_set_default_button_0(w_shell *shell, w_button *button,
+		int save) {
+	/*if (button == null) {
+	 if (defaultButton == saveDefault) {
+	 if (save) saveDefault = null;
+	 return;
+	 }
+	 } else {
+	 if ((button.style & SWT.PUSH) == 0) return;
+	 if (button == defaultButton) {
+	 if (save) saveDefault = defaultButton;
+	 return;
+	 }
+	 }
+	 if (defaultButton != null) {
+	 if (!defaultButton.isDisposed ()) defaultButton.setDefault (false);
+	 }
+	 if ((defaultButton = button) == null) defaultButton = saveDefault;
+	 if (defaultButton != null) {
+	 if (!defaultButton.isDisposed ()) defaultButton.setDefault (true);
+	 }
+	 if (save) saveDefault = defaultButton;
+	 if (saveDefault != null && saveDefault.isDisposed ()) saveDefault = null;*/
 }
-wresult _w_shell_set_image(w_shell *shell, w_image *image) {
+
+wresult _w_shell_set_default_button(w_shell *shell, w_button *button) {
+	if (button != 0) {
+		if (w_widget_is_ok(W_WIDGET(button)))
+			return W_ERROR_INVALID_ARGUMENT;
+		w_shell *bshell;
+		w_control_get_shell(W_CONTROL(button), &bshell);
+		if (bshell != shell)
+			return W_ERROR_INVALID_PARENT;
+	}
+	return _w_shell_set_default_button_0(shell, button, W_TRUE);
+}
+wresult _w_shell_set_images(w_shell *shell, w_image *images, size_t length) {
+	HWND handle = _W_WIDGET(shell)->handle;
+	HICON hSmallIcon = 0, hLargeIcon = 0;
+	if (images != 0 && length > 0) {
+		/*int depth = display.getIconDepth ();
+		 ImageData [] datas = null;
+		 if (images.length > 1) {
+		 Image [] bestImages = new Image [images.length];
+		 System.arraycopy (images, 0, bestImages, 0, images.length);
+		 datas = new ImageData [images.length];
+		 for (int i=0; i<datas.length; i++) {
+		 datas [i] = images [i].getImageDataAtCurrentZoom ();
+		 }
+		 images = bestImages;
+		 sort (images, datas, OS.GetSystemMetrics (OS.SM_CXSMICON), OS.GetSystemMetrics (OS.SM_CYSMICON), depth);
+		 }
+		 smallIcon = images [0];
+		 if (images.length > 1) {
+		 sort (images, datas, OS.GetSystemMetrics (OS.SM_CXICON), OS.GetSystemMetrics (OS.SM_CYICON), depth);
+		 }
+		 largeIcon = images [0];*/
+	}
+	SendMessageW(handle, WM_SETICON, ICON_SMALL, (LPARAM) hSmallIcon);
+	SendMessageW(handle, WM_SETICON, ICON_BIG, (LPARAM) hLargeIcon);
+
+	/*
+	 * Bug in Windows.  When WM_SETICON is used to remove an
+	 * icon from the window trimmings for a window with the
+	 * extended style bits WS_EX_DLGMODALFRAME, the window
+	 * trimmings do not redraw to hide the previous icon.
+	 * The fix is to force a redraw.
+	 */
+	if (hSmallIcon == 0 && hLargeIcon == 0
+			&& (_W_WIDGET(shell)->style & W_BORDER) != 0) {
+		int flags = RDW_FRAME | RDW_INVALIDATE;
+		RedrawWindow(handle, 0, 0, flags);
+	}
+	return W_TRUE;
+}
+wresult _w_shell_set_maximized_0(w_shell *shell, int maximized) {
+	_W_SHELL(shell)->swFlags = maximized ? SW_SHOWMAXIMIZED : SW_RESTORE;
+	wresult result = W_TRUE;
+	HWND handle = _W_WIDGET(shell)->handle;
+	if (!IsWindowVisible(handle))
+		return result;
+	if (maximized == IsZoomed(handle))
+		return result;
+	ShowWindow(handle, _W_SHELL(shell)->swFlags);
+	UpdateWindow(handle);
+	return result;
 }
 wresult _w_shell_set_maximized(w_shell *shell, int maximized) {
+	win_toolkit->init_startup = 1;
+	return _w_shell_set_maximized_0(shell, maximized);
 }
 wresult _w_shell_set_menu_bar(w_shell *shell, w_menu *menu) {
 	if (_W_SHELL(shell)->menubar == menu)
 		return W_TRUE;
 	if (menu != 0) {
-		if (!w_widget_is_ok(W_WIDGET(menu)))
+		if (w_widget_is_ok(W_WIDGET(menu)) <= 0)
 			return W_ERROR_INVALID_ARGUMENT;
 		if ((_W_WIDGET(menu)->style & W_BAR) == 0)
 			return W_ERROR_MENU_NOT_BAR;
-//if (menu.parent != this) error (W_ERROR_INVALID_PARENT);
+		if (_W_MENU(menu)->parent != W_CONTROL(shell))
+			return W_ERROR_INVALID_PARENT;
 	}
 	_W_SHELL(shell)->menubar = menu;
 	HMENU hMenu = menu != 0 ? _W_MENU(menu)->handle : 0;
+	wresult result;
 	if (SetMenu(_W_WIDGET(shell)->handle, hMenu)) {
-		return W_TRUE;
+		result = W_TRUE;
 	} else
-		return W_ERROR_CANNOT_SET_MENU;
+		result = W_ERROR_CANNOT_SET_MENU;
+	_w_shell_destroy_accelerators(shell);
+	return result;
+}
+wresult _w_shell_set_minimized_0(w_shell *shell, int minimized) {
+	_W_SHELL(shell)->swFlags = minimized ? SW_SHOWMINNOACTIVE : SW_RESTORE;
+	wresult result = W_TRUE;
+	HWND handle = _W_WIDGET(shell)->handle;
+	if (!IsWindowVisible(handle))
+		return result;
+	if (minimized == IsIconic(handle))
+		return result;
+	int flags = _W_SHELL(shell)->swFlags;
+	if (flags == SW_SHOWMINNOACTIVE && handle == GetActiveWindow()) {
+		flags = SW_MINIMIZE;
+	}
+	ShowWindow(handle, flags);
+	UpdateWindow(handle);
+	return result;
 }
 wresult _w_shell_set_minimized(w_shell *shell, int minimized) {
+	win_toolkit->init_startup = 1;
+	return _w_shell_set_minimized_0(shell, minimized);
 }
 wresult _w_shell_set_text(w_shell *shell, const char *text, size_t length,
 		int enc) {
@@ -1759,7 +1864,142 @@ wresult _w_shell_set_text(w_shell *shell, const char *text, size_t length,
 	 OS.SetWindowText (handle, buffer);
 	 }*/
 }
+//@Override
+void checkBorder() {
+	/* Do nothing */
+}
+void checkComposited(w_composite *parent) {
+	/* Do nothing */
+}
+/*@Override
+ void checkOpened () {
+ if (!opened) resized = false;
+ }
+ @Override
+ Widget computeTabGroup () {
+ return this;
+ }
 
+ @Override
+ Control computeTabRoot () {
+ return this;
+ }
+ */
+//@Override
+void computeTrimInPixels(int x, int y, int width, int height) {
+
+	/* Get the size of the trimmings */
+	/*RECT rect = new RECT ();
+	 OS.SetRect (rect, x, y, x + width, y + height);
+	 int bits1 = OS.GetWindowLong (handle, OS.GWL_STYLE);
+	 int bits2 = OS.GetWindowLong (handle, OS.GWL_EXSTYLE);
+	 boolean hasMenu = OS.IsWinCE ? false : OS.GetMenu (handle) != 0;
+	 OS.AdjustWindowRectEx (rect, bits1, hasMenu, bits2);*/
+
+	/* Get the size of the scroll bars */
+	/*if (horizontalBar != null) rect.bottom += OS.GetSystemMetrics (OS.SM_CYHSCROLL);
+	 if (verticalBar != null) rect.right += OS.GetSystemMetrics (OS.SM_CXVSCROLL);*/
+
+	/* Compute the height of the menu bar */
+	/*if (hasMenu) {
+	 RECT testRect = new RECT ();
+	 OS.SetRect (testRect, 0, 0, rect.right - rect.left, rect.bottom - rect.top);
+	 OS.SendMessage (handle, OS.WM_NCCALCSIZE, 0, testRect);
+	 while ((testRect.bottom - testRect.top) < height) {
+	 if (testRect.bottom - testRect.top == 0) break;
+	 rect.top -= OS.GetSystemMetrics (OS.SM_CYMENU) - OS.GetSystemMetrics (OS.SM_CYBORDER);
+	 OS.SetRect (testRect, 0, 0, rect.right - rect.left, rect.bottom - rect.top);
+	 OS.SendMessage (handle, OS.WM_NCCALCSIZE, 0, testRect);
+	 }
+	 }
+	 return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);*/
+}
+//@Override
+void getClientAreaInPixels(w_widget *widget) {
+	HWND handle = _W_WIDGET(widget)->handle;
+	if (IsIconic(handle)) {
+		/*WINDOWPLACEMENT lpwndpl = new WINDOWPLACEMENT ();
+		 lpwndpl.length = WINDOWPLACEMENT.sizeof;
+		 OS.GetWindowPlacement (handle, lpwndpl);
+		 if ((lpwndpl.flags & OS.WPF_RESTORETOMAXIMIZED) != 0) {
+		 return new Rectangle (0, 0, oldWidth, oldHeight);
+		 }
+		 int width = lpwndpl.right - lpwndpl.left;
+		 int height = lpwndpl.bottom - lpwndpl.top;*/
+		/*
+		 * Feature in Windows.  For some reason WM_NCCALCSIZE does
+		 * not compute the client area when the window is minimized.
+		 * The fix is to compute it using AdjustWindowRectEx() and
+		 * GetSystemMetrics().
+		 *
+		 * NOTE: This code fails to compute the correct client area
+		 * for a minimized window where the menu bar would wrap were
+		 * the window restored.  There is no fix for this problem at
+		 * this time.
+		 */
+		/*if (horizontalBar != null) width -= OS.GetSystemMetrics (OS.SM_CYHSCROLL);
+		 if (verticalBar != null) height -= OS.GetSystemMetrics (OS.SM_CXVSCROLL);
+		 RECT rect = new RECT ();
+		 int bits1 = OS.GetWindowLong (handle, OS.GWL_STYLE);
+		 int bits2 = OS.GetWindowLong (handle, OS.GWL_EXSTYLE);
+		 boolean hasMenu = OS.IsWinCE ? false : OS.GetMenu (handle) != 0;
+		 OS.AdjustWindowRectEx (rect, bits1, hasMenu, bits2);
+		 width = Math.max (0, width - (rect.right - rect.left));
+		 height = Math.max (0, height - (rect.bottom - rect.top));
+		 return new Rectangle (0, 0, width, height);*/
+	}
+	//return super.getClientAreaInPixels ();
+}
+//@Override
+boolean isReparentable() {
+	/*
+	 * Feature in Windows.  Calling SetParent() for a shell causes
+	 * a kind of fake MDI to happen.  It doesn't work well on Windows
+	 * and is not supported on the other platforms.  The fix is to
+	 * disallow the SetParent().
+	 */
+	return W_FALSE;
+}
+
+//@Override
+boolean isTabGroup() {
+	/*
+	 * Can't test WS_TAB bits because they are the same as WS_MAXIMIZEBOX.
+	 */
+	return W_TRUE;
+}
+
+//@Override
+boolean isTabItem() {
+	/*
+	 * Can't test WS_TAB bits because they are the same as WS_MAXIMIZEBOX.
+	 */
+	return W_FALSE;
+}
+//@Override
+void setOrientation(int orientation) {
+	/*super.setOrientation (orientation);
+	 if (menus != null) {
+	 for (int i=0; i<menus.length; i++) {
+	 Menu menu = menus [i];
+	 if (menu != null && !menu.isDisposed () && (menu.getStyle () & SWT.POP_UP) != 0) {
+	 menu._setOrientation (menu.getOrientation ());
+	 }
+	 }
+	 }*/
+}
+//@Override
+boolean traverseItem(boolean next) {
+	return W_FALSE;
+}
+
+//@Override
+boolean traverseReturn() {
+	/*if (defaultButton == null || defaultButton.isDisposed ()) return false;
+	 if (!defaultButton.isVisible () || !defaultButton.isEnabled ()) return false;
+	 defaultButton.click ();
+	 return true;*/
+}
 int _SHELL_WM_CLOSE(w_widget *widget, _w_event_platform *e,
 		_w_widget_reserved *reserved) {
 	/*if (isEnabled () && isActive ()) closeWidget ();
@@ -2378,13 +2618,13 @@ void _w_shell_class_init(struct _w_shell_class *clazz) {
 	clazz->set_modified = _w_shell_set_modified;
 	clazz->force_active = _w_shell_force_active;
 	clazz->get_default_button = _w_shell_get_default_button;
-	clazz->get_images = _w_shell_get_image;
+	clazz->get_images = _w_shell_get_images;
 	clazz->get_maximized = _w_shell_get_maximized;
 	clazz->get_menu_bar = _w_shell_get_menu_bar;
 	clazz->get_minimized = _w_shell_get_minimized;
 	clazz->get_text = _w_shell_get_text;
 	clazz->set_default_button = _w_shell_set_default_button;
-	clazz->set_images = _w_shell_set_image;
+	clazz->set_images = _w_shell_set_images;
 	clazz->set_maximized = _w_shell_set_maximized;
 	clazz->set_menu_bar = _w_shell_set_menu_bar;
 	clazz->set_minimized = _w_shell_set_minimized;
