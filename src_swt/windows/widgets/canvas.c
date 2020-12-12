@@ -17,15 +17,15 @@ const char* _w_canvas_window_class(w_control *control,
 	//if (display.useOwnDC) return display.windowOwnDCClass;
 	return _w_scrollable_window_class(control, reserved);
 }
-int _CANVAS_WM_CHAR(w_widget *widget, struct _w_event_platform *e,
+wresult _CANVAS_WM_CHAR(w_widget *widget, struct _w_event_platform *e,
 		struct _w_widget_reserved *reserved) {
-	int result = _WIDGET_WM_CHAR(widget, e, reserved);
+	wresult result = _WIDGET_WM_CHAR(widget, e, reserved);
 	/* if (result != null) return result;
 	 if (caret != null) {
 	 switch ((int)wParam) {
 	 case SWT.DEL:
 	 case SWT.BS:
-	 case SWT.ESC:
+	 case SWT.ESC:  
 	 break;
 	 default: {
 	 if (OS.GetKeyState (OS.VK_CONTROL) >= 0) {
