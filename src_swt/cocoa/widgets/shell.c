@@ -806,11 +806,10 @@ NSWindow* _w_shell_parent_window (w_shell *shell) {
 }
 
 //@Override
-wresult _w_shell_print (w_graphics* gc) {
-	/*checkWidget ();
-	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
-	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
-	return false;*/
+wresult _w_shell_print (w_control* control,w_graphics* gc) {
+	if (gc == 0) return W_ERROR_NULL_ARGUMENT;
+	if (w_graphics_is_ok(gc)<=0) return W_ERROR_INVALID_ARGUMENT;
+	return W_FALSE;
 }
 
 //@Override
