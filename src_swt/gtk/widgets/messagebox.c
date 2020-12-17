@@ -6,7 +6,7 @@
  */
 #ifdef __linux
 #include "toolkit.h"
-gboolean _w_toolkit_messagebox_emissionProc(GSignalInvocationHint *ihint,
+gboolean _w_messagebox_emissionProc(GSignalInvocationHint *ihint,
 		guint n_param_values, const GValue *param_values, gpointer data) {
 	if (gtk_widget_get_toplevel(GTK_WIDGET(g_value_peek_pointer(param_values)))
 			== data) {
@@ -15,11 +15,11 @@ gboolean _w_toolkit_messagebox_emissionProc(GSignalInvocationHint *ihint,
 	}
 	return 1;
 }
-void _w_toolkit_messagebox_createButtons(GtkWindow *handle,
+void _w_messagebox_createButtons(GtkWindow *handle,
 		w_messagebox *messagebox, int style, int alignment) {
 	if (alignment == W_LEFT) {
-		if ((style & (1 << 5)) != 0) //W_OK
-			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-ok", W_OK);
+		if ((style & (1 << 5) /* W_OK*/) != 0) //W_OK
+			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-ok", (1 << 5) /* W_OK*/);
 //	 if ((style & W_ABORT) != 0) gtk_dialog_add_button(GTK_DIALOG(handle), Converter.wcsToMbcs (W_getMessage("SWT_Abort"), true), W_ABORT);
 //	 if ((style & W_RETRY) != 0) gtk_dialog_add_button(GTK_DIALOG(handle), Converter.wcsToMbcs (W_getMessage("SWT_Retry"), true), W_RETRY);
 		if ((style & W_YES) != 0)
@@ -32,8 +32,8 @@ void _w_toolkit_messagebox_createButtons(GtkWindow *handle,
 	} else {
 		if ((style & W_CANCEL) != 0)
 			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-cancel", W_CANCEL);
-		if ((style & (1 << 5)) != 0) //W_OK
-			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-ok", W_OK);
+		if ((style & (1 << 5) /* W_OK*/) != 0) //W_OK
+			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-ok", (1 << 5) /* W_OK*/);
 		if ((style & W_NO) != 0)
 			gtk_dialog_add_button(GTK_DIALOG(handle), "gtk-no", W_NO);
 		if ((style & W_YES) != 0)
@@ -44,25 +44,25 @@ void _w_toolkit_messagebox_createButtons(GtkWindow *handle,
 	}
 }
 
-wuint64 _w_toolkit_messagebox_check_style(wuint64 style) {
-	wuint64 mask = (W_YES | W_NO | W_OK | W_CANCEL | W_ABORT | W_RETRY
+wuint64 _w_messagebox_check_style(wuint64 style) {
+	wuint64 mask = (W_YES | W_NO | (1 << 5) /* W_OK*/ | W_CANCEL | W_ABORT | W_RETRY
 			| W_IGNORE);
 	wuint64 bits = style & mask;
-	if (bits == W_OK || bits == W_CANCEL || bits == (W_OK | W_CANCEL))
+	if (bits == (1 << 5) /* W_OK*/ || bits == W_CANCEL || bits == ((1 << 5) /* W_OK*/ | W_CANCEL))
 		return style;
 	if (bits == W_YES || bits == W_NO || bits == (W_YES | W_NO)
 			|| bits == (W_YES | W_NO | W_CANCEL))
 		return style;
 	if (bits == (W_RETRY | W_CANCEL) || bits == (W_ABORT | W_RETRY | W_IGNORE))
 		return style;
-	style = (style & ~mask) | W_OK;
+	style = (style & ~mask) | (1 << 5) /* W_OK*/;
 	return style;
 }
-int _w_toolkit_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox) {
+int _w_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox) {
 	GtkWindow *parentHandle =
 			GTK_WINDOW(
 					(messagebox->parent != 0) ? _W_SHELL_HANDLE(messagebox->parent) : 0);
-	wuint64 style = _w_toolkit_messagebox_check_style(messagebox->style);
+	wuint64 style = _w_messagebox_check_style(messagebox->style);
 	GtkDialogFlags dialogFlags = GTK_DIALOG_DESTROY_WITH_PARENT;
 	if ((style & (W_PRIMARY_MODAL | W_APPLICATION_MODAL | W_SYSTEM_MODAL))
 			!= 0) {
@@ -105,8 +105,8 @@ int _w_toolkit_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox) {
 		}
 	}
 	/* Display display = parent != null ? parent.getDisplay (): Display.getCurrent ();*/
-	_w_toolkit_messagebox_createButtons(handle, messagebox, style,
-			W_LEFT/*display.getDismissalAlignment ()*/);
+	//_w_messagebox_createButtons(handle, messagebox, style,
+	//		W_LEFT/*display.getDismissalAlignment ()*/);
 	gtk_window_set_title(handle, messagebox->title);
 	/*display.addIdleProc ();
 	 Dialog oldModal = null;*/
@@ -127,7 +127,7 @@ int _w_toolkit_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox) {
 	if ((style & W_RIGHT_TO_LEFT) != 0) {
 		signalId = gtk_toolkit->closures[SIGNAL_MAP].signal_id;
 		hookId = g_signal_add_emission_hook(signalId, 0,
-				_w_toolkit_messagebox_emissionProc, handle, 0);
+				_w_messagebox_emissionProc, handle, 0);
 	}
 	//display.sendPreExternalEventDispatchEvent ();
 	int response = gtk_dialog_run(GTK_DIALOG(handle));

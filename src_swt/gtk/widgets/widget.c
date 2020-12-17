@@ -765,6 +765,9 @@ gboolean _gtk_widget_expose(w_widget *widget, _w_event_platform *e,
 	}
 	return FALSE;
 }
+wuint64 _w_widget_check_style(w_widget *control, wuint64 style){
+	return style;
+}
 void _w_widget_class_init(struct _w_widget_class *clazz) {
 	//resource
 	clazz->is_ok = _w_widget_is_ok;
@@ -783,6 +786,7 @@ void _w_widget_class_init(struct _w_widget_class *clazz) {
 		reserved->create_handle = _w_widget_create_handle;
 		reserved->set_orientation = _w_widget_set_orientation;
 		reserved->hook_events = _w_widget_hook_events;
+		reserved->check_style = _w_widget_check_style;
 		/*
 		 * signals
 		 */

@@ -94,7 +94,7 @@ private:
 		return *this;
 	}
 protected:
-	int PostEvent0(WEvent *e);
+	WResult PostEvent0(WEvent *e);
 	virtual bool PostEvent(WEvent *e);
 	virtual bool OnPlatformEvent(WPlatformEvent *e);
 	virtual void OnFreeMemory(WEvent &e, WWidget *widget);
@@ -102,16 +102,18 @@ protected:
 	virtual bool OnSashSelection(WEvent &e);
 	virtual void OnUpdate();
 protected:
-	static int post_event_proc(w_widget *widget, w_event *event);
+	static WResult post_event_proc(w_widget *widget, w_event *event);
 	static int exec_function(void *args);
 	bool DefaultPostEvent(WEvent *e) {
 		return w_widget_default_post_event(W_WIDGET(this), W_EVENT(e));
 	}
 	/**
-	 * index 0..3
+	 * index 0..4
 	 *  0 : void* data
 	 *  1 : used in c as function
 	 *  2 : used in c++ as listener
+	 *  3 :
+	 *  4 :
 	 */
 	void* GetData(int index) {
 		return w_widget_get_data(W_WIDGET(this), index);
@@ -121,7 +123,7 @@ protected:
 	}
 public:
 	bool IsOk() {
-		return w_widget_is_ok(W_WIDGET(this));
+		return w_widget_is_ok(W_WIDGET(this)) > 0;
 	}
 	bool IsDisposed() {
 		return !IsOk();
@@ -347,7 +349,7 @@ public:
 	 */
 	WString GetText() {
 		WString str;
-		w_item_get_text(W_ITEM(this),w_alloc_string_ref, &str.ref);
+		w_item_get_text(W_ITEM(this), w_alloc_string_ref, &str.ref);
 		return str;
 	}
 	/**

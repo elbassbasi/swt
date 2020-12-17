@@ -162,7 +162,7 @@ void metal_button_draw_background_arrow(w_theme *theme,w_themedata *data, w_grap
     w_graphics_fill_polygon(gc,pt,3);
 }
 void metal_button_draw_background(w_theme *theme,w_themedata *data, w_graphics *gc, w_rect *bounds) {
-    if(data->style & W_CHECK || data->style & W_RADIO){
+    if((data->style & W_CHECK) != 0 || (data->style & W_RADIO)!=0){
         metal_button_draw_background_radio(theme,data,gc,bounds);
     }else if(data->style & W_ARROW){
         metal_button_draw_background_arrow(theme,data,gc,bounds);
@@ -226,6 +226,7 @@ void w_theme_metal_draw_focus(w_theme *theme,w_themedata *data, w_graphics *gc, 
 }
 void w_theme_metal_draw_image(w_theme *theme,w_themedata *data, w_graphics *gc, w_rect *bounds,
                               w_image *image, int flags){
+	w_graphics_draw_image(gc, image, bounds, bounds, flags);
 
 }
 void w_theme_metal_draw_text(w_theme *theme,w_themedata *data, w_graphics *gc, w_rect *bounds, const char *text, int length, int flags){
@@ -235,7 +236,7 @@ void w_theme_metal_draw_text(w_theme *theme,w_themedata *data, w_graphics *gc, w
     w_graphics_text_extent(gc, text, length, &sz,
                            W_DRAW_DELIMITER | W_DRAW_TAB);
     int padding = 0;
-    if(data->style & W_CHECK || data->style & W_RADIO){
+    if((data->style & W_CHECK)!=0 || (data->style & W_RADIO)!=0){
         padding = 9;
     }
     r.x = (bounds->width - sz.width) / 2 + padding;

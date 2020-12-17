@@ -684,10 +684,23 @@ public:
 	WMenu() {
 		this->items = 0;
 		this->items_length = 0;
+		this->notifyControl = 0;
 	}
-	bool CreateItems(WMenuItems *items, size_t length);
+	bool CreateItems(WControl *notify, WMenuItems *items, size_t length);
+	bool CreateItems(WMenuItems *items, size_t length) {
+		return CreateItems(GetParent(), items, length);
+	}
+	bool CreateItems(WControl *notify, WMenuItems *items) {
+		return CreateItems(notify, items, -1);
+	}
 	bool CreateItems(WMenuItems *items) {
-		return CreateItems(items, -1);
+		return CreateItems(GetParent(), items, -1);
+	}
+	WControl* GetNotifyControl() {
+		return this->notifyControl;
+	}
+	void SetNotifyControl(WControl *control) {
+		this->notifyControl = control;
 	}
 protected:
 	void OnDispose(WEvent &e);
@@ -704,6 +717,7 @@ protected:
 	bool CreateSubItems(WMenuItem &parent, size_t &start);
 	WMenuItems *items;
 	size_t items_length;
+	WControl *notifyControl;
 };
 
 #endif /* SWTP_WIDGETS_MENU_H_ */

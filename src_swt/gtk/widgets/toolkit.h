@@ -306,6 +306,6 @@ wresult _w_toolkit_wake(w_toolkit *toolkit);
  */
 wresult _w_toolkit_open_clipboard(w_toolkit *toolkit, w_clipboard *clipboard,
 		int clipboards);
-int _w_toolkit_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox);
+int _w_messagebox_open(w_toolkit *toolkit, w_messagebox *messagebox);
 #endif
 #endif /* SRC_GTK_WIDGETS_TOOLKIT_H_ */

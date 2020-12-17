@@ -71,10 +71,10 @@ void WItem::SetListener(IWListener *listener) {
 		last->DecRef();
 }
 
-int WWidget::post_event_proc(w_widget *widget, w_event *event) {
+WResult WWidget::post_event_proc(w_widget *widget, w_event *event) {
 	return ((WWidget*) widget)->PostEvent0((WEvent*) event);
 }
-int WWidget::PostEvent0(WEvent *e) {
+WResult WWidget::PostEvent0(WEvent *e) {
 	bool ret = false;
 	if (e->type == W_EVENT_PLATFORM) {
 		ret = this->OnPlatformEvent((WPlatformEvent*) e);
@@ -309,8 +309,8 @@ bool WMenu::OnItemSelection(WMenuEvent &e) {
 		if (this->items != 0) {
 			wushort id = e.item->GetId();
 			WControl::SelectionAction action = this->items[id].action;
-			if (action != 0) {
-				WControl *c = GetParent();
+			if (action != 0 && this->notifyControl != 0) {
+				WControl *c = this->notifyControl;
 				(c->*action)(&e);
 			}
 		}
@@ -351,8 +351,9 @@ void WMenu::OnDispose(WEvent &e) {
 	this->items = 0;
 }
 
-bool WMenu::CreateItems(WMenuItems *items, size_t length) {
+bool WMenu::CreateItems(WControl *notify, WMenuItems *items, size_t length) {
 	WMenuItem item;
+	this->notifyControl = notify;
 	GetRoot(item);
 	size_t start = 0;
 	this->items = items;

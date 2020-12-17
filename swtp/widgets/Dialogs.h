@@ -71,6 +71,7 @@ public:
 	}
 	WShell *parent;
 	wuint64 style;
+	WIterator<char*> files;
 public:
 	void GetFileNames(WIterator<char*>& files){
 

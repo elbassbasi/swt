@@ -5,6 +5,7 @@
  *      Author: azeddine El Bassbasi
  */
 #include "browser_ie.h"
+#if defined( __WIN32__) || defined(__WIN64__)
 const IID IID_IDocHostShowUI = { 0xc4d244b0, 0xd43e, 0x11cf, { 0x89, 0x3b, 0x00,
 		0xaa, 0x00, 0xbd, 0xce, 0x1a } };
 #define IE_IOleClientSite_SITE(This) ((_w_ie_web_site *)This)
@@ -821,3 +822,4 @@ void _w_ie_web_site_init(_w_ie_web_site *site) {
 	site->iAuthenticate = &IE_IAuthenticate_Vtbl;
 	site->iDispatch = &IE_IDispatch_Vtbl;
 }
+#endif

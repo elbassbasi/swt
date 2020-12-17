@@ -5,19 +5,21 @@
  *      Author: Azeddine El Bassbasi
  */
 #include "button.h"
-wresult wc_button_create(w_widget *widget, w_widget *parent, int style,
+wresult wc_button_create(w_widget *widget, w_widget *parent, wuint64 style,
 		w_widget_post_event_proc post_event) {
-	wresult result = wc_control_create(widget, parent, style,
-                                        post_event, sizeof(struct wc_button_priv));
+	wresult result = wc_control_create(widget, parent, style, post_event,
+			sizeof(struct wc_button_priv));
 	if (result < 0)
 		return result;
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+	w_image_init(&priv->image);
 	return result;
 }
 void wc_button_draw(w_widget *widget, w_graphics *gc) {
 	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
-	w_rect r;
+	w_rect r, t;
 	w_size sz;
-	w_control_get_bounds(W_CONTROL(widget), &r.pt,&r.sz);
+	w_control_get_bounds(W_CONTROL(widget), &r.pt, &r.sz);
 	r.x = 0;
 	r.y = 0;
 	w_theme *theme = w_toolkit_get_theme(w_widget_get_toolkit(widget));
@@ -26,9 +28,24 @@ void wc_button_draw(w_widget *widget, w_graphics *gc) {
 	data.clientArea = 0;
 	data.state = priv->state;
 	data.style = w_widget_get_style(widget);
-	w_theme_draw_background(theme,&data, gc, &r);
-	w_theme_draw_text(theme,&data, gc, &r, priv->text, -1,
+	w_theme_draw_background(theme, &data, gc, &r);
+	if (w_image_is_ok(&priv->image) > 0) {
+		w_image_get_size(&priv->image, &t.sz);
+		r.x = t.width;
+	}
+	w_theme_draw_text(theme, &data, gc, &r, priv->text, -1,
 			W_THEME_DRAW_HCENTER | W_THEME_DRAW_VCENTER);
+	if (w_image_is_ok(&priv->image) > 0) {
+		r.x = 0;
+		r.y = 0;
+		r.width = -1;
+		r.height = -1;
+		t.x = 0;
+		t.y = 0;
+		t.width = -1;
+		t.height = -1;
+		w_graphics_draw_image(gc, &priv->image, &r, &t, priv->state);
+	}
 }
 int wc_button_paint(w_widget *widget, w_event_paint *e) {
 	wc_button_draw(widget, e->gc);
@@ -55,29 +72,39 @@ int wc_button_mouseup(w_widget *widget, w_event_mouse *e) {
 	return W_TRUE;
 }
 int wc_button_compute_size(w_widget *widget, w_event_compute_size *e) {
-    if(e->wHint != W_DEFAULT && e->wHint != W_DEFAULT){
-        e->size->width = e->wHint;
-        e->size->height = e->hHint;
-        return W_TRUE;
-    }
-    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
-    w_graphics gc;
-    w_themedata data;
-    w_rect bounds,result;
-    w_graphics_init(&gc);
-    w_control_get_graphics(W_CONTROL(widget), &gc);
-    w_theme *theme = w_toolkit_get_theme(w_widget_get_toolkit(widget));
-    data.clazz = W_THEME_CLASS_BUTTON;
-    data.clientArea = 0;
-    data.state = priv->state;
-    data.style = w_widget_get_style(widget);
-    w_theme_measure_text(theme,&data,&gc,0,&result,priv->text,-1,W_THEME_DRAW_CENTER);
-    w_graphics_dispose(&gc);
-    if(e->wHint == W_DEFAULT) e->size->width = result.width;
-    else e->size->width = e->wHint;
-    if(e->hHint == W_DEFAULT) e->size->height = result.height;
-    else e->size->height = e->hHint;
-    return W_TRUE;
+	if (e->wHint != W_DEFAULT && e->wHint != W_DEFAULT) {
+		e->size->width = e->wHint;
+		e->size->height = e->hHint;
+		return W_TRUE;
+	}
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(widget));
+	w_graphics gc;
+	w_themedata data;
+	w_rect bounds, result;
+	w_graphics_init(&gc);
+	w_control_get_graphics(W_CONTROL(widget), &gc);
+	w_theme *theme = w_toolkit_get_theme(w_widget_get_toolkit(widget));
+	data.clazz = W_THEME_CLASS_BUTTON;
+	data.clientArea = 0;
+	data.state = priv->state;
+	data.style = w_widget_get_style(widget);
+	w_theme_measure_text(theme, &data, &gc, 0, &result, priv->text, -1,
+			W_THEME_DRAW_CENTER);
+	w_graphics_dispose(&gc);
+	if (w_image_is_ok(&priv->image) > 0) {
+		w_image_get_size(&priv->image, &bounds.sz);
+		result.width += bounds.sz.width;
+		result.height = w_max(bounds.sz.height, result.height);
+	}
+	if (e->wHint == W_DEFAULT)
+		e->size->width = result.width;
+	else
+		e->size->width = e->wHint;
+	if (e->hHint == W_DEFAULT)
+		e->size->height = result.height;
+	else
+		e->size->height = e->hHint;
+	return W_TRUE;
 }
 wresult wc_button_post_event(w_widget *widget, w_event *e) {
 	switch (e->type) {
@@ -91,63 +118,80 @@ wresult wc_button_post_event(w_widget *widget, w_event *e) {
 		return wc_button_mouseup(widget, (w_event_mouse*) e);
 		break;
 	case W_EVENT_COMPUTE_SIZE:
-	    return wc_button_compute_size(widget,(w_event_compute_size*)e);
-        break;
+		return wc_button_compute_size(widget, (w_event_compute_size*) e);
+		break;
 	}
 	return widget->clazz->next_class->post_event(widget, e);
 }
-int wc_button_get_alignment(w_button *button) {
+wresult wc_button_get_alignment(w_button *button) {
 }
 wresult wc_button_get_grayed(w_button *button) {
-    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
-    return priv->state & W_GRAYED != 0;
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	return priv->state & W_GRAYED != 0;
 }
 wresult wc_button_get_image(w_button *button, w_image *image) {
 }
 wresult wc_button_get_selection(w_button *button) {
-    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
-    return priv->state & W_SELECTED != 0;
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	return priv->state & W_SELECTED != 0;
 }
-wresult wc_button_get_text(w_button *button, w_alloc *text) {
+wresult wc_button_get_text(w_button *button, w_alloc alloc, void *user_data) {
 
 }
 wresult wc_button_set_alignment(w_button *button, int alignment) {
+	w_control_redraw(W_CONTROL(button), 0, W_FALSE);
+	return W_TRUE;
 }
 wresult wc_button_set_grayed(w_button *button, int grayed) {
-    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
-    if(grayed){
-        priv->state |= W_GRAYED;
-    }else{
-        priv->state &= ~ W_GRAYED;
-    }
-    return W_TRUE;
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	if (grayed) {
+		priv->state |= W_GRAYED;
+	} else {
+		priv->state &= ~W_GRAYED;
+	}
+	w_control_redraw(W_CONTROL(button), 0, W_FALSE);
+	return W_TRUE;
 }
 wresult wc_button_set_image(w_button *button, w_image *image) {
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	w_image_dispose(&priv->image);
+	if (image == 0)
+		return W_TRUE;
+	if (w_image_is_ok(image) <= 0)
+		return W_ERROR_INVALID_ARGUMENT;
+	wresult result = w_image_copy(image, 0, &priv->image);
+	w_control_redraw(W_CONTROL(button), 0, W_FALSE);
+	return result;
 }
 wresult wc_button_set_selection(w_button *button, int selected) {
-    wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
-    if(selected){
-        priv->state |= W_SELECTED;
-    }else{
-        priv->state &= ~ W_SELECTED;
-    }
-    return W_TRUE;
+	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
+	if (selected) {
+		priv->state |= W_SELECTED;
+	} else {
+		priv->state &= ~W_SELECTED;
+	}
+	w_control_redraw(W_CONTROL(button), 0, W_FALSE);
+	return W_TRUE;
 }
-wresult wc_button_set_text(w_button *button, const char *string) {
+wresult wc_button_set_text(w_button *button, const char *string,
+		size_t length) {
 	wc_button_priv *priv = wc_control_get_priv(W_CONTROL(button));
 	if (priv->text != 0) {
 		free(priv->text);
 	}
-	priv->text = strdup(string);
+	if (length == -1) {
+		priv->text = strdup(string);
+	} else {
+		priv->text = strndup(string, length);
+	}
 	w_control_redraw(W_CONTROL(button), 0, W_FALSE);
 	return W_TRUE;
 }
 void wc_button_init_class(struct _w_widget_class *clazz) {
-    wc_ccanvas_init_class_priv(clazz,sizeof(struct wc_button_priv));
+	wc_ccanvas_init_class_priv(clazz, sizeof(struct wc_button_priv));
 	clazz->create = wc_button_create;
 	clazz->post_event = wc_button_post_event;
 
-	W_BUTTON_CLASS(clazz)->get_alignment = wc_button_get_alignment;
 	W_BUTTON_CLASS(clazz)->get_alignment = wc_button_get_alignment;
 	W_BUTTON_CLASS(clazz)->get_grayed = wc_button_get_grayed;
 	W_BUTTON_CLASS(clazz)->get_image = wc_button_get_image;
@@ -160,5 +204,4 @@ void wc_button_init_class(struct _w_widget_class *clazz) {
 	W_BUTTON_CLASS(clazz)->set_text = wc_button_set_text;
 
 }
-
 

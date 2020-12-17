@@ -343,7 +343,7 @@ void _w_toolkit_class_init(_w_toolkit *toolkit) {
 	/*
 	 *
 	 */
-	clazz->messagebox_open = _w_toolkit_messagebox_open;
+	clazz->messagebox_open = _w_messagebox_open;
 	clazz->open_clipboard = _w_toolkit_open_clipboard;
 }
 typedef void (*__w_widget_init_class)(struct _w_widget_class *clazz);

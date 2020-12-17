@@ -16,7 +16,7 @@ typedef struct w_toolkit w_toolkit;
 typedef struct w_control w_control;
 typedef struct w_composite w_composite;
 typedef struct w_shell w_shell;
-typedef int (*w_widget_post_event_proc)(w_widget *widget, w_event *event);
+typedef wresult (*w_widget_post_event_proc)(w_widget *widget, w_event *event);
 struct w_widget {
 	void *v_table; //used in c++ as virtual table
 	struct _w_widget_class *clazz;

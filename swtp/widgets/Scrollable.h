@@ -138,8 +138,8 @@ public:
 	 *
 	 */
 	WScrollable* GetParent() {
-		WScrollable* parent;
-		w_scrollbar_get_parent(W_SCROLLBAR(this),(w_scrollable**)&parent);
+		WScrollable *parent;
+		w_scrollbar_get_parent(W_SCROLLBAR(this), (w_scrollable**) &parent);
 		return parent;
 	}
 	/**
@@ -565,10 +565,9 @@ public:
 	 *
 	 * @see #getClientArea
 	 */
-	WRect& ComputeTrim(int x, int y, int width, int height,
-			const WRect &result = WRect()) {
-		WRect r(x, y, width, height);
-		return ComputeTrim((WRect&) result, r);
+	WRect ComputeTrim(int x, int y, int width, int height) {
+		WRect result;
+		return ComputeTrim(result, x, y, width, height);
 	}
 	/**
 	 * Returns a rectangle which describes the area of the
@@ -592,8 +591,9 @@ public:
 	 *
 	 * @see #computeTrim
 	 */
-	WRect& GetClientArea(const WRect &clientArea = WRect()) {
-		return GetClientArea((WRect&) clientArea);
+	WRect GetClientArea() {
+		WRect clientArea;
+		return GetClientArea(clientArea);
 	}
 	/**
 	 * Returns the receiver's horizontal scroll bar if it has
@@ -612,8 +612,9 @@ public:
 	 *
 	 * @return the horizontal scroll bar (or null)
 	 */
-	WScrollBar& GetHorizontalBar(const WScrollBar &scrollBar = WScrollBar()) {
-		return GetHorizontalBar((WScrollBar&) scrollBar);
+	WScrollBar GetHorizontalBar() {
+		WScrollBar scrollBar;
+		return GetHorizontalBar(scrollBar);
 	}
 	/**
 	 * Returns the mode of the receiver's scrollbars. This will be
@@ -647,8 +648,9 @@ public:
 	 *
 	 * @return the vertical scroll bar (or null)
 	 */
-	WScrollBar& GetVerticalBar(const WScrollBar &scrollBar = WScrollBar()) {
-		return GetVerticalBar((WScrollBar&) scrollBar);
+	WScrollBar GetVerticalBar() {
+		WScrollBar scrollBar;
+		return GetVerticalBar(scrollBar);
 	}
 public:
 	static bool IsScrollable(WWidget *widget) {
